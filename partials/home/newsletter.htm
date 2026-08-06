@@ -1,0 +1,28 @@
+<section class="z-newsletter">
+  <h2 class="z-newsletter-title">Recibe ofertas de temporada</h2>
+  <p class="z-newsletter-desc">
+    Un correo al mes con nuevos destinos y precios especiales. Nada de spam.
+  </p>
+  <form id="z-newsletter-form" class="z-newsletter-form" onsubmit="zimaNewsletter(event)">
+    <input type="email" name="email" required
+      placeholder="tucorreo@ejemplo.com"
+      class="z-input-pill">
+    <button type="submit" class="z-btn z-btn-teal" style="white-space:nowrap">
+      Suscribirme
+    </button>
+  </form>
+  <div id="z-newsletter-ok" class="z-newsletter-ok" style="display:none">
+    <span class="z-newsletter-ok-msg">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--z-teal)" stroke-width="2.5"><path d="M4 12l6 6L20 6"/></svg>
+      ¡Gracias por suscribirte!
+    </span>
+  </div>
+</section>
+
+<script>
+function zimaNewsletter(e) {
+  e.preventDefault();
+  document.getElementById('z-newsletter-form').style.display = 'none';
+  document.getElementById('z-newsletter-ok').style.display   = 'block';
+}
+</script>

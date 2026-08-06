@@ -1,0 +1,147 @@
+{# ── amenity/landing.htm ── #}
+
+<div class="zam-page">
+
+  {# ── Hero cinemático ── #}
+  <div class="zam-hero">
+    {% if amenity.preview_image %}
+      <div class="zam-hero-bg"
+           style="background-image:url('{{ amenity.preview_image.path }}')"></div>
+    {% else %}
+      <div class="zam-hero-bg zam-hero-bg--empty"></div>
+    {% endif %}
+    <div class="zam-hero-overlay"></div>
+
+    <div class="zam-hero-content">
+      {% if amenity.category %}
+        <span class="zam-hero-tag">{{ amenity.category.name }}</span>
+      {% endif %}
+      <h1 class="zam-hero-title">{{ amenity.name }}</h1>
+      <div class="zam-hero-origin">
+        <a href="{{ 'operator'|page({'slug': operator.slug}) }}"
+           class="zam-hero-back">← {{ operator.name }}</a>
+      </div>
+    </div>
+
+    <div class="zam-hero-scroll">
+      <span class="zam-hero-scroll-line"></span>
+      <span class="zam-hero-scroll-lbl">scroll</span>
+    </div>
+  </div>
+
+  {# ── Banda editorial ── #}
+  {% if amenity.preview_text %}
+  <div class="zam-band">
+    <div class="zam-band-inner">
+      <p class="zam-band-text">{{ amenity.preview_text }}</p>
+    </div>
+  </div>
+  {% endif %}
+
+  {# ── Cuerpo ── #}
+  <div class="zam-body">
+
+    {# Descripción + imagen lateral #}
+    {% if amenity.description or amenity.gallery is not empty %}
+    <div class="zam-editorial">
+
+      {% if amenity.description %}
+      <div class="zam-editorial-text">
+        <div class="zam-richtext">{{ amenity.description|raw }}</div>
+      </div>
+      {% endif %}
+
+      {% if amenity.gallery is not empty %}
+      <aside class="zam-editorial-aside">
+        <div class="zam-aside-img-wrap">
+          <img src="{{ amenity.gallery|first.getThumb(600, 800, {mode: 'crop'}) }}"
+               alt="{{ amenity.name }}" class="zam-aside-img">
+          <div class="zam-aside-img-accent"></div>
+        </div>
+      </aside>
+      {% endif %}
+
+    </div>
+    {% endif %}
+
+    {# Galería filmstrip #}
+    {% if amenity.gallery|length > 1 %}
+    <div class="zam-filmstrip-wrap">
+      <h2 class="zam-filmstrip-title">Galería</h2>
+      <div class="zam-filmstrip" id="zamFilmstrip">
+        {% for i, image in amenity.gallery %}
+          {% if not loop.first %}
+          <button class="zam-film-item" type="button"
+                  data-index="{{ loop.index0 }}"
+                  data-src="{{ image.path }}">
+            <img src="{{ image.getThumb(600, 420, {mode: 'crop'}) }}"
+                 alt="{{ amenity.name }} {{ loop.index }}" loading="lazy">
+            <div class="zam-film-shine"></div>
+          </button>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {# Volver #}
+    <div class="zam-footer-nav">
+      <a href="{{ 'operator'|page({'slug': operator.slug}) }}"
+         class="zam-back-link">
+        <span class="zam-back-arrow">←</span>
+        <span>Volver a {{ operator.name }}</span>
+      </a>
+    </div>
+
+  </div>
+
+</div>
+
+{# ── Lightbox ── #}
+{% if amenity.gallery|length > 1 %}
+<div class="zam-lb" id="zamLb" hidden>
+  <div class="zam-lb-bd"></div>
+  <button class="zam-lb-close" id="zamLbClose">✕</button>
+  <button class="zam-lb-prev"  id="zamLbPrev">‹</button>
+  <button class="zam-lb-next"  id="zamLbNext">›</button>
+  <div class="zam-lb-stage">
+    <img class="zam-lb-img" id="zamLbImg" src="" alt="">
+    <div class="zam-lb-count" id="zamLbCount"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const strip   = document.getElementById('zamFilmstrip');
+  const lb      = document.getElementById('zamLb');
+  const lbImg   = document.getElementById('zamLbImg');
+  const lbCount = document.getElementById('zamLbCount');
+  const items   = Array.from(strip.querySelectorAll('.zam-film-item'));
+  const srcs    = items.map(el => el.dataset.src);
+  let cur = 0;
+
+  function open(i) {
+    cur = ((i % srcs.length) + srcs.length) % srcs.length;
+    lbImg.src = srcs[cur];
+    lbCount.textContent = (cur + 1) + ' / ' + srcs.length;
+    lb.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+  function close() { lb.hidden = true; lbImg.src = ''; document.body.style.overflow = ''; }
+  function prev()  { open(cur - 1); }
+  function next()  { open(cur + 1); }
+
+  items.forEach(el => el.addEventListener('click', () => open(+el.dataset.index)));
+  document.getElementById('zamLbClose').addEventListener('click', close);
+  document.getElementById('zamLbPrev').addEventListener('click', prev);
+  document.getElementById('zamLbNext').addEventListener('click', next);
+  lb.querySelector('.zam-lb-bd').addEventListener('click', close);
+  document.addEventListener('keydown', e => {
+    if (lb.hidden) return;
+    if (e.key === 'Escape')     close();
+    if (e.key === 'ArrowLeft')  prev();
+    if (e.key === 'ArrowRight') next();
+  });
+})();
+</script>
+{% endif %}

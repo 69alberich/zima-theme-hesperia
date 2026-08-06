@@ -1,0 +1,73 @@
+<footer class="z-footer">
+  <div class="z-wrap z-footer-grid">
+
+    <!-- Marca -->
+    <div>
+      {% if this.theme.logo %}
+        <img src="{{ this.theme.logo|media }}" alt="{{ this.theme.site_name|default('Hesperia') }}" style="height:36px;width:auto;margin-bottom:16px;display:block;">
+      {% else %}
+        <div class="z-footer-brand-name">{{ this.theme.site_name|default('Hesperia') }}</div>
+      {% endif %}
+      <p class="z-footer-brand-desc">
+        {{ this.theme.tagline|default('Make it exceptional.') }}
+      </p>
+      {% if this.theme.phone or this.theme.email %}
+        <p class="z-footer-brand-desc" style="margin-top:12px;">
+          {% if this.theme.phone %}<span>{{ this.theme.phone }}</span><br>{% endif %}
+          {% if this.theme.email %}<a href="mailto:{{ this.theme.email }}" class="z-footer-link">{{ this.theme.email }}</a>{% endif %}
+        </p>
+      {% endif %}
+      <div style="display:flex;gap:14px;margin-top:18px;">
+        {% if this.theme.facebook_url %}
+          <a href="{{ this.theme.facebook_url }}" class="z-footer-link" target="_blank" rel="noopener" aria-label="Facebook">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+        {% endif %}
+        {% if this.theme.instagram_url %}
+          <a href="{{ this.theme.instagram_url }}" class="z-footer-link" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Explorar -->
+    <div>
+      <div class="z-footer-col-title">Explorar</div>
+      <nav class="z-footer-nav">
+        <a href="/hoteles"      class="z-footer-link">Hoteles</a>
+        <a href="/restaurantes" class="z-footer-link">Restaurantes</a>
+        <a href="/experiencias" class="z-footer-link">Experiencias</a>
+      </nav>
+    </div>
+
+    <!-- Servicios -->
+    <div>
+      <div class="z-footer-col-title">Servicios</div>
+      <nav class="z-footer-nav">
+        <a href="#" class="z-footer-link">Conferencias</a>
+        <a href="#" class="z-footer-link">Bodas & Eventos</a>
+        <a href="#" class="z-footer-link">Spa & Bienestar</a>
+        <a href="#" class="z-footer-link">Gastronomía</a>
+      </nav>
+    </div>
+
+    <!-- Ayuda -->
+    <div>
+      <div class="z-footer-col-title">Ayuda</div>
+      <nav class="z-footer-nav">
+        <a href="/contacto"    class="z-footer-link">Contacto</a>
+        <a href="/mis-ordenes" class="z-footer-link">Mis reservas</a>
+        <a href="#"            class="z-footer-link">Política de cancelación</a>
+        <a href="#"            class="z-footer-link">Términos y condiciones</a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="z-footer-divider">
+    <div class="z-wrap z-footer-bottom">
+      <span class="z-footer-copy">© {{ 'now'|date('Y') }} {{ this.theme.site_name|default('Hesperia Venezuela') }}. Todos los derechos reservados.</span>
+      <span class="z-footer-copy">Powered by Zima</span>
+    </div>
+  </div>
+</footer>

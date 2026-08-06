@@ -1,0 +1,528 @@
+{# ── product/body.htm ── #}
+
+{% set p = params ?? {} %}
+
+{# ── Tabs ── #}
+<nav class="zpd-tabs">
+  <a href="#zpd-desc"    class="zpd-tab is-active">Descripción</a>
+  <a href="#zpd-offers"  class="zpd-tab">Tarifas</a>
+  <a href="#zpd-reviews" class="zpd-tab">Reseñas</a>
+</nav>
+
+{# ══ Galería ══ #}
+{% set galleryItems = product.gallery is not empty ? product.gallery : [] %}
+{% set allSlides    = [] %}
+{% if product.preview_image %}{% set allSlides = allSlides|merge([product.preview_image]) %}{% endif %}
+{% for f in galleryItems %}{% set allSlides = allSlides|merge([f]) %}{% endfor %}
+
+{% if allSlides|length > 0 %}
+<section class="zpd-section zpd-section--gallery">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+  <div class="zpd-gallery">
+
+    {# Slide principal grande #}
+    <div class="swiper zpd-gal-main">
+      <div class="swiper-wrapper">
+        {% for file in allSlides %}
+          <div class="swiper-slide">
+            <div class="zpd-gal-slide">
+              <img src="{{ file.path }}" alt="{{ product.name }}">
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+      {% if allSlides|length > 1 %}
+        <div class="swiper-button-prev zpd-swiper-prev"></div>
+        <div class="swiper-button-next zpd-swiper-next"></div>
+      {% endif %}
+    </div>
+
+    {# Thumbs — solo si hay más de una imagen #}
+    {% if allSlides|length > 1 %}
+    <div class="swiper zpd-gal-thumbs">
+      <div class="swiper-wrapper">
+        {% for file in allSlides %}
+          <div class="swiper-slide zpd-gal-thumb-slide">
+            <img src="{{ file.path }}" alt="">
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+  (function () {
+    var thumbsEl = document.querySelector('.zpd-gal-thumbs');
+    var thumbsSwiper = thumbsEl ? new Swiper('.zpd-gal-thumbs', {
+      spaceBetween: 8,
+      slidesPerView: 'auto',
+      watchSlidesProgress: true,
+      freeMode: true,
+    }) : null;
+
+    new Swiper('.zpd-gal-main', {
+      loop: false,
+      speed: 380,
+      navigation: { nextEl: '.zpd-swiper-next', prevEl: '.zpd-swiper-prev' },
+      thumbs: thumbsSwiper ? { swiper: thumbsSwiper } : undefined,
+      keyboard: { enabled: true },
+    });
+  })();
+  </script>
+
+</section>
+{% endif %}
+
+{# ══ Descripción ══ #}
+<section id="zpd-desc" class="zpd-section">
+  <h2 class="zpd-section-title">Sobre este producto</h2>
+  <div class="zpd-description">
+    {% if product.description is not empty %}
+      <p>{{ product.description|raw }}</p>
+    {% else %}
+      <p class="zpd-desc-empty">Este producto no tiene descripción todavía.</p>
+    {% endif %}
+  </div>
+</section>
+
+{# ══ Atributos / Highlights ══ #}
+{% if productAttributes is not empty %}
+<section class="zpd-section">
+  <h2 class="zpd-section-title">¿Qué incluye?</h2>
+  <div class="zpd-highlights">
+    {% for attr in productAttributes %}
+      <div class="zpd-highlight-item">
+        <span class="zpd-highlight-icon">{{ attr.icon is not empty ? attr.icon : '✓' }}</span>
+        <div>
+          <span class="zpd-highlight-label">{{ attr.name }}</span>
+          {% if attr.pivot.value is not empty %}
+            <span class="zpd-highlight-value">{{ attr.pivot.value }}</span>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{# ══ Condiciones ══ #}
+{% set cfg = productConfig %}
+{% if cfg %}
+<section class="zpd-section zpd-section--conditions">
+  <h2 class="zpd-section-title">Condiciones</h2>
+  <div class="zpd-conditions">
+
+    {# Capacidad máxima — solo si tiene valor > 0 #}
+    {% if cfg.max_capacity is not null and cfg.max_capacity != 0 %}
+      <div class="zpd-cond-card">
+        <span class="zpd-cond-icon">👥</span>
+        <div class="zpd-cond-body">
+          <div class="zpd-cond-label">Capacidad máxima</div>
+          <div class="zpd-cond-value">{{ cfg.max_capacity }} persona{{ cfg.max_capacity != 1 ? 's' : '' }}</div>
+        </div>
+      </div>
+    {% endif %}
+
+    {# Niños — solo si max_kids_capacity == 0: no se admiten; si > 0: se admiten con o sin límite #}
+    {% if cfg.max_kids_capacity == 0 %}
+      <div class="zpd-cond-card">
+        <span class="zpd-cond-icon">🚫</span>
+        <div class="zpd-cond-body">
+          <div class="zpd-cond-label">Niños</div>
+          <div class="zpd-cond-value">No se admiten niños</div>
+        </div>
+      </div>
+    {% else %}
+      <div class="zpd-cond-card">
+        <span class="zpd-cond-icon">👶</span>
+        <div class="zpd-cond-body">
+          <div class="zpd-cond-label">Niños</div>
+          <div class="zpd-cond-value">
+            Aceptados
+            {% if cfg.max_kids_capacity > 0 %}— máx. {{ cfg.max_kids_capacity }}{% endif %}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    {# Salida #}
+    {% if cfg.has_departure %}
+      <div class="zpd-cond-card">
+        <span class="zpd-cond-icon">🚢</span>
+        <div class="zpd-cond-body">
+          <div class="zpd-cond-label">Salida</div>
+          <div class="zpd-cond-value">Tiene salida programada</div>
+        </div>
+      </div>
+    {% endif %}
+
+    {# Origen #}
+    {% if cfg.has_origin %}
+      <div class="zpd-cond-card">
+        <span class="zpd-cond-icon">📍</span>
+        <div class="zpd-cond-body">
+          <div class="zpd-cond-label">Punto de origen</div>
+          <div class="zpd-cond-value">Tiene punto de salida definido</div>
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+{% endif %}
+
+{# ══ Ofertas ══ #}
+<section id="zpd-offers" class="zpd-section">
+  <h2 class="zpd-section-title">{% if isStore %}Opciones disponibles{% else %}Tarifas disponibles{% endif %}</h2>
+
+  {% if isStore %}
+
+    {# ── Vista STORE ──────────────────────────────────────────── #}
+    {% if offers is empty or offers|length == 0 %}
+      <div class="zpd-offers-nodates">
+        <div class="zpd-offers-nodates-icon">📦</div>
+        <p class="zpd-offers-nodates-title">No hay opciones disponibles para este producto.</p>
+      </div>
+    {% else %}
+      <div class="zpd-offers">
+        {% for offer in offers %}
+          {% set isSelected = selectedOffer and selectedOffer.offerId == offer.offerId %}
+          {% set media = offerMedia[offer.offerId] ?? null %}
+
+          <div class="zpd-offer-card {% if isSelected %}zpd-offer-card--selected{% endif %}">
+
+            {% if isSelected %}
+              <div class="zpd-offer-badge zpd-offer-badge--selected">✓ Seleccionada</div>
+            {% endif %}
+
+            <div class="zpd-offer-body">
+              <div class="zpd-offer-info">
+                <div class="zpd-offer-name">{{ offer.offerName }}</div>
+                {% if media and media.preview_text %}
+                  <p class="zpd-offer-preview-text">{{ media.preview_text }}</p>
+                {% endif %}
+
+                {# Líneas de precio unitario #}
+                {% if offer.prices|length > 0 %}
+                  <ul class="zpd-offer-prices">
+                    {% for line in offer.prices %}
+                      <li class="zpd-offer-price-line">
+                        <span class="zpd-offer-price-pax">{{ line.priceTypeName }}</span>
+                        <span class="zpd-offer-price-total">${{ line.unitPrice|number_format(2, '.', ',') }} / unidad</span>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                {% endif %}
+
+                {# Stock #}
+                <div class="zpd-offer-stock">
+                  {% if not offer.isAvailable %}
+                    <span class="zpd-offer-stock--unavail">Agotado</span>
+                  {% elseif offer.isLowStock %}
+                    <span class="zpd-offer-stock--low">¡Solo {{ offer.stock }} unidad{{ offer.stock != 1 ? 'es' : '' }}!</span>
+                  {% else %}
+                    <span class="zpd-offer-stock--ok">Disponible</span>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="zpd-offer-action">
+                {% if offer.lowestPrice is not null %}
+                  <div class="zpd-offer-price">
+                    ${{ offer.lowestPrice|number_format(2, '.', ',') }}
+                  </div>
+                  <div class="zpd-offer-price-unit">por unidad</div>
+                {% endif %}
+
+                {% if offer.isAvailable %}
+                  <button type="button"
+                    class="z-btn z-btn-teal z-btn--sm zpd-offer-btn zpd-store-body-add-btn"
+                    data-offer-id="{{ offer.offerId }}"
+                    onclick="zpdStoreBodyAdd({{ offer.offerId }})">
+                    🛒 Agregar al carrito
+                  </button>
+                {% else %}
+                  <span class="z-btn z-btn--sm zpd-offer-btn" style="opacity:.4;pointer-events:none">Agotado</span>
+                {% endif %}
+              </div>
+            </div>
+
+          </div>
+        {% endfor %}
+      </div>
+
+      <div id="zpd-store-body-msg" class="zpd-store-msg" style="display:none;margin-top:12px"></div>
+
+      <script>
+      function zpdStoreBodyAdd(offerId) {
+        var btn   = document.querySelector('.zpd-store-body-add-btn[data-offer-id="' + offerId + '"]');
+        var msgEl = document.getElementById('zpd-store-body-msg');
+        btn.disabled = true;
+        btn.textContent = 'Agregando…';
+        window.oc.request(btn, '{{ __SELF__ }}::onAddToCart', {
+          data: { offer_id: offerId, quantity: 1 },
+          success: function (data) {
+            msgEl.textContent = data.message || 'Añadido al carrito.';
+            msgEl.className = 'zpd-store-msg zpd-store-msg--ok';
+            msgEl.style.display = '';
+            btn.textContent = '✓ Añadido';
+            if (data.cartCount !== undefined) {
+              var badge = document.querySelector('.z-cart-badge');
+              if (badge) badge.textContent = data.cartCount;
+            }
+            setTimeout(function () { btn.disabled = false; btn.textContent = '🛒 Agregar al carrito'; }, 2000);
+          },
+          error: function (xhr) {
+            var err = (xhr.responseJSON && xhr.responseJSON.error) ? xhr.responseJSON.error : 'Error al agregar.';
+            msgEl.textContent = err;
+            msgEl.className = 'zpd-store-msg zpd-store-msg--err';
+            msgEl.style.display = '';
+            btn.disabled = false;
+            btn.textContent = '🛒 Agregar al carrito';
+          }
+        });
+      }
+      </script>
+    {% endif %}
+
+  {% else %}
+
+    {# ── Vista BOOKING ────────────────────────────────────────── #}
+    {% if not hasDates %}
+
+      <div class="zpd-offers-nodates">
+        <div class="zpd-offers-nodates-icon">📅</div>
+        <p class="zpd-offers-nodates-title">Elige las fechas de tu estadía para ver los precios.</p>
+        <p class="zpd-offers-nodates-sub">Ingresa tu llegada y salida en el buscador y verás todas las tarifas disponibles aquí.</p>
+      </div>
+
+    {% elseif offers is empty or offers|length == 0 %}
+
+      <div class="zpd-offers-nodates">
+        <div class="zpd-offers-nodates-icon">😕</div>
+        <p class="zpd-offers-nodates-title">Sin disponibilidad para las fechas seleccionadas.</p>
+        <p class="zpd-offers-nodates-sub">
+          Prueba con otras fechas —
+          <a href="{{ 'search'|page }}?{{ baseQuery }}">volver al buscador</a>.
+        </p>
+      </div>
+
+    {% else %}
+
+      <p class="zpd-section-sub">
+        Para: <strong>{{ p.date_from|date('d M') }} → {{ p.date_to|date('d M') }}</strong>
+        {% if p.all_occupancies is defined and p.all_occupancies %}
+          · <span class="zpd-occ-hint">Precio desde — <a href="#" onclick="zpdOpenModal();return false;">ajusta ocupación</a></span>
+        {% else %}
+          · {{ p.adults ?? 2 }} adulto{{ (p.adults ?? 2) != 1 ? 's' : '' }}
+          {% if (p.children ?? 0) > 0 %}· {{ p.children }} niño{{ p.children != 1 ? 's' : '' }}{% endif %}
+        {% endif %}
+      </p>
+
+      <div class="zpd-offers">
+        {% for offer in offers %}
+
+          {% set isSelected = selectedOffer and selectedOffer.offerId == offer.offerId %}
+          {% set media = offerMedia[offer.offerId] ?? null %}
+          {% set offerSlides = [] %}
+          {% if media %}
+            {% if media.preview_image %}{% set offerSlides = offerSlides|merge([media.preview_image]) %}{% endif %}
+            {% for img in media.gallery|slice(0, 5) %}{% set offerSlides = offerSlides|merge([img]) %}{% endfor %}
+          {% endif %}
+
+          <div class="zpd-offer-card {% if isSelected %}zpd-offer-card--selected{% endif %} {% if loop.first and not isSelected %}zpd-offer-card--featured{% endif %}">
+
+            {% if loop.first and not isSelected %}
+              <div class="zpd-offer-badge">⭐ Menor precio</div>
+            {% elseif isSelected %}
+              <div class="zpd-offer-badge zpd-offer-badge--selected">✓ Seleccionada</div>
+            {% endif %}
+
+            {% if offerSlides|length > 0 %}
+              {% set gid = 'og-' ~ offer.offerId %}
+              <div class="zpd-offer-gallery" id="{{ gid }}">
+                {% for img in offerSlides %}
+                  <button type="button"
+                          class="zpd-offer-gal-thumb"
+                          data-lightbox-src="{{ img.path }}"
+                          data-lightbox-group="{{ gid }}"
+                          onclick="zpdLightbox('{{ img.path }}', '{{ gid }}', {{ loop.index0 }})">
+                    <img src="{{ img.getThumb(240, 160, {mode:'crop'}) }}" alt="">
+                  </button>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            {% set priceGroups = offer.groupedPrices %}
+            {% set firstGroupKey = priceGroups|keys|first %}
+            {% set firstGroup    = priceGroups[firstGroupKey] %}
+
+            <div class="zpd-offer-body">
+              <div class="zpd-offer-info">
+                <div class="zpd-offer-name">{{ offer.offerName }}</div>
+                {% if media and media.preview_text %}
+                  <p class="zpd-offer-preview-text">{{ media.preview_text }}</p>
+                {% endif %}
+
+                {% if priceGroups|length > 1 %}
+                  <div class="zpd-price-type-tabs" data-offer="{{ offer.offerId }}">
+                    {% for key, group in priceGroups %}
+                      <label class="zpd-price-type-tab{% if loop.first %} is-active{% endif %}">
+                        <input type="radio"
+                               name="price_type_{{ offer.offerId }}"
+                               value="{{ group.id }}"
+                               data-offer="{{ offer.offerId }}"
+                               data-lowest="{{ offer.lowestTotalForType(group.id)|number_format(2, '.', ',') }}"
+                               {% if loop.first %}checked{% endif %}>
+                        {{ group.name }}
+                      </label>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+
+                {% if p.all_occupancies is defined and p.all_occupancies %}
+                  <p class="zpd-offer-alloc-hint">Ajusta la ocupación para ver el precio exacto.</p>
+                {% else %}
+                  {% for key, group in priceGroups %}
+                    <ul class="zpd-offer-prices zpd-price-group"
+                        data-offer="{{ offer.offerId }}"
+                        data-type-id="{{ group.id }}"
+                        {% if not loop.first %}style="display:none"{% endif %}>
+                      {% for line in group.lines %}
+                        <li class="zpd-offer-price-line">
+                          <span class="zpd-offer-price-pax">{{ line.paxLabel }}</span>
+                          <span class="zpd-offer-price-per">${{ line.unitPrice|number_format(2, '.', ',') }}/noche</span>
+                          <span class="zpd-offer-price-total">${{ line.totalPrice|number_format(2, '.', ',') }} total</span>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  {% endfor %}
+                {% endif %}
+
+                <div class="zpd-offer-stock">
+                  {% if not offer.isAvailable %}
+                    <span class="zpd-offer-stock--unavail">No disponible</span>
+                  {% elseif offer.isLowStock %}
+                    <span class="zpd-offer-stock--low">¡Solo {{ offer.availability }} lugar{{ offer.availability != 1 ? 'es' : '' }}!</span>
+                  {% else %}
+                    <span class="zpd-offer-stock--ok">Disponible</span>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="zpd-offer-action">
+                <div class="zpd-offer-price-from">desde</div>
+                <div class="zpd-offer-price zpd-offer-price-val" data-offer="{{ offer.offerId }}">
+                  ${{ firstGroup ? offer.lowestTotalForType(firstGroup.id)|number_format(2, '.', ',') : (offer.lowestTotal ? offer.lowestTotal|number_format(2, '.', ',') : '—') }}
+                </div>
+                <div class="zpd-offer-price-unit">total · {{ offer.nights }} noche{{ offer.nights != 1 ? 's' : '' }}</div>
+
+                {% if offer.isAvailable %}
+                  {% if isSelected %}
+                    <span class="zpd-offer-selected-pill">✓ Seleccionada</span>
+                  {% else %}
+                    <a href="?{{ baseQuery }}&offer_id={{ offer.offerId }}"
+                      class="z-btn z-btn-teal z-btn--sm zpd-offer-btn">
+                      Seleccionar
+                    </a>
+                  {% endif %}
+                  <button type="button"
+                    class="z-btn z-btn-ghost z-btn--sm zpd-offer-btn zpd-add-btn"
+                    data-request="productDetail::onAddToCart"
+                    data-offer="{{ offer.offerId }}"
+                    data-request-data="offer_id: {{ offer.offerId }}, date_from: '{{ p.date_from ?? '' }}', date_to: '{{ p.date_to ?? '' }}', adults: {{ p.adults ?? 2 }}, children: {{ p.children ?? 0 }}, price_type_id: '{{ firstGroup.id }}'"
+                    data-request-success="zCartOnAdd(data)">
+                    🛒 Añadir al carrito
+                  </button>
+                {% else %}
+                  <span class="z-btn z-btn--sm zpd-offer-btn" style="opacity:.4;pointer-events:none">No disponible</span>
+                {% endif %}
+              </div>
+            </div>
+
+          </div>
+        {% endfor %}
+      </div>
+
+    {% endif %}
+
+  {% endif %}
+</section>
+
+{# ══ Operador ══ #}
+{% partial 'product/operator-card' %}
+
+{# ══ Ubicación ══ #}
+<section class="zpd-section">
+  <h2 class="zpd-section-title">Ubicación</h2>
+  <div class="zpd-map-placeholder">
+    <span class="zpd-map-icon">🗺</span>
+    <span>Próximamente</span>
+  </div>
+</section>
+
+{# ══ Reseñas (mock) ══ #}
+<section id="zpd-reviews" class="zpd-section">
+  <h2 class="zpd-section-title">Reseñas</h2>
+  <div class="zpd-offers-nodates" style="padding: 32px 0">
+    <div class="zpd-offers-nodates-icon">💬</div>
+    <p class="zpd-offers-nodates-title">Las reseñas estarán disponibles próximamente.</p>
+  </div>
+</section>
+
+{# ══ Lightbox modal ══ #}
+<div id="zpd-lightbox" class="zpd-lb" style="display:none" onclick="if(event.target===this)zpdLbClose()">
+  <button class="zpd-lb-close" onclick="zpdLbClose()">✕</button>
+  <button class="zpd-lb-prev" onclick="zpdLbNav(-1)">&#8249;</button>
+  <button class="zpd-lb-next" onclick="zpdLbNav(1)">&#8250;</button>
+  <div class="zpd-lb-inner">
+    <img id="zpd-lb-img" src="" alt="">
+  </div>
+  <div class="zpd-lb-dots" id="zpd-lb-dots"></div>
+</div>
+
+<script>
+(function () {
+  var _group = [], _idx = 0;
+
+  window.zpdLightbox = function (src, groupId, idx) {
+    var thumbs = document.querySelectorAll('[data-lightbox-group="' + groupId + '"]');
+    _group = Array.from(thumbs).map(function (b) { return b.getAttribute('data-lightbox-src'); });
+    _idx   = idx;
+    _render();
+    document.getElementById('zpd-lightbox').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.zpdLbClose = function () {
+    document.getElementById('zpd-lightbox').style.display = 'none';
+    document.body.style.overflow = '';
+  };
+
+  window.zpdLbNav = function (dir) {
+    _idx = (_idx + dir + _group.length) % _group.length;
+    _render();
+  };
+
+  function _render() {
+    document.getElementById('zpd-lb-img').src = _group[_idx];
+    var dots = document.getElementById('zpd-lb-dots');
+    if (_group.length <= 1) { dots.innerHTML = ''; return; }
+    dots.innerHTML = _group.map(function (_, i) {
+      return '<span class="zpd-lb-dot' + (i === _idx ? ' zpd-lb-dot--on' : '') + '" onclick="zpdLbNav(' + (i - _idx) + ')"></span>';
+    }).join('');
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (document.getElementById('zpd-lightbox').style.display === 'none') return;
+    if (e.key === 'ArrowRight') zpdLbNav(1);
+    if (e.key === 'ArrowLeft')  zpdLbNav(-1);
+    if (e.key === 'Escape')     zpdLbClose();
+  });
+})();
+</script>

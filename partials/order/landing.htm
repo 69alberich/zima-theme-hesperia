@@ -1,0 +1,152 @@
+<div class="zor-page">
+
+  <div class="zor-header">
+    <div class="zor-header-icon">✓</div>
+    <div>
+      <p class="zor-header-label">Pedido recibido</p>
+      <h1 class="zor-title">Orden #{{ order.id }}</h1>
+      <p class="zor-header-sub">{{ order.customer.name }} · {{ order.created_at|date('d M Y, H:i') }}</p>
+    </div>
+  </div>
+
+  <div class="zor-layout">
+
+    {# ── Columna izquierda: pago ── #}
+    <div class="zor-main">
+
+      <section class="zor-section">
+        {% if order.status == 'pending' %}
+
+          <h2 class="zor-section-title">Selecciona cómo pagar</h2>
+
+          {% if paymentMethods is empty %}
+            <p class="zor-empty">No hay métodos de pago configurados.</p>
+          {% else %}
+            <div class="zor-pm-list">
+              {% for method in paymentMethods %}
+                <label class="zor-pm-option {% if loop.first %}is-selected{% endif %}"
+                       data-pm-id="{{ method.id }}">
+                  <input type="radio" name="payment_method"
+                         value="{{ method.id }}"
+                         class="zor-pm-radio"
+                         {% if loop.first %}checked{% endif %}>
+                  <span class="zor-pm-body">
+                    <span class="zor-pm-name">{{ method.name }}</span>
+                    {% if method.instructions %}
+                      <span class="zor-pm-hint">{{ method.instructions }}</span>
+                    {% endif %}
+                  </span>
+                  <span class="zor-pm-check">✓</span>
+                </label>
+              {% endfor %}
+            </div>
+
+            <div class="zor-panels">
+              {% for method in paymentMethods %}
+                <div class="zor-panel" data-pm-panel="{{ method.id }}"
+                     {% if not loop.first %}style="display:none"{% endif %}>
+                  {% partial 'order/payment-panel' method=method order=order vesCurrency=vesCurrency amountVes=amountVes %}
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+        {% elseif order.status == 'payment_in_review' %}
+
+          <div class="zor-payment-sent">
+            <div class="zor-payment-sent-icon">🕐</div>
+            <h2 class="zor-payment-sent-title">Pago en revisión</h2>
+            <p class="zor-payment-sent-desc">Recibimos tu comprobante de pago. Lo verificaremos y confirmaremos tu reserva a la brevedad.</p>
+          </div>
+
+        {% else %}
+
+          <div class="zor-payment-sent">
+            <div class="zor-payment-sent-icon">{{ order.status == 'confirmed' ? '✅' : 'ℹ️' }}</div>
+            <h2 class="zor-payment-sent-title">
+              {% if order.status == 'confirmed' %}Reserva confirmada
+              {% elseif order.status == 'cancelled' %}Reserva cancelada
+              {% elseif order.status == 'completed' %}Reserva completada
+              {% else %}{{ order.status }}{% endif %}
+            </h2>
+            <p class="zor-payment-sent-desc">El estado de tu reserva no requiere acción de pago en este momento.</p>
+          </div>
+
+        {% endif %}
+      </section>
+
+    </div>
+
+    {# ── Columna derecha: resumen ── #}
+    <aside class="zor-summary">
+      <div class="zor-summary-card">
+        <h2 class="zor-summary-title">Resumen</h2>
+
+        <div class="zor-summary-items">
+          {% for item in order.items %}
+            {% set nights = item.date_from and item.date_to ? item.date_from.diffInDays(item.date_to) : null %}
+            {% set parts    = item.pax_code ? item.pax_code|split('-') : [] %}
+            {% set adults   = parts|length > 0 ? parts[0] : null %}
+            {% set children = parts|length > 1 ? parts[1] : null %}
+
+            <div class="zco-item">
+              {% if item.offer and item.offer.product and item.offer.product.preview_image %}
+                <img class="zco-item-img"
+                     src="{{ item.offer.product.preview_image.getThumb(64, 64, {mode: 'crop'}) }}"
+                     alt="{{ item.offer.product.name }}">
+              {% else %}
+                <div class="zco-item-img zco-item-img--placeholder">🌊</div>
+              {% endif %}
+
+              <div class="zco-item-body">
+                <div class="zco-item-name">{{ item.offer.product.name ?? item.offer_name }}</div>
+                <div class="zco-item-offer">{{ item.offer_name }}</div>
+                <div class="zco-item-meta">
+                  {% if item.date_from %}
+                    <span>{{ item.date_from|date('d M') }} → {{ item.date_to|date('d M Y') }}</span>
+                  {% endif %}
+                  {% if nights %}<span>{{ nights }} noche{{ nights != 1 ? 's' : '' }}</span>{% endif %}
+                  {% if adults %}
+                    <span>{{ adults }} adulto{{ adults != 1 ? 's' : '' }}{% if children > 0 %}, {{ children }} niño{{ children != 1 ? 's' : '' }}{% endif %}</span>
+                  {% endif %}
+                  {% if item.price_category_name %}<span>{{ item.price_category_name }}</span>{% endif %}
+                </div>
+              </div>
+
+              <div class="zco-item-price">${{ item.total_price|number_format(2, '.', ',') }}</div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="zco-summary-divider"></div>
+
+        <div class="zco-summary-total-row">
+          <span>Total</span>
+          <span class="zco-summary-total">${{ order.total_price|number_format(2, '.', ',') }}</span>
+        </div>
+
+        <div class="zor-status-badge zor-status-badge--{{ order.status }}">
+          {{ order.status|upper }}
+        </div>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<script>
+(function () {
+  var options = document.querySelectorAll('.zor-pm-option');
+  options.forEach(function (opt) {
+    opt.addEventListener('click', function () {
+      options.forEach(function (o) { o.classList.remove('is-selected'); });
+      opt.classList.add('is-selected');
+
+      var id = opt.dataset.pmId;
+      document.querySelectorAll('.zor-panel').forEach(function (p) {
+        p.style.display = p.dataset.pmPanel === id ? '' : 'none';
+      });
+    });
+  });
+})();
+</script>

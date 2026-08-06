@@ -1,0 +1,32 @@
+##
+url = "/producto/:slug"
+layout = "default"
+title = "Detalle del producto"
+
+[productDetail]
+==
+<div class="zpd-page">
+
+  {# ── Hero ── #}
+  {% partial 'product/hero' %}
+
+  {# ── Layout: body + sidebar ── #}
+  <div class="z-wrap zpd-wrap">
+    <div class="zpd-layout">
+
+      {# ── Columna principal ── #}
+      <main class="zpd-body">
+        {% partial 'product/body' %}
+      </main>
+
+      {# ── Sidebar (sticky booking card) ── #}
+      <aside class="zpd-sidebar">
+        {% partial 'product/sidebar' %}
+      </aside>
+
+    </div>
+  </div>
+
+</div>
+
+{% partial 'product/date-modal' %}

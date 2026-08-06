@@ -1,0 +1,16 @@
+{# ── operator/highlights.htm ── atributos destacados (categoría code = 'principal') #}
+{% if highlightAttrs is not empty %}
+<section class="zop-section zop-highlights-section">
+  <div class="zop-highlights">
+    {% for attr in highlightAttrs %}
+      <div class="zop-highlight">
+        <div class="zop-highlight-value">{{ attr.pivot.value ?: '—' }}</div>
+        <div class="zop-highlight-label">{{ attr.name }}</div>
+        {% if attr.pivot.description %}
+          <div class="zop-highlight-description">{{ attr.pivot.description }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}

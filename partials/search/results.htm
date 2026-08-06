@@ -1,0 +1,22 @@
+{# ── search/results.htm ── #}
+{# Estado inicial — si el componente ya ejecutó la búsqueda en onRun,   #}
+{# los resultados reales se inyectan en #z-search-results vía el        #}
+{# components/searchbox/results.htm del componente.                     #}
+
+{% if results is defined and results is not empty %}
+
+  {# Auto-run desde onRun: delegar al partial del componente #}
+  {% partial 'searchBox::results' %}
+
+{% else %}
+
+  {# Estado vacío — ninguna búsqueda ejecutada aún #}
+  <div class="z-results-empty">
+    <div class="z-results-empty-icon">🏝</div>
+    <p class="z-results-empty-title">¿A dónde quieres ir?</p>
+    <p class="z-results-empty-desc">
+      Selecciona tus fechas, ocupación y haz clic en <strong>Buscar</strong> para ver disponibilidad y precios.
+    </p>
+  </div>
+
+{% endif %}

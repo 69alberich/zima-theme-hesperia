@@ -1,0 +1,306 @@
+{# ── product/date-modal.htm ── #}
+
+{% set p         = params ?? {} %}
+{% set cfg       = productConfig %}
+{% set maxCap    = (cfg and cfg.max_capacity > 0) ? cfg.max_capacity : null %}
+{% set kidsCount = (cfg and cfg.max_kids_capacity > 0) ? true : false %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css">
+<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
+
+<div id="zpd-modal" class="zpd-modal" aria-hidden="true">
+  <div class="zpd-modal-backdrop" onclick="zpdCloseModal()"></div>
+
+  <div class="zpd-modal-box" role="dialog" aria-modal="true" aria-labelledby="zpd-modal-title">
+
+    <div class="zpd-modal-header">
+      <h3 class="zpd-modal-title" id="zpd-modal-title">Fechas y ocupación</h3>
+      <button class="zpd-modal-close" onclick="zpdCloseModal()" aria-label="Cerrar">✕</button>
+    </div>
+
+    <div class="zpd-modal-body">
+
+      {# ── Selector de fechas ── #}
+      <div class="zpd-modal-dates" onclick="document.getElementById('zpd-lp').click()">
+        <div class="zpd-modal-date-field">
+          <div class="zpd-modal-date-lbl">Llegada</div>
+          <div id="zpd-ci-lbl" class="zpd-modal-date-val {% if not p.date_from %}zpd-modal-date-val--dim{% endif %}">
+            {{ p.date_from is not empty ? p.date_from|date('d M Y') : 'Seleccionar' }}
+          </div>
+        </div>
+        <div class="zpd-modal-date-sep">→</div>
+        <div class="zpd-modal-date-field">
+          <div class="zpd-modal-date-lbl">Salida</div>
+          <div id="zpd-co-lbl" class="zpd-modal-date-val {% if not p.date_to %}zpd-modal-date-val--dim{% endif %}">
+            {{ p.date_to is not empty ? p.date_to|date('d M Y') : 'Seleccionar' }}
+          </div>
+        </div>
+        <input id="zpd-lp" readonly class="zsb-ghost-input">
+      </div>
+
+      <input type="hidden" id="zpd-df" value="{{ p.date_from ?? '' }}">
+      <input type="hidden" id="zpd-dt" value="{{ p.date_to ?? '' }}">
+
+      {# ── Ocupación ── #}
+      <div class="zpd-modal-occ">
+
+        {# Condiciones de capacidad #}
+        {% if cfg and cfg.has_capacity %}
+          <div class="zpd-modal-conditions">
+            <div class="zpd-modal-cond-item">
+              <span class="zpd-modal-cond-icon">👥</span>
+              <div>
+                <div class="zpd-modal-cond-lbl">Capacidad máxima</div>
+                <div class="zpd-modal-cond-val">{{ cfg.max_capacity }} persona{{ cfg.max_capacity != 1 ? 's' : '' }} en total</div>
+              </div>
+            </div>
+            <div class="zpd-modal-cond-item">
+              <span class="zpd-modal-cond-icon">{{ kidsCount ? '👶' : '🚫' }}</span>
+              <div>
+                <div class="zpd-modal-cond-lbl">Niños</div>
+                <div class="zpd-modal-cond-val">
+                  {% if kidsCount %}
+                    Permitidos{% if cfg.max_kids_capacity %} — máx. {{ cfg.max_kids_capacity }}{% endif %}
+                  {% else %}
+                    No incluye precio para niños
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+
+        {# Alerta de capacidad excedida #}
+        <div id="zpd-cap-alert" class="zpd-modal-cap-alert" style="display:none">
+          ⚠ La combinación supera la capacidad máxima del producto.
+        </div>
+
+        <div class="zpd-modal-occ-row">
+          <div>
+            <div class="zpd-modal-occ-lbl">Adultos</div>
+            <div class="zpd-modal-occ-sub">Mayores de 12 años</div>
+          </div>
+          <div class="z-stepper" data-min="1" data-max="{{ maxCap ?? 20 }}">
+            <button type="button" data-dec class="z-stepper-btn">−</button>
+            <span class="z-stepper-val" id="zpd-av">{{ p.adults ?? 2 }}</span>
+            <button type="button" data-inc class="z-stepper-btn">+</button>
+            <input type="hidden" id="zpd-a" value="{{ p.adults ?? 2 }}">
+          </div>
+        </div>
+
+        <div class="zpd-modal-occ-row {% if not kidsCount %}zpd-modal-occ-row--disabled{% endif %}">
+          <div>
+            <div class="zpd-modal-occ-lbl">
+              Niños
+              {% if not kidsCount %}
+                <span class="zpd-modal-occ-badge">No aplica</span>
+              {% endif %}
+            </div>
+            <div class="zpd-modal-occ-sub">De 2 a 12 años</div>
+          </div>
+          <div class="z-stepper {% if not kidsCount %}is-disabled{% endif %}"
+            data-min="0" data-max="{{ (kidsCount and cfg.max_kids_capacity) ? cfg.max_kids_capacity : (maxCap ?? 20) }}">
+            <button type="button" data-dec class="z-stepper-btn" {% if not kidsCount %}disabled{% endif %}>−</button>
+            <span class="z-stepper-val" id="zpd-cv">{{ (kidsCount and p.children) ? p.children : 0 }}</span>
+            <button type="button" data-inc class="z-stepper-btn" {% if not kidsCount %}disabled{% endif %}>+</button>
+            <input type="hidden" id="zpd-c" value="{{ (kidsCount and p.children) ? p.children : 0 }}">
+          </div>
+        </div>
+
+      </div>
+
+      {# ── Preview de tarifas ── #}
+      <div class="zpd-modal-peek-wrap">
+        <div class="zpd-modal-peek-title">Tarifas disponibles</div>
+        <div id="zpd-modal-peek" class="zpd-modal-peek">
+          <div class="zpd-peek-hint">Selecciona fechas para ver los precios.</div>
+        </div>
+      </div>
+
+    </div>{# /body #}
+
+    <div class="zpd-modal-footer">
+      <button type="button" class="z-btn z-btn-ghost z-btn--sm" onclick="zpdCloseModal()">Cancelar</button>
+      <button type="button" id="zpd-apply-btn" class="z-btn z-btn-primary zpd-modal-apply" onclick="zpdApplyDates()">
+        Ver tarifas
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  :root {
+    --litepicker-day-is-start-color-bg: var(--z-teal);
+    --litepicker-day-is-end-color-bg:   var(--z-teal);
+  }
+  .litepicker { font-family: var(--z-font-sans); }
+  .litepicker .container__months { border-radius: 16px; box-shadow: 0 20px 50px -20px rgba(28,43,42,.3) !important; }
+</style>
+
+<script>
+(function () {
+  var MAX_CAP    = {{ maxCap ?? 'null' }};
+  var KIDS_COUNT = {{ kidsCount ? 'true' : 'false' }};
+  var handler    = 'productDetail::onPeekPrices';
+  var fmt        = { day: 'numeric', month: 'short', year: 'numeric' };
+
+  // ── Litepicker ──────────────────────────────────────────────────────────────
+  function initPicker() {
+    if (typeof Litepicker === 'undefined') { setTimeout(initPicker, 100); return; }
+    new Litepicker({
+      element:         document.getElementById('zpd-lp'),
+      singleMode:      false,
+      numberOfMonths:  2,
+      numberOfColumns: 2,
+      minDate:         new Date(),
+      lang:            'es-VE',
+      format:          'YYYY-MM-DD',
+      autoApply:       true,
+      mobileFriendly:  true,
+      {% if p.date_from is not empty %}
+      startDate: '{{ p.date_from }}',
+      endDate:   '{{ p.date_to }}',
+      {% endif %}
+      setup: function (picker) {
+        picker.on('selected', function (start, end) {
+          var df = start.format('YYYY-MM-DD');
+          var dt = end.format('YYYY-MM-DD');
+          document.getElementById('zpd-df').value = df;
+          document.getElementById('zpd-dt').value = dt;
+
+          var ciEl = document.getElementById('zpd-ci-lbl');
+          var coEl = document.getElementById('zpd-co-lbl');
+          ciEl.textContent = start.toJSDate().toLocaleDateString('es-VE', fmt);
+          ciEl.classList.remove('zpd-modal-date-val--dim');
+          coEl.textContent = end.toJSDate().toLocaleDateString('es-VE', fmt);
+          coEl.classList.remove('zpd-modal-date-val--dim');
+
+          zpdValidateCap();
+          zpdFetchPrices();
+        });
+      }
+    });
+  }
+  initPicker();
+
+  // ── Steppers ────────────────────────────────────────────────────────────────
+  function syncStepper(valId, hidId) {
+    var valEl = document.getElementById(valId);
+    var hidEl = document.getElementById(hidId);
+    if (!valEl) return;
+    var stepper = valEl.closest('.z-stepper');
+    var max = parseInt(stepper.dataset.max) || 99;
+
+    function onStep() {
+      setTimeout(function () {
+        // Enforce max in case zima.js didn't clamp (e.g. data-max was unset)
+        var v = parseInt(valEl.textContent) || 0;
+        if (v > max) { v = max; valEl.textContent = v; }
+        hidEl.value = v;
+        zpdValidateCap();
+        zpdFetchPrices();
+      }, 0);
+    }
+    stepper.querySelector('[data-dec]').addEventListener('click', onStep);
+    stepper.querySelector('[data-inc]').addEventListener('click', onStep);
+  }
+  syncStepper('zpd-av', 'zpd-a');
+  syncStepper('zpd-cv', 'zpd-c');
+
+  // ── Validación de capacidad ──────────────────────────────────────────────────
+  window.zpdValidateCap = function () {
+    if (!MAX_CAP) return;
+
+    var adults   = parseInt(document.getElementById('zpd-a').value) || 1;
+    var children = parseInt(document.getElementById('zpd-c').value) || 0;
+    var total    = adults + (KIDS_COUNT ? children : 0);
+    var exceeded = total > MAX_CAP;
+
+    var alertEl  = document.getElementById('zpd-cap-alert');
+    var applyBtn = document.getElementById('zpd-apply-btn');
+
+    alertEl.style.display  = exceeded ? 'flex' : 'none';
+    applyBtn.disabled      = exceeded;
+    applyBtn.style.opacity = exceeded ? '.4' : '';
+  };
+
+  // ── Fetch precios vía AJAX ───────────────────────────────────────────────────
+  var peekTimeout = null;
+  function zpdFetchPrices() {
+    var df  = document.getElementById('zpd-df').value;
+    var dt  = document.getElementById('zpd-dt').value;
+    if (!df || !dt) return;
+
+    var alertEl = document.getElementById('zpd-cap-alert');
+    if (alertEl && alertEl.style.display !== 'none') return; // capacidad excedida
+
+    clearTimeout(peekTimeout);
+    peekTimeout = setTimeout(function () {
+      var peek = document.getElementById('zpd-modal-peek');
+      peek.innerHTML = '<div class="zpd-peek-loading">Buscando tarifas…</div>';
+
+      oc.request(document.body, handler, {
+        data: {
+          date_from: df,
+          date_to:   dt,
+          adults:    document.getElementById('zpd-a').value,
+          children:  document.getElementById('zpd-c').value,
+        },
+        update: { '@peek': '#zpd-modal-peek' },
+        error: function () {
+          peek.innerHTML = '<div class="zpd-peek-hint">No se pudo cargar la previsualización.</div>';
+        }
+      });
+    }, 350);
+  }
+
+  // ── Validar al abrir el modal ────────────────────────────────────────────────
+  var origOpen = window.zpdOpenModal;
+  window.zpdOpenModal = function () {
+    origOpen && origOpen();
+    zpdValidateCap();
+    // Si ya hay fechas, cargar precios inmediatamente
+    if (document.getElementById('zpd-df').value) zpdFetchPrices();
+  };
+
+})();
+
+// ── Open / Close / Apply ─────────────────────────────────────────────────────
+function zpdOpenModal() {
+  var m = document.getElementById('zpd-modal');
+  m.classList.add('is-open');
+  m.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+
+function zpdCloseModal() {
+  var m = document.getElementById('zpd-modal');
+  m.classList.remove('is-open');
+  m.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+
+function zpdApplyDates() {
+  var df = document.getElementById('zpd-df').value;
+  var dt = document.getElementById('zpd-dt').value;
+  var a  = document.getElementById('zpd-a').value;
+  var c  = document.getElementById('zpd-c').value;
+
+  if (!df || !dt) {
+    document.getElementById('zpd-ci-lbl').style.color = 'var(--z-orange)';
+    return;
+  }
+
+  var params = new URLSearchParams({ date_from: df, date_to: dt, adults: a, children: c });
+
+  var currentOffer = new URLSearchParams(window.location.search).get('offer_id');
+  if (currentOffer) params.set('offer_id', currentOffer);
+
+  window.location.href = window.location.pathname + '?' + params.toString();
+}
+
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') zpdCloseModal();
+});
+</script>

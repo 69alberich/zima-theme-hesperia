@@ -1,0 +1,40 @@
+{# ── product/hero.htm — banner estático ── #}
+
+{% set productName = product.name ?? 'Producto' %}
+{% set category    = product.categories is not empty ? product.categories.first.name : null %}
+
+<div class="zpd-hero">
+  <div class="zpd-hero-main">
+
+    {# Color sólido — sin imagen para evitar distorsión #}
+    <div class="zpd-slide-color"></div>
+
+    <div class="zpd-hero-overlay">
+      <div class="z-wrap zpd-hero-content">
+
+        <nav class="zpd-breadcrumb">
+          <a href="/">Inicio</a>
+          <span class="zpd-breadcrumb-sep">›</span>
+          <a href="/buscar{% if params is not empty %}?{{ baseQuery }}{% endif %}">Resultados</a>
+          <span class="zpd-breadcrumb-sep">›</span>
+          <span>{{ productName }}</span>
+        </nav>
+
+        <div class="zpd-hero-badges">
+          <span class="zpd-badge zpd-badge--type">{{ isStore ? 'Tienda' : 'Booking' }}</span>
+          {% if category %}
+            <span class="zpd-badge zpd-badge--cat">{{ category }}</span>
+          {% endif %}
+        </div>
+
+        <h1 class="zpd-hero-title">{{ productName }}</h1>
+
+        {% if product.brand is not empty and product.brand %}
+          <p class="zpd-hero-location">📍 {{ product.brand.name }}</p>
+        {% endif %}
+
+      </div>
+    </div>
+
+  </div>
+</div>

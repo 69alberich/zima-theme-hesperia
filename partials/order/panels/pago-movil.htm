@@ -1,0 +1,121 @@
+<div class="zpm-panel">
+
+  {# ── Monto a pagar ── #}
+  <div class="zpm-amount-block">
+    <p class="zpm-amount-label">Total a pagar</p>
+    {% if amountVes and vesCurrency %}
+      <div class="zpm-amount-primary">
+        <span class="zpm-amount-currency">Bs.</span>
+        <span class="zpm-amount-ves">{{ amountVes|number_format(2, '.', ',') }}</span>
+      </div>
+      <div class="zpm-amount-secondary">
+        <span class="zpm-amount-eq">≈</span>
+        <span class="zpm-amount-usd">${{ order.total_price|number_format(2, '.', ',') }} USD</span>
+        <span class="zpm-amount-sep">·</span>
+        <span class="zpm-amount-rate">1 USD = Bs. {{ vesCurrency.rate|number_format(2, '.', ',') }}</span>
+      </div>
+    {% else %}
+      <div class="zpm-amount-primary">
+        <span class="zpm-amount-currency">$</span>
+        <span class="zpm-amount-ves">{{ order.total_price|number_format(2, '.', ',') }}</span>
+      </div>
+    {% endif %}
+  </div>
+
+  {# ── Datos bancarios ── #}
+  <div class="zpm-bank-card">
+    <div class="zpm-bank-header">
+      <span class="zpm-bank-icon">📱</span>
+      <span class="zpm-bank-title">Datos para pago móvil o transferencia</span>
+    </div>
+    <ul class="zpm-data-list">
+      <li>
+        <span class="zpm-data-label">Banco</span>
+        <span class="zpm-data-val">Banco Venezolano Principal</span>
+      </li>
+      <li>
+        <span class="zpm-data-label">RIF / Documento</span>
+        <span class="zpm-data-val">J-12345678</span>
+      </li>
+      <li>
+        <span class="zpm-data-label">Teléfono</span>
+        <span class="zpm-data-val zpm-copyable" data-copy="04141114455">
+          0414-111-44-55
+          <button class="zpm-copy-btn" type="button" title="Copiar">⧉</button>
+        </span>
+      </li>
+    </ul>
+  </div>
+
+  {# ── Formulario ── #}
+  <form id="zpm-form"
+        data-request="frontOrder::onSubmitPayment"
+        data-request-files
+        data-request-success="zpmOnSuccess(data)"
+        data-request-error="zpmOnError(data)">
+
+    <input type="hidden" name="payment_method_id" value="{{ method.id }}">
+
+    <p class="zpm-form-intro">Una vez realizado el pago, ingresa los datos del comprobante:</p>
+
+    <div class="zpm-fields">
+      <div class="zpm-field">
+        <label class="zpm-label" for="zpm-ref">Número de referencia <span class="zco-req">*</span></label>
+        <input class="zco-input" type="text" id="zpm-ref" name="reference"
+               placeholder="Ej. 123456789" required>
+      </div>
+
+      <div class="zpm-field">
+        <label class="zpm-label" for="zpm-voucher">Captura del comprobante</label>
+        <label class="zpm-file-label" for="zpm-voucher">
+          <span class="zpm-file-icon">📎</span>
+          <span class="zpm-file-text" id="zpm-file-name">Seleccionar imagen o PDF</span>
+        </label>
+        <input class="zpm-file-input-hidden" type="file" id="zpm-voucher" name="voucher"
+               accept="image/*,.pdf">
+        <p class="zpm-file-hint">JPG, PNG o PDF — máx. 5 MB</p>
+      </div>
+    </div>
+
+    <div id="zpm-error" class="zpm-error" style="display:none"></div>
+
+    <button type="submit" class="z-btn z-btn-teal zpm-submit-btn">
+      Registrar pago →
+    </button>
+
+  </form>
+
+</div>
+
+<script>
+(function () {
+  // File name display
+  var fileInput = document.getElementById('zpm-voucher');
+  if (fileInput) {
+    fileInput.addEventListener('change', function () {
+      var name = this.files[0] ? this.files[0].name : 'Seleccionar imagen o PDF';
+      document.getElementById('zpm-file-name').textContent = name;
+    });
+  }
+
+  // Copy buttons
+  document.querySelectorAll('.zpm-copyable').forEach(function (el) {
+    el.querySelector('.zpm-copy-btn').addEventListener('click', function () {
+      navigator.clipboard.writeText(el.dataset.copy).then(function () {
+        var btn = el.querySelector('.zpm-copy-btn');
+        btn.textContent = '✓';
+        setTimeout(function () { btn.textContent = '⧉'; }, 1500);
+      });
+    });
+  });
+})();
+
+function zpmOnSuccess(data) {
+  window.location.reload();
+}
+function zpmOnError(data) {
+  var el = document.getElementById('zpm-error');
+  el.textContent = data && data.message ? data.message : 'Error al registrar el pago. Intenta nuevamente.';
+  el.style.display = 'block';
+}
+</script>

@@ -1,0 +1,96 @@
+<aside id="z-filters" class="z-filters">
+
+  {# ── Header ── #}
+  <div class="z-filters-header">
+    <span class="z-filters-title">Filtros</span>
+    <button type="button" class="z-filters-clear" onclick="
+      document.getElementById('zf-price-min').value = '';
+      document.getElementById('zf-price-max').value = '';
+    ">
+      Limpiar
+    </button>
+  </div>
+
+  {# ── Rango de precio ── #}
+  <div class="zf-section">
+    <div class="zf-title">Precio total (USD)</div>
+    <div class="z-filters-price-grid">
+      <div>
+        <div class="z-filters-price-lbl">Mínimo</div>
+        <input type="number" id="zf-price-min" name="price_min" placeholder="0" min="0"
+          value="{{ prefill.price_min ?? '' }}"
+          class="z-input z-filters-price-input"
+          form="zsb-form-searchBox">
+      </div>
+      <div>
+        <div class="z-filters-price-lbl">Máximo</div>
+        <input type="number" id="zf-price-max" name="price_max" placeholder="5000" min="0"
+          value="{{ prefill.price_max ?? '' }}"
+          class="z-input z-filters-price-input"
+          form="zsb-form-searchBox">
+      </div>
+    </div>
+  </div>
+
+  {# ── Tipo ── (pendiente: sincronizar con tabs del search box)
+  <div class="zf-section">
+    <div class="zf-title">Tipo</div>
+    <label class="zf-label">
+      <input type="radio" name="zf_type" value="booking" class="zf-radio zf-check" checked> Alojamiento &amp; Excursiones
+    </label>
+    <label class="zf-label">
+      <input type="radio" name="zf_type" value="store" class="zf-radio zf-check"> Tienda
+    </label>
+  </div>
+  #}
+
+  {# ── Destino ── (pendiente: depende de categoryMenu y parámetros URL)
+  <div class="zf-section">
+    <div class="zf-title">Destino</div>
+    <label class="zf-label"><input type="checkbox" class="zf-check"> Los Roques</label>
+    <label class="zf-label"><input type="checkbox" class="zf-check"> Morrocoy</label>
+    <label class="zf-label"><input type="checkbox" class="zf-check"> Choroní</label>
+    <label class="zf-label"><input type="checkbox" class="zf-check"> Mochima</label>
+    <label class="zf-label"><input type="checkbox" class="zf-check"> Cumaná</label>
+  </div>
+  #}
+
+  {# ── Categoría ── (pendiente: integración con CategoryMenu)
+  <div class="zf-section">
+    <div class="zf-title">Categoría</div>
+    <label class="zf-label"><input type="checkbox" class="zf-check"> Posadas</label>
+    <label class="zf-label"><input type="checkbox" class="zf-check"> Hoteles</label>
+    <label class="zf-label"><input type="checkbox" class="zf-check"> Embarcaciones</label>
+    <label class="zf-label"><input type="checkbox" class="zf-check"> Excursiones</label>
+    <label class="zf-label"><input type="checkbox" class="zf-check"> Cabañas</label>
+    <label class="zf-label"><input type="checkbox" class="zf-check"> Camping</label>
+  </div>
+  #}
+
+  {# ── Capacidad ── (pendiente: parámetro en búsqueda)
+  <div class="zf-section">
+    <div class="zf-title">Capacidad (personas)</div>
+    <div class="z-filters-caps">
+      {% for n in [1,2,4,6,8,10] %}
+        <button class="zf-cap-btn" data-cap="{{ n }}">{{ n }}+</button>
+      {% endfor %}
+    </div>
+  </div>
+  #}
+
+  {# ── Servicios / amenidades ── (pendiente: atributos en criterio de búsqueda)
+  <div class="zf-section zf-section--last">
+    <div class="zf-title">Servicios</div>
+    <label class="zf-label"><input type="checkbox" class="zf-check"> Desayuno incluido</label>
+    <label class="zf-label"><input type="checkbox" class="zf-check"> Wi-Fi</label>
+    <label class="zf-label"><input type="checkbox" class="zf-check"> Snorkel incluido</label>
+    <label class="zf-label"><input type="checkbox" class="zf-check"> Traslado</label>
+    <label class="zf-label"><input type="checkbox" class="zf-check"> Mascotas permitidas</label>
+  </div>
+  #}
+
+  <button type="submit" form="zsb-form-searchBox" class="z-btn z-btn-teal z-filters-apply">
+    Aplicar filtros
+  </button>
+
+</aside>

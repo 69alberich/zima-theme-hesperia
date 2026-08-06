@@ -1,0 +1,29 @@
+{# ── product/operator-card.htm ── #}
+{% if productOperator %}
+<section class="zpd-section zop-card-section">
+  <h2 class="zpd-section-title">Operador</h2>
+
+  <div class="zop-card">
+    <div class="zop-card-img-col">
+      {% if productOperator.preview_image %}
+        <img class="zop-card-img"
+             src="{{ productOperator.preview_image.getThumb(200, 200, {mode: 'crop'}) }}"
+             alt="{{ productOperator.name }}">
+      {% else %}
+        <div class="zop-card-img zop-card-img--placeholder">🏢</div>
+      {% endif %}
+    </div>
+
+    <div class="zop-card-body">
+      <div class="zop-card-name">{{ productOperator.name }}</div>
+      {% if productOperator.preview_text %}
+        <p class="zop-card-desc">{{ productOperator.preview_text }}</p>
+      {% endif %}
+      <a class="zop-card-link"
+         href="{{ 'operator'|page({'slug': productOperator.slug}) }}">
+        Ver ficha completa →
+      </a>
+    </div>
+  </div>
+</section>
+{% endif %}

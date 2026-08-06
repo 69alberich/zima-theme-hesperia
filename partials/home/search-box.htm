@@ -1,0 +1,192 @@
+{# ── Search Box — Booking / Productos ── #}
+
+{# Litepicker CDN (range datepicker, sin dependencias) #}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css">
+<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
+
+<div id="z-search-box" class="z-search-box">
+
+  {# ── Tab switcher ── #}
+  <div class="zsb-tabs">
+    <button class="zsb-tab is-active" data-tab="booking">🗓 Booking</button>
+    <button class="zsb-tab" data-tab="productos">🔍 Productos</button>
+  </div>
+
+  {# ══ Panel: Booking ══ #}
+  <div class="zsb-panel" id="zsb-panel-booking">
+    {# Fila 1 — fechas + acción #}
+    <div class="zsb-date-grid">
+
+      <div id="zsb-checkin-wrap" class="zsb-field" onclick="document.getElementById('zsb-litepicker').click()">
+        <div class="zsb-field-label">Llegada</div>
+        <div id="zsb-checkin-label" class="zsb-field-value">Seleccionar</div>
+        <input type="hidden" id="zsb-date-from">
+      </div>
+
+      <div id="zsb-checkout-wrap" class="zsb-field" onclick="document.getElementById('zsb-litepicker').click()">
+        <div class="zsb-field-label">Salida</div>
+        <div id="zsb-checkout-label" class="zsb-field-value">Seleccionar</div>
+        <input type="hidden" id="zsb-date-to">
+      </div>
+
+      {# Input fantasma para anclar Litepicker #}
+      <input id="zsb-litepicker" readonly class="zsb-ghost-input">
+
+      {# Noches (se calcula automático) #}
+      <div id="zsb-nights-wrap" class="zsb-field">
+        <div class="zsb-field-label">Noches</div>
+        <div id="zsb-nights-label" class="zsb-field-value">—</div>
+      </div>
+
+      <div class="zsb-field-action">
+        <button class="z-btn z-btn-primary zsb-search-btn" onclick="zsbSearch()">
+          Buscar
+        </button>
+      </div>
+    </div>
+
+    {# Fila 2 — ocupación #}
+    <div class="zsb-occupancy">
+
+      <div class="zsb-occ-field">
+        <span class="zsb-occ-label">Adultos</span>
+        <div class="z-stepper" data-min="1" data-max="20">
+          <button data-dec class="z-stepper-btn">−</button>
+          <span class="z-stepper-val" id="zsb-adults-val">2</span>
+          <button data-inc class="z-stepper-btn">+</button>
+          <input type="hidden" id="zsb-adults" value="2">
+        </div>
+      </div>
+
+      <div class="zsb-occ-field">
+        <span class="zsb-occ-label">Niños</span>
+        <div class="z-stepper" data-min="0" data-max="20">
+          <button data-dec class="z-stepper-btn">−</button>
+          <span class="z-stepper-val" id="zsb-children-val">0</span>
+          <button data-inc class="z-stepper-btn">+</button>
+          <input type="hidden" id="zsb-children" value="0">
+        </div>
+      </div>
+
+      <label class="zsb-all-occ-label">
+        <input type="checkbox" id="zsb-all-occ" class="zsb-checkbox">
+        Todas las ocupaciones
+      </label>
+
+    </div>
+  </div>
+
+  {# ══ Panel: Productos ══ #}
+  <div class="zsb-panel" id="zsb-panel-productos" style="display:none">
+    <div class="zsb-product-grid">
+      <input type="text" id="zsb-product-query"
+        placeholder="Nombre del producto, destino..."
+        class="z-input zsb-product-input"
+        onkeydown="if(event.key==='Enter') zsbSearchProduct()">
+      <button class="z-btn z-btn-primary zsb-product-btn" onclick="zsbSearchProduct()">
+        Buscar
+      </button>
+    </div>
+  </div>
+
+</div>
+
+{# ── Script ── #}
+<script>
+(function () {
+  // ── Tab switching ───────────────────────────────────────
+  document.querySelectorAll('.zsb-tab').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      document.querySelectorAll('.zsb-tab').forEach(function (t) {
+        t.classList.remove('is-active');
+        t.style.color = 'var(--z-text-dim)';
+        t.style.borderBottomColor = 'transparent';
+      });
+      tab.classList.add('is-active');
+      tab.style.color = 'var(--z-teal)';
+      tab.style.borderBottomColor = 'var(--z-teal)';
+
+      var target = tab.dataset.tab;
+      document.querySelectorAll('.zsb-panel').forEach(function (p) {
+        p.style.display = p.id === 'zsb-panel-' + target ? '' : 'none';
+      });
+    });
+  });
+
+  // ── Litepicker ─────────────────────────────────────────
+  var fmt = { weekday: 'short', day: 'numeric', month: 'short' };
+
+  function initPicker () {
+    if (typeof Litepicker === 'undefined') {
+      setTimeout(initPicker, 100);
+      return;
+    }
+    new Litepicker({
+      element:        document.getElementById('zsb-litepicker'),
+      singleMode:     false,
+      numberOfMonths: 2,
+      numberOfColumns: 2,
+      minDate:        new Date(),
+      lang:           'es-VE',
+      format:         'YYYY-MM-DD',
+      autoApply:      true,
+      showWeekNumbers: false,
+      resetButton:    true,
+      mobileFriendly: true,
+      setup: function (picker) {
+        picker.on('selected', function (start, end) {
+          var s = start.toJSDate();
+          var e = end.toJSDate();
+
+          document.getElementById('zsb-date-from').value  = start.format('YYYY-MM-DD');
+          document.getElementById('zsb-date-to').value    = end.format('YYYY-MM-DD');
+
+          document.getElementById('zsb-checkin-label').textContent  = s.toLocaleDateString('es-VE', fmt);
+          document.getElementById('zsb-checkin-label').style.color  = 'var(--z-text)';
+          document.getElementById('zsb-checkout-label').textContent = e.toLocaleDateString('es-VE', fmt);
+          document.getElementById('zsb-checkout-label').style.color = 'var(--z-text)';
+
+          var nights = Math.round((e - s) / 86400000);
+          var nl = document.getElementById('zsb-nights-label');
+          nl.textContent = nights + (nights === 1 ? ' noche' : ' noches');
+          nl.style.color = 'var(--z-text)';
+        });
+      }
+    });
+  }
+  initPicker();
+
+  // ── Sync hidden inputs después de que zima.js actualiza el valor ──
+  document.querySelectorAll('#zsb-panel-booking .z-stepper').forEach(function (stepper) {
+    var valEl   = stepper.querySelector('.z-stepper-val');
+    var hidden  = document.getElementById(valEl.id.replace('-val', ''));
+    stepper.querySelector('[data-dec]').addEventListener('click', function () {
+      if (hidden) hidden.value = parseInt(valEl.textContent);
+    });
+    stepper.querySelector('[data-inc]').addEventListener('click', function () {
+      if (hidden) hidden.value = parseInt(valEl.textContent);
+    });
+  });
+
+})();
+
+// ── Búsqueda booking ──────────────────────────────────
+function zsbSearch () {
+  var from    = document.getElementById('zsb-date-from').value;
+  var to      = document.getElementById('zsb-date-to').value;
+  var adults  = document.getElementById('zsb-adults').value;
+  var children= document.getElementById('zsb-children').value;
+  var allOcc  = document.getElementById('zsb-all-occ').checked ? '1' : '0';
+
+  var params = new URLSearchParams({ date_from: from, date_to: to, adults: adults, children: children, all_occupancies: allOcc });
+  window.location.href = '{{ "search"|page }}?' + params.toString();
+}
+
+// ── Búsqueda productos ────────────────────────────────
+function zsbSearchProduct () {
+  var q = document.getElementById('zsb-product-query').value.trim();
+  var params = new URLSearchParams({ search_type: 'store' });
+  if (q) params.set('q', q);
+  window.location.href = '{{ "search"|page }}?' + params.toString();
+}
+</script>

@@ -1,0 +1,16 @@
+{# ── category-checks.htm ── #}
+{# Usa categoryParent / categoryChildren inyectados por [categoryMenu] en la page #}
+
+{% if categoryParent %}
+  <div class="zf-section">
+    <div class="zf-title">{{ categoryParent.name }}</div>
+
+    {% for child in categoryChildren %}
+      <label class="zf-label">
+        <input type="checkbox" name="category[]" value="{{ child.slug }}" class="zf-check">
+        {{ child.name }}
+      </label>
+    {% endfor %}
+
+  </div>
+{% endif %}

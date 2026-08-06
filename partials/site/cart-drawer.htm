@@ -1,0 +1,86 @@
+{# ── Cart overlay ── #}
+<div id="z-cart-overlay" class="z-overlay" style="display:none" data-cart-close></div>
+
+{# ── Cart drawer ── #}
+<div id="z-cart-drawer" class="z-cart-drawer">
+
+  {# Header #}
+  <div class="z-cart-header">
+    <div class="z-cart-title">Tu carrito</div>
+    <button class="z-cart-close-btn" data-cart-close aria-label="Cerrar carrito">✕</button>
+  </div>
+
+  {# Trigger oculto para refrescar el drawer desde JS externo #}
+  <button id="z-cart-load-btn" style="display:none"
+          data-request="frontCart::onLoadDrawer"
+          data-request-success="zCartOnUpdate(data)"></button>
+
+  {# Items — renderizados server-side; se reemplazan vía AJAX al eliminar #}
+  <div id="z-cart-items" class="z-cart-body">
+    {% if cartItems is empty %}
+      <div class="z-cart-empty">
+        <div class="z-cart-empty-icon">🌴</div>
+        <div class="z-cart-empty-msg">Tu carrito está vacío</div>
+      </div>
+    {% else %}
+      {% for item in cartItems %}
+        {% set nights = item.date_from and item.date_to ? item.date_from.diffInDays(item.date_to) : null %}
+        {% set parts    = item.pax_code ? item.pax_code|split('-') : [] %}
+        {% set adults   = parts|length > 0 ? parts[0] : null %}
+        {% set children = parts|length > 1 ? parts[1] : null %}
+
+        <div class="z-cart-item" data-item-id="{{ item.id }}">
+
+          {% if item.offer.product.preview_image %}
+            <img class="z-cart-item-img"
+                 src="{{ item.offer.product.preview_image.getThumb(80, 80, {mode: 'crop'}) }}"
+                 alt="{{ item.offer.product.name }}">
+          {% endif %}
+
+          <div class="z-cart-item-body">
+            <div class="z-cart-item-name">{{ item.offer.product.name ?? item.offer_name }}</div>
+            <div class="z-cart-item-offer">{{ item.offer_name }}</div>
+
+            <div class="z-cart-item-meta">
+              {% if item.date_from %}
+                <span>{{ item.date_from|date('d M') }} → {{ item.date_to|date('d M Y') }}</span>
+              {% endif %}
+              {% if nights %}
+                <span>{{ nights }} noche{{ nights != 1 ? 's' : '' }}</span>
+              {% endif %}
+              {% if adults %}
+                <span>{{ adults }} adulto{{ adults != 1 ? 's' : '' }}{% if children > 0 %}, {{ children }} niño{{ children != 1 ? 's' : '' }}{% endif %}</span>
+              {% endif %}
+              {% if item.price_type_name %}
+                <span>{{ item.price_type_name }}</span>
+              {% endif %}
+            </div>
+
+            <div class="z-cart-item-foot">
+              <span class="z-cart-item-price">${{ item.total_price|number_format(2, '.', ',') }}</span>
+              <button class="z-cart-item-remove"
+                      data-request="frontCart::onRemoveItem"
+                      data-request-data="item_id: {{ item.id }}"
+                      data-request-success="zCartOnUpdate(data)"
+                      aria-label="Eliminar">✕</button>
+            </div>
+          </div>
+
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  {# Footer con total y acciones #}
+  <div class="z-cart-foot">
+    <div class="z-cart-total-row">
+      <span class="z-cart-total-label">Total</span>
+      <span id="z-cart-total" class="z-cart-total-val">${{ cartTotal|number_format(2, '.', ',') }}</span>
+    </div>
+    <div class="z-cart-actions">
+      {# TD: página de carrito completo pendiente #}
+      {# <a href="{{ 'cart'|page }}" class="z-btn z-btn-teal">Ver carrito completo</a> #}
+      <a href="{{ 'checkout'|page }}" class="z-btn z-btn-primary">Ir a pagar</a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,7 @@
+name: Zima Hesperia
+description: 'Theme hotelero para Hesperia Venezuela — elegante, oscuro, refinado.'
+author: Zima
+homepage: ''
+code: zima-theme-hesperia
+
+form: config/fields.yaml

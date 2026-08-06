@@ -1,0 +1,20 @@
+{#
+  Partial reutilizable: panel de instrucciones por método de pago.
+  Variables esperadas:
+    method  — PaymentMethod model
+    order   — Order model
+#}
+
+{% if method.code == 'stripe' %}
+  {% partial 'order/panels/stripe' method=method order=order %}
+
+{% elseif method.code == 'pago-movil' %}
+  {% partial 'order/panels/pago-movil' method=method order=order vesCurrency=vesCurrency amountVes=amountVes %}
+
+{% elseif method.code == 'paypal' %}
+  {% partial 'order/panels/paypal' method=method order=order %}
+
+{% else %}
+  {% partial 'order/panels/unavailable' method=method order=order %}
+
+{% endif %}

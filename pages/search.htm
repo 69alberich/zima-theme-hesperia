@@ -1,0 +1,28 @@
+##
+url = "/buscar"
+layout = "default"
+title = "Resultados de búsqueda"
+
+[searchBox]
+==
+<div class="z-wrap z-search-page">
+
+  {# ── Search box ── #}
+  <div class="z-search-box-wrap">
+    {% component 'searchBox' %}
+  </div>
+
+  {# ── Body: filters + results ── #}
+  <div class="z-search-layout">
+
+    {# ── Sidebar de filtros ── #}
+    {% partial 'search/filters' %}
+
+    {# ── Panel de resultados (actualizado por AJAX o auto-run) ── #}
+    <div id="z-search-results">
+      {% partial 'search/results' %}
+    </div>
+
+  </div>
+
+</div>

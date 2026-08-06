@@ -1,0 +1,139 @@
+{# ── operator/landing.htm ── #}
+
+<div class="zop-page">
+
+  {# ── Hero ── #}
+  <div class="zop-hero">
+    {% if operator.preview_image %}
+      <div class="zop-hero-bg" style="background-image:url('{{ operator.preview_image.path }}')"></div>
+    {% else %}
+      <div class="zop-hero-bg zop-hero-bg--empty"></div>
+    {% endif %}
+    <div class="zop-hero-overlay"></div>
+
+    <div class="zop-hero-content">
+
+      {% if operator.preview_image %}
+        <img class="zop-hero-avatar"
+             src="{{ operator.preview_image.getThumb(100, 100, {mode: 'crop'}) }}"
+             alt="{{ operator.name }}">
+      {% else %}
+        <div class="zop-hero-avatar zop-hero-avatar--placeholder">🏢</div>
+      {% endif %}
+
+      <div class="zop-hero-text">
+        {% if operator.groups is not empty %}
+          <div class="zop-hero-group">{{ operator.groups|map(g => g.name)|join(' · ') }}</div>
+        {% endif %}
+        <h1 class="zop-hero-name">{{ operator.name }}</h1>
+        {% if operator.preview_text %}
+          <p class="zop-hero-tagline">{{ operator.preview_text }}</p>
+        {% endif %}
+      </div>
+
+      <div class="zop-hero-stats">
+        <div class="zop-hero-stat">
+          <span class="zop-hero-stat-val">{{ productCount }}</span>
+          <span class="zop-hero-stat-lbl">Producto{{ productCount != 1 ? 's' : '' }}</span>
+        </div>
+        <div class="zop-hero-stat">
+          <span class="zop-hero-stat-val">{{ catalogCount }}</span>
+          <span class="zop-hero-stat-lbl">Catálogo{{ catalogCount != 1 ? 's' : '' }}</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  {# ── Subbar ── #}
+  <div class="zop-subbar">
+    <div class="zop-subbar-inner">
+      <a href="{{ '/'|page }}">Inicio</a>
+      <span class="zop-subbar-sep">›</span>
+      <span class="zop-subbar-current">{{ operator.name }}</span>
+    </div>
+  </div>
+
+  {# ── Cuerpo ── #}
+  <div class="zop-body">
+
+    {% partial 'operator/highlights' %}
+    {% partial 'operator/gallery' %}
+    {% partial 'operator/attributes' %}
+
+    {% if operator.catalogs is not empty %}
+      {% for catalog in operator.catalogs %}
+        <section class="zop-section">
+
+          <div class="zop-catalog-header">
+            <div class="zop-catalog-pill">📂 Catálogo</div>
+            <h2 class="zop-catalog-title">{{ catalog.name }}</h2>
+            {% if catalog.preview_text %}
+              <p class="zop-catalog-sub">{{ catalog.preview_text }}</p>
+            {% endif %}
+          </div>
+
+          {% if catalog.products is not empty %}
+            <div class="zop-products">
+              {% for product in catalog.products %}
+
+                {% set activeOffers = product.offers|filter(o => o.active) %}
+
+                <a class="zop-product-card"
+                   href="{{ 'product'|page({'slug': product.slug}) }}">
+
+                  <div class="zop-product-img-wrap">
+                    {% if product.preview_image %}
+                      <img class="zop-product-img"
+                           src="{{ product.preview_image.getThumb(480, 360, {mode: 'crop'}) }}"
+                           alt="{{ product.name }}">
+                    {% else %}
+                      <div class="zop-product-img zop-product-img--placeholder">🌊</div>
+                    {% endif %}
+
+                    {% if activeOffers is not empty %}
+                      <span class="zop-product-img-badge">
+                        {{ activeOffers|length }} oferta{{ activeOffers|length != 1 ? 's' : '' }}
+                      </span>
+                    {% endif %}
+                  </div>
+
+                  <div class="zop-product-body">
+                    <div class="zop-product-name">{{ product.name }}</div>
+                    {% if product.preview_text %}
+                      <p class="zop-product-desc">
+                        {{ product.preview_text|slice(0, 110) }}{% if product.preview_text|length > 110 %}…{% endif %}
+                      </p>
+                    {% endif %}
+
+                    <div class="zop-product-footer">
+                      {% if activeOffers is not empty %}
+                        <span class="zop-product-offers">Disponible</span>
+                      {% else %}
+                        <span class="zop-product-offers" style="color:var(--z-text-soft)">Sin ofertas activas</span>
+                      {% endif %}
+                      <span class="zop-product-cta">Ver →</span>
+                    </div>
+                  </div>
+
+                </a>
+              {% endfor %}
+            </div>
+
+          {% else %}
+            <p class="zop-empty">Este catálogo no tiene productos activos.</p>
+          {% endif %}
+
+        </section>
+      {% endfor %}
+
+    {% else %}
+      <section class="zop-section">
+        <p class="zop-empty">Este operador no tiene catálogos activos.</p>
+      </section>
+    {% endif %}
+
+    {% partial 'operator/amenities' %}
+
+  </div>
+</div>

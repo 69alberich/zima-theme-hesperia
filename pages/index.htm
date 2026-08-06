@@ -1,0 +1,46 @@
+##
+url = "/"
+layout = "default"
+title = "Inicio"
+meta_title = "Zima — Caribe venezolano"
+meta_description = "Hoteles, embarcaciones y experiencias en Los Roques, Morrocoy, Choroní y más — todo en una sola reserva."
+
+[searchBox]
+redirect = 1
+destinationPage = "search"
+==
+{# ── HERO ── #}
+<div class="z-hero">
+  <div class="z-hero-bg"></div>
+  <div class="z-hero-dim"></div>
+  <div class="z-wrap z-hero-body">
+    <div class="z-hero-text">
+      <div class="z-hero-eyebrow">Caribe venezolano</div>
+      <h1 class="z-hero-title">Tu escapada frente al mar empieza aquí</h1>
+      <p class="z-hero-subtitle">
+        Hoteles, embarcaciones y experiencias en Los Roques, Morrocoy, Choroní y más — todo en una sola reserva.
+      </p>
+    </div>
+
+    {# Search bar #}
+    {% partial 'home/search-box' %}
+  </div>
+</div>
+
+{# ── CATEGORÍAS ── #}
+{% partial 'home/categories' %}
+
+{# ── STATS BAR ── #}
+{% partial 'home/stats' %}
+
+{# ── POR QUÉ ZIMA ── #}
+{% partial 'home/why-zima' %}
+
+{# ── OFERTAS DESTACADAS ── #}
+{% partial 'home/featured' %}
+
+{# ── CATÁLOGO ── #}
+{% partial 'home/catalog' %}
+
+{# ── NEWSLETTER ── #}
+{% partial 'home/newsletter' %}

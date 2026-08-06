@@ -1,0 +1,84 @@
+{# ── operator/gallery.htm ── galería del operador con lightbox #}
+{% if operator.gallery is not empty %}
+<section class="zop-section zop-gallery-section">
+  <h2 class="zop-section-title">Galería</h2>
+
+  <div class="zop-gallery" id="zopGallery">
+    {% for i, image in operator.gallery %}
+      <button class="zop-gallery-item zop-gallery-item--{{ loop.index }}"
+              type="button"
+              data-index="{{ loop.index0 }}"
+              data-src="{{ image.path }}"
+              aria-label="Ver imagen {{ loop.index }}">
+        <img src="{{ image.getThumb(800, 600, {mode: 'crop'}) }}"
+             alt="{{ image.title ?: operator.name ~ ' — foto ' ~ loop.index }}"
+             loading="lazy">
+        <div class="zop-gallery-overlay">
+          <span class="zop-gallery-zoom">⊕</span>
+        </div>
+      </button>
+    {% endfor %}
+  </div>
+
+</section>
+
+{# ── Lightbox ── #}
+<div class="zop-glb" id="zopGlb" role="dialog" aria-modal="true" aria-label="Galería" hidden>
+  <div class="zop-glb-backdrop"></div>
+  <button class="zop-glb-close" id="zopGlbClose" aria-label="Cerrar">✕</button>
+  <button class="zop-glb-prev"  id="zopGlbPrev"  aria-label="Anterior">‹</button>
+  <button class="zop-glb-next"  id="zopGlbNext"  aria-label="Siguiente">›</button>
+  <div class="zop-glb-stage">
+    <img class="zop-glb-img" id="zopGlbImg" src="" alt="">
+    <div class="zop-glb-counter" id="zopGlbCounter"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const gallery = document.getElementById('zopGallery');
+  const lb      = document.getElementById('zopGlb');
+  const lbImg   = document.getElementById('zopGlbImg');
+  const lbCount = document.getElementById('zopGlbCounter');
+  const btnClose = document.getElementById('zopGlbClose');
+  const btnPrev  = document.getElementById('zopGlbPrev');
+  const btnNext  = document.getElementById('zopGlbNext');
+
+  const items = Array.from(gallery.querySelectorAll('.zop-gallery-item'));
+  const srcs  = items.map(el => el.dataset.src);
+  let current = 0;
+
+  function open(idx) {
+    current = ((idx % srcs.length) + srcs.length) % srcs.length;
+    lbImg.src = srcs[current];
+    lbCount.textContent = (current + 1) + ' / ' + srcs.length;
+    lb.hidden = false;
+    lb.focus();
+    document.body.style.overflow = 'hidden';
+  }
+
+  function close() {
+    lb.hidden = true;
+    lbImg.src = '';
+    document.body.style.overflow = '';
+  }
+
+  function prev() { open(current - 1); }
+  function next() { open(current + 1); }
+
+  items.forEach(el => el.addEventListener('click', () => open(+el.dataset.index)));
+  btnClose.addEventListener('click', close);
+  btnPrev.addEventListener('click', prev);
+  btnNext.addEventListener('click', next);
+  document.getElementById('zopGlb').querySelector('.zop-glb-backdrop')
+    .addEventListener('click', close);
+
+  document.addEventListener('keydown', function (e) {
+    if (lb.hidden) return;
+    if (e.key === 'Escape')     close();
+    if (e.key === 'ArrowLeft')  prev();
+    if (e.key === 'ArrowRight') next();
+  });
+})();
+</script>
+{% endif %}

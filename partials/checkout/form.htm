@@ -1,0 +1,154 @@
+<div class="zco-page">
+  <div class="zco-header">
+    <a href="/carrito" class="zco-back">← Volver al carrito</a>
+    <h1 class="zco-title">Checkout</h1>
+  </div>
+
+  <div class="zco-layout">
+
+    {# ── Columna izquierda: formulario ── #}
+    <div class="zco-main">
+
+      {# Errores globales #}
+      <div id="zco-errors" class="zco-errors" style="display:none"></div>
+
+      <form id="zco-form" data-request="frontCheckout::onPlaceOrder" data-request-success="zcoOnSuccess(data)" data-request-error="zcoOnError(data)">
+
+        {# ── Datos del cliente ── #}
+        <section class="zco-section">
+          <h2 class="zco-section-title">Información de contacto</h2>
+
+          <div class="zco-field-row">
+            <div class="zco-field zco-field--full">
+              <label class="zco-label" for="zco-name">Nombre completo <span class="zco-req">*</span></label>
+              <input class="zco-input" type="text" id="zco-name" name="name" placeholder="Ej. María González" autocomplete="name" required>
+              <div class="zco-field-error" id="err-name"></div>
+            </div>
+          </div>
+
+          <div class="zco-field-row">
+            <div class="zco-field">
+              <label class="zco-label" for="zco-email">Correo electrónico <span class="zco-req">*</span></label>
+              <input class="zco-input" type="email" id="zco-email" name="email" placeholder="correo@ejemplo.com" autocomplete="email" required>
+              <div class="zco-field-error" id="err-email"></div>
+            </div>
+            <div class="zco-field">
+              <label class="zco-label" for="zco-phone">Teléfono</label>
+              <input class="zco-input" type="tel" id="zco-phone" name="phone" placeholder="+58 412 000 0000" autocomplete="tel">
+            </div>
+          </div>
+
+          <div class="zco-field-row">
+            <div class="zco-field zco-field--doc-type">
+              <label class="zco-label" for="zco-doc-type">Tipo de documento</label>
+              <select class="zco-input zco-select" id="zco-doc-type" name="document_type">
+                <option value="">— Sin especificar —</option>
+                {% for value, label in documentTypes %}
+                  <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="zco-field">
+              <label class="zco-label" for="zco-doc-number">Número de documento</label>
+              <input class="zco-input" type="text" id="zco-doc-number" name="document_number" placeholder="Ej. 12345678">
+            </div>
+          </div>
+        </section>
+
+        {# ── Notas ── #}
+        <section class="zco-section">
+          <h2 class="zco-section-title">Notas adicionales <span class="zco-optional">(opcional)</span></h2>
+          <textarea class="zco-input zco-textarea" name="notes" id="zco-notes"
+                    placeholder="Solicitudes especiales, alergias, preferencias…" rows="3"></textarea>
+        </section>
+
+        {# ── Submit ── #}
+        <div class="zco-submit-row">
+          <button type="submit" class="z-btn z-btn-primary zco-submit-btn" id="zco-submit">
+            Confirmar pedido
+          </button>
+          <p class="zco-submit-note">Al confirmar, tu reserva quedará en estado <strong>Pendiente</strong> hasta que el equipo la procese.</p>
+        </div>
+
+      </form>
+    </div>
+
+    {# ── Columna derecha: resumen ── #}
+    <aside class="zco-summary">
+      <div class="zco-summary-card">
+        <h2 class="zco-summary-title">Resumen del pedido</h2>
+
+        <div class="zco-summary-items">
+          {% for item in cartItems %}
+            {% set nights = item.date_from and item.date_to ? item.date_from.diffInDays(item.date_to) : null %}
+            {% set parts    = item.pax_code ? item.pax_code|split('-') : [] %}
+            {% set adults   = parts|length > 0 ? parts[0] : null %}
+            {% set children = parts|length > 1 ? parts[1] : null %}
+
+            <div class="zco-item">
+              {% if item.offer.product.preview_image %}
+                <img class="zco-item-img"
+                     src="{{ item.offer.product.preview_image.getThumb(64, 64, {mode: 'crop'}) }}"
+                     alt="{{ item.offer.product.name }}">
+              {% else %}
+                <div class="zco-item-img zco-item-img--placeholder">🌊</div>
+              {% endif %}
+
+              <div class="zco-item-body">
+                <div class="zco-item-name">{{ item.offer.product.name ?? item.offer_name }}</div>
+                <div class="zco-item-offer">{{ item.offer_name }}</div>
+                <div class="zco-item-meta">
+                  {% if item.date_from %}
+                    <span>{{ item.date_from|date('d M') }} → {{ item.date_to|date('d M Y') }}</span>
+                  {% endif %}
+                  {% if nights %}<span>{{ nights }} noche{{ nights != 1 ? 's' : '' }}</span>{% endif %}
+                  {% if adults %}
+                    <span>{{ adults }} adulto{{ adults != 1 ? 's' : '' }}{% if children > 0 %}, {{ children }} niño{{ children != 1 ? 's' : '' }}{% endif %}</span>
+                  {% endif %}
+                  {% if item.price_type_name %}<span>{{ item.price_type_name }}</span>{% endif %}
+                </div>
+              </div>
+
+              <div class="zco-item-price">${{ item.total_price|number_format(2, '.', ',') }}</div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="zco-summary-divider"></div>
+
+        <div class="zco-summary-total-row">
+          <span>Total</span>
+          <span class="zco-summary-total">${{ cartTotal|number_format(2, '.', ',') }}</span>
+        </div>
+
+        <p class="zco-summary-note">Sin cobro hasta la confirmación · Cancelación gratuita</p>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<script>
+(function () {
+  // Payment method: resaltar opción seleccionada
+  document.querySelectorAll('.zco-pm-radio').forEach(function (radio) {
+    radio.addEventListener('change', function () {
+      document.querySelectorAll('.zco-pm-option').forEach(function (opt) {
+        opt.classList.remove('is-selected');
+      });
+      radio.closest('.zco-pm-option').classList.add('is-selected');
+    });
+  });
+})();
+
+function zcoOnError(data) {
+  var errBox = document.getElementById('zco-errors');
+  errBox.textContent = 'Ocurrió un error al procesar el pedido. Intenta nuevamente.';
+  errBox.style.display = 'block';
+}
+
+function zcoOnSuccess(data) {
+  // La redirección la maneja el componente PHP; esto es fallback
+  if (data && data.redirect) window.location.href = data.redirect;
+}
+</script>

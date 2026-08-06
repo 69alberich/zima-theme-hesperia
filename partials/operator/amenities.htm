@@ -1,0 +1,43 @@
+{# ── operator/amenities.htm ── espacios y experiencias del operador #}
+{% if operator.amenities is not empty %}
+<section class="zop-section zop-amenities-section">
+
+  <div class="zop-amenities-header">
+    <h2 class="zop-section-title">Espacios & Experiencias</h2>
+  </div>
+
+  <div class="zop-am-grid">
+    {% for amenity in operator.amenities %}
+      <article class="zop-am-card{% if loop.first %} zop-am-card--featured{% endif %}"
+               onclick="location.href='{{ 'amenity'|page({'operatorSlug': operator.slug, 'amenitySlug': amenity.slug}) }}'"
+               style="cursor:pointer">
+
+        {# Imagen de fondo #}
+        <div class="zop-am-bg">
+          {% if amenity.preview_image %}
+            <img src="{{ amenity.preview_image.getThumb(900, 600, {mode: 'crop'}) }}"
+                 alt="{{ amenity.name }}" loading="lazy">
+          {% else %}
+            <div class="zop-am-bg-placeholder"></div>
+          {% endif %}
+        </div>
+
+        <div class="zop-am-overlay"></div>
+
+        <div class="zop-am-content">
+          {% if amenity.category %}
+            <span class="zop-am-tag">{{ amenity.category.name }}</span>
+          {% endif %}
+          <h3 class="zop-am-name">{{ amenity.name }}</h3>
+          {% if amenity.preview_text %}
+            <p class="zop-am-excerpt">{{ amenity.preview_text }}</p>
+          {% endif %}
+          <span class="zop-am-cta">Conocer más →</span>
+        </div>
+
+      </article>
+    {% endfor %}
+  </div>
+
+</section>
+{% endif %}

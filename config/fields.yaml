@@ -1,0 +1,76 @@
+tabs:
+    fields:
+        # ── Identidad ────────────────────────────────────────────
+        site_name:
+            label: Nombre del sitio
+            type: text
+            default: Hesperia Venezuela
+            tab: General
+
+        tagline:
+            label: Tagline / Eslogan
+            type: text
+            default: "Make it exceptional."
+            tab: General
+
+        # ── Imágenes ─────────────────────────────────────────────
+        logo:
+            label: Logo (imagen)
+            type: mediafinder
+            mode: image
+            tab: Imágenes
+
+        hero_image:
+            label: Imagen de fondo del hero
+            type: mediafinder
+            mode: image
+            tab: Imágenes
+
+        og_image:
+            label: Imagen para redes sociales (OG Image)
+            type: mediafinder
+            mode: image
+            tab: Imágenes
+
+        # ── Colores ───────────────────────────────────────────────
+        color_primary:
+            label: Color primario (acento)
+            comment: "Por defecto: #CA462D (terracota Hesperia)"
+            type: colorpicker
+            default: '#CA462D'
+            tab: Colores
+
+        color_dark:
+            label: Color oscuro (texto / nav / footer)
+            comment: "Por defecto: #051C2C (azul marino Hesperia)"
+            type: colorpicker
+            default: '#051C2C'
+            tab: Colores
+
+        color_bg:
+            label: Color de fondo de página
+            comment: "Por defecto: #f8f6f3 (blanco cálido)"
+            type: colorpicker
+            default: '#f8f6f3'
+            tab: Colores
+
+        # ── Contacto ──────────────────────────────────────────────
+        phone:
+            label: Teléfono de contacto
+            type: text
+            tab: General
+
+        email:
+            label: Email de contacto
+            type: text
+            tab: General
+
+        facebook_url:
+            label: URL Facebook
+            type: text
+            tab: General
+
+        instagram_url:
+            label: URL Instagram
+            type: text
+            tab: General

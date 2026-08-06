@@ -1,0 +1,287 @@
+{# ── product/sidebar.htm ── #}
+
+{% if isStore %}
+  {# ════════════════════════════════════════════════════════ #}
+  {# STORE — Vista ecommerce                                   #}
+  {# ════════════════════════════════════════════════════════ #}
+
+  {% set offer = selectedOffer %}
+
+  <div class="zpd-card" id="zpd-store-card">
+
+    {# ── Precio ── #}
+    <div class="zpd-card-price-row">
+      <div>
+        {% if offer and offer.lowestPrice is not null %}
+          <div class="zpd-card-price">
+            ${{ offer.lowestPrice|number_format(2, '.', ',') }}
+            <span class="zpd-card-unit">/ unidad</span>
+          </div>
+        {% else %}
+          <div class="zpd-card-price zpd-card-price--dim">Sin precio</div>
+        {% endif %}
+      </div>
+      {% if offer %}
+        {% if offer.isAvailable %}
+          <span class="zpd-badge zpd-badge--avail">✓ Disponible</span>
+        {% else %}
+          <span class="zpd-badge zpd-badge--unavail">Agotado</span>
+        {% endif %}
+      {% endif %}
+    </div>
+
+    {% if offer %}
+
+      {# ── Nombre de la tarifa (si hay varias) ── #}
+      {% if offers|length > 1 %}
+        <div class="zpd-store-offers">
+          <div class="zpd-store-offers-label">Opciones disponibles</div>
+          {% for o in offers %}
+            <a href="?offer_id={{ o.offerId }}"
+               class="zpd-store-offer-row {% if o.offerId == offer.offerId %}is-selected{% endif %}">
+              <span class="zpd-store-offer-name">{{ o.offerName }}</span>
+              <span class="zpd-store-offer-price">
+                {% if o.lowestPrice is not null %}
+                  ${{ o.lowestPrice|number_format(2, '.', ',') }}
+                {% else %}
+                  —
+                {% endif %}
+              </span>
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="zpd-card-rate">
+          <span class="zpd-card-rate-name">{{ offer.offerName }}</span>
+        </div>
+      {% endif %}
+
+      {# ── Stock ── #}
+      {% if offer.isLowStock %}
+        <div class="zpd-card-stock">
+          <span class="zpd-card-stock-dot"></span>
+          Quedan <strong>{{ offer.stock }}</strong> unidad{{ offer.stock != 1 ? 'es' : '' }}
+        </div>
+      {% endif %}
+
+      {# ── Cantidad ── #}
+      <div class="zpd-store-qty">
+        <span class="zpd-store-qty-label">Cantidad</span>
+        <div class="z-stepper" data-min="1" {% if not offer.unlimited and offer.stock %}data-max="{{ offer.stock }}"{% else %}data-max="99"{% endif %}>
+          <button type="button" data-dec class="z-stepper-btn">−</button>
+          <span class="z-stepper-val" id="zpd-qty-val">1</span>
+          <button type="button" data-inc class="z-stepper-btn">+</button>
+          <input type="hidden" id="zpd-qty" value="1">
+        </div>
+      </div>
+
+      {# ── Botón agregar al carrito ── #}
+      <button type="button" id="zpd-store-add-btn"
+        class="z-btn z-btn-primary zpd-offer-btn"
+        data-offer-id="{{ offer.offerId }}"
+        onclick="zpdStoreAddToCart()">
+        Agregar al carrito
+      </button>
+
+      <div id="zpd-store-msg" class="zpd-store-msg" style="display:none"></div>
+
+    {% else %}
+      <div class="zpd-card-no-dates">
+        <span class="zpd-card-no-dates-icon">📦</span>
+        <span>No hay opciones disponibles para este producto.</span>
+      </div>
+    {% endif %}
+
+  </div>
+
+  <script>
+  (function () {
+    var stepper = document.querySelector('#zpd-store-card .z-stepper');
+    if (!stepper) return;
+    var valEl = stepper.querySelector('.z-stepper-val');
+    var hidden = document.getElementById('zpd-qty');
+    var min = parseInt(stepper.dataset.min) || 1;
+    var max = parseInt(stepper.dataset.max) || 99;
+    stepper.querySelector('[data-dec]').addEventListener('click', function () {
+      var v = parseInt(valEl.textContent) - 1;
+      if (v < min) v = min;
+      valEl.textContent = v;
+      if (hidden) hidden.value = v;
+    });
+    stepper.querySelector('[data-inc]').addEventListener('click', function () {
+      var v = parseInt(valEl.textContent) + 1;
+      if (v > max) v = max;
+      valEl.textContent = v;
+      if (hidden) hidden.value = v;
+    });
+  })();
+
+  function zpdStoreAddToCart() {
+    var btn     = document.getElementById('zpd-store-add-btn');
+    var msgEl   = document.getElementById('zpd-store-msg');
+    var qty     = document.getElementById('zpd-qty')?.value || 1;
+    var offerId = btn.dataset.offerId;
+
+    btn.disabled = true;
+    btn.textContent = 'Agregando…';
+
+    window.oc.request(btn, '{{ __SELF__ }}::onAddToCart', {
+      data: { offer_id: offerId, quantity: qty },
+      success: function (data) {
+        msgEl.textContent = data.message || 'Añadido al carrito.';
+        msgEl.className = 'zpd-store-msg zpd-store-msg--ok';
+        msgEl.style.display = '';
+        btn.textContent = '✓ Añadido';
+        if (data.cartCount !== undefined) {
+          var badge = document.querySelector('.z-cart-badge');
+          if (badge) badge.textContent = data.cartCount;
+        }
+        setTimeout(function () {
+          btn.disabled = false;
+          btn.textContent = 'Agregar al carrito';
+        }, 2000);
+      },
+      error: function (xhr) {
+        var err = xhr.responseJSON?.error || 'Error al agregar.';
+        msgEl.textContent = err;
+        msgEl.className = 'zpd-store-msg zpd-store-msg--err';
+        msgEl.style.display = '';
+        btn.disabled = false;
+        btn.textContent = 'Agregar al carrito';
+      }
+    });
+  }
+  </script>
+
+{% else %}
+  {# ════════════════════════════════════════════════════════ #}
+  {# BOOKING — Vista reservas (original)                      #}
+  {# ════════════════════════════════════════════════════════ #}
+
+  {% set offer  = selectedOffer %}
+  {% set p      = params ?? {} %}
+  {% set nights = (offer and offer.nights) ? offer.nights : null %}
+
+  <div class="zpd-card" id="zpd-booking-card">
+
+    {# ── Precio ── #}
+    <div class="zpd-card-price-row">
+      <div>
+        <div class="zpd-card-from">desde</div>
+        {% if offer and offer.lowestTotal is not null %}
+          <div class="zpd-card-price">
+            ${{ offer.lowestTotal|number_format(2, '.', ',') }}
+            <span class="zpd-card-unit">total</span>
+          </div>
+        {% elseif not hasDates %}
+          <div class="zpd-card-price zpd-card-price--dim">—</div>
+        {% else %}
+          <div class="zpd-card-price zpd-card-price--dim">Sin precio</div>
+        {% endif %}
+      </div>
+
+      {% if offer %}
+        {% if offer.isAvailable %}
+          <span class="zpd-badge zpd-badge--avail">✓ Disponible</span>
+        {% else %}
+          <span class="zpd-badge zpd-badge--unavail">Agotado</span>
+        {% endif %}
+      {% endif %}
+    </div>
+
+    {# ── Fechas ── #}
+    {% if hasDates %}
+      <div class="zpd-card-dates">
+        <div class="zpd-card-date-field">
+          <div class="zpd-card-date-lbl">Llegada</div>
+          <div class="zpd-card-date-val">{{ p.date_from|date('d M') }}</div>
+        </div>
+        <div class="zpd-card-date-arrow">→</div>
+        <div class="zpd-card-date-field">
+          <div class="zpd-card-date-lbl">Salida</div>
+          <div class="zpd-card-date-val">{{ p.date_to|date('d M') }}</div>
+        </div>
+        {% if nights %}
+          <div class="zpd-card-date-field">
+            <div class="zpd-card-date-lbl">Noches</div>
+            <div class="zpd-card-date-val">{{ nights }}</div>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="zpd-card-occ">
+        {% if p.all_occupancies is defined %}
+          <span class="zpd-card-occ-lbl">Todas las ocupaciones</span>
+        {% else %}
+          <span class="zpd-card-occ-lbl">
+            {{ p.adults ?? 2 }} adulto{{ (p.adults ?? 2) != 1 ? 's' : '' }}
+            {% if (p.children ?? 0) > 0 %}· {{ p.children }} niño{{ p.children != 1 ? 's' : '' }}{% endif %}
+          </span>
+        {% endif %}
+        <button type="button" class="zpd-card-occ-edit" onclick="zpdOpenModal()">Cambiar</button>
+      </div>
+    {% else %}
+      <div class="zpd-card-no-dates">
+        <span class="zpd-card-no-dates-icon">📅</span>
+        <span>Elige las fechas de tu estadía para ver los precios.</span>
+        <button type="button" class="z-btn z-btn-teal z-btn--sm zpd-card-no-dates-btn" onclick="zpdOpenModal()">
+          Seleccionar fechas
+        </button>
+      </div>
+    {% endif %}
+
+    {# ── Tarifa activa ── #}
+    {% if offer %}
+      <div class="zpd-card-rate">
+        <span class="zpd-card-rate-name">{{ offer.offerName }}</span>
+      </div>
+
+      {# Desglose por línea de precio #}
+      <div class="zpd-card-breakdown">
+        {% if p.all_occupancies is defined and p.all_occupancies %}
+          <div class="zpd-card-breakdown-row">
+            <span>Precio desde{% if nights %} · {{ nights }} noche{{ nights != 1 ? 's' : '' }}{% endif %}</span>
+            <span>${{ offer.lowestTotal|number_format(2, '.', ',') }}</span>
+          </div>
+        {% else %}
+          {% for line in offer.prices %}
+            <div class="zpd-card-breakdown-row">
+              <span>
+                {{ line.paxLabel is not empty ? line.paxLabel ~ ' · ' : '' }}
+                {{ line.priceTypeName }}
+                {% if nights %}· {{ nights }} noche{{ nights != 1 ? 's' : '' }}{% endif %}
+              </span>
+              <span>${{ line.totalPrice|number_format(2, '.', ',') }}</span>
+            </div>
+          {% endfor %}
+          {% if offer.prices|length > 1 %}
+            <div class="zpd-card-breakdown-row zpd-card-breakdown-row--total">
+              <span>Mínimo</span>
+              <span>${{ offer.lowestTotal|number_format(2, '.', ',') }}</span>
+            </div>
+          {% endif %}
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {# ── Stock warning ── #}
+    {% if hasDates and offer and offer.isLowStock %}
+      <div class="zpd-card-stock">
+        <span class="zpd-card-stock-dot"></span>
+        Quedan <strong>{{ offer.availability }}</strong> lugar{{ offer.availability != 1 ? 'es' : '' }}
+      </div>
+    {% endif %}
+
+  </div>
+
+  {# ── Contacto rápido ── #}
+  <div class="zpd-card zpd-card--contact">
+    <div class="zpd-contact-icon">💬</div>
+    <div>
+      <div class="zpd-contact-title">¿Tienes preguntas?</div>
+      <div class="zpd-contact-desc">Nuestro equipo responde en minutos.</div>
+    </div>
+    <a href="#" class="z-btn z-btn-ghost z-btn--sm">Escribir</a>
+  </div>
+
+{% endif %}
