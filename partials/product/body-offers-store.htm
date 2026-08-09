@@ -1,0 +1,52 @@
+{# ── product/body-offers-store.htm ── #}
+{# Solo se renderiza cuando hay más de un offer para comparar.    #}
+{# Con un solo offer no hay nada que comparar — el sidebar basta. #}
+{# Variables: offers, selectedOffer, baseQuery                    #}
+
+{% if offers|length > 1 %}
+
+<div class="zpd-store-variants">
+  {% for offer in offers %}
+    {% set isSelected = selectedOffer and selectedOffer.offerId == offer.offerId %}
+
+    <div class="zpd-sv-card {% if isSelected %}zpd-sv-card--selected{% endif %}">
+
+      {% if isSelected %}
+        <div class="zpd-sv-selected-pill">✓ Seleccionada</div>
+      {% endif %}
+
+      <div class="zpd-sv-name">{{ offer.offerName }}</div>
+
+      <div class="zpd-sv-price">
+        {% if offer.lowestPrice is not null %}
+          desde ${{ offer.lowestPrice|number_format(2, '.', ',') }}
+        {% else %}
+          —
+        {% endif %}
+      </div>
+
+      <div class="zpd-sv-stock">
+        {% if not offer.isAvailable %}
+          <span class="zpd-offer-stock--unavail">Agotado</span>
+        {% elseif offer.isLowStock %}
+          <span class="zpd-offer-stock--low">¡Solo {{ offer.stock }}!</span>
+        {% else %}
+          <span class="zpd-offer-stock--ok">Disponible</span>
+        {% endif %}
+      </div>
+
+      {% if isSelected %}
+        <span class="zpd-sv-btn zpd-sv-btn--active">Seleccionada</span>
+      {% elseif offer.isAvailable %}
+        <a href="?{{ baseQuery }}&offer_id={{ offer.offerId }}" class="zpd-sv-btn">
+          Seleccionar
+        </a>
+      {% else %}
+        <span class="zpd-sv-btn zpd-sv-btn--disabled">Agotado</span>
+      {% endif %}
+
+    </div>
+  {% endfor %}
+</div>
+
+{% endif %}

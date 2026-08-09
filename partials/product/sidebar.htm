@@ -5,47 +5,23 @@
   {# STORE — Vista ecommerce                                   #}
   {# ════════════════════════════════════════════════════════ #}
 
-  {% set offer = selectedOffer %}
+  {% set offer      = selectedOffer %}
+  {% set firstPrice = offer ? offer.prices|first : null %}
 
   <div class="zpd-card" id="zpd-store-card">
 
-    {# ── Precio ── #}
-    <div class="zpd-card-price-row">
-      <div>
-        {% if offer and offer.lowestPrice is not null %}
-          <div class="zpd-card-price">
-            ${{ offer.lowestPrice|number_format(2, '.', ',') }}
-            <span class="zpd-card-unit">/ unidad</span>
-          </div>
-        {% else %}
-          <div class="zpd-card-price zpd-card-price--dim">Sin precio</div>
-        {% endif %}
-      </div>
-      {% if offer %}
-        {% if offer.isAvailable %}
-          <span class="zpd-badge zpd-badge--avail">✓ Disponible</span>
-        {% else %}
-          <span class="zpd-badge zpd-badge--unavail">Agotado</span>
-        {% endif %}
-      {% endif %}
-    </div>
-
     {% if offer %}
 
-      {# ── Nombre de la tarifa (si hay varias) ── #}
+      {# ── Selector de oferta (si hay varias) ── #}
       {% if offers|length > 1 %}
         <div class="zpd-store-offers">
-          <div class="zpd-store-offers-label">Opciones disponibles</div>
+          <div class="zpd-store-offers-label">Opciones</div>
           {% for o in offers %}
             <a href="?offer_id={{ o.offerId }}"
                class="zpd-store-offer-row {% if o.offerId == offer.offerId %}is-selected{% endif %}">
               <span class="zpd-store-offer-name">{{ o.offerName }}</span>
               <span class="zpd-store-offer-price">
-                {% if o.lowestPrice is not null %}
-                  ${{ o.lowestPrice|number_format(2, '.', ',') }}
-                {% else %}
-                  —
-                {% endif %}
+                {{ o.lowestPrice is not null ? '$' ~ o.lowestPrice|number_format(2, '.', ',') : '—' }}
               </span>
             </a>
           {% endfor %}
@@ -56,7 +32,42 @@
         </div>
       {% endif %}
 
-      {# ── Stock ── #}
+      {# ── Selector de price type ── #}
+      {% if offer.prices|length > 1 %}
+        <div class="zpd-card-section-label">Tarifa</div>
+        <div class="zpd-store-price-types">
+          {% for line in offer.prices %}
+            <label class="zpd-store-pt-row {% if loop.first %}is-selected{% endif %}">
+              <input type="radio"
+                     name="zpd_sidebar_pt"
+                     value="{{ line.priceTypeId }}"
+                     data-price="{{ line.unitPrice|number_format(2, '.', ',') }}"
+                     data-label="{{ line.priceTypeName }}"
+                     {% if loop.first %}checked{% endif %}>
+              <span class="zpd-store-pt-name">{{ line.priceTypeName }}</span>
+              <span class="zpd-store-pt-price">${{ line.unitPrice|number_format(2, '.', ',') }}</span>
+            </label>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {# ── Precio actual ── #}
+      <div class="zpd-card-price-row">
+        <div>
+          <div class="zpd-card-from">precio</div>
+          <div class="zpd-card-price" id="zpd-sidebar-price">
+            ${{ firstPrice ? firstPrice.unitPrice|number_format(2, '.', ',') : '—' }}
+            <span class="zpd-card-unit">/ unidad</span>
+          </div>
+        </div>
+        {% if offer.isAvailable %}
+          <span class="zpd-badge zpd-badge--avail">✓ Disponible</span>
+        {% else %}
+          <span class="zpd-badge zpd-badge--unavail">Agotado</span>
+        {% endif %}
+      </div>
+
+      {# ── Stock warning ── #}
       {% if offer.isLowStock %}
         <div class="zpd-card-stock">
           <span class="zpd-card-stock-dot"></span>
@@ -67,7 +78,7 @@
       {# ── Cantidad ── #}
       <div class="zpd-store-qty">
         <span class="zpd-store-qty-label">Cantidad</span>
-        <div class="z-stepper" data-min="1" {% if not offer.unlimited and offer.stock %}data-max="{{ offer.stock }}"{% else %}data-max="99"{% endif %}>
+        <div class="z-stepper" data-min="1" data-max="{{ not offer.unlimited and offer.stock ? offer.stock : 99 }}">
           <button type="button" data-dec class="z-stepper-btn">−</button>
           <span class="z-stepper-val" id="zpd-qty-val">1</span>
           <button type="button" data-inc class="z-stepper-btn">+</button>
@@ -75,10 +86,11 @@
         </div>
       </div>
 
-      {# ── Botón agregar al carrito ── #}
+      {# ── Botón agregar ── #}
       <button type="button" id="zpd-store-add-btn"
         class="z-btn z-btn-primary zpd-offer-btn"
         data-offer-id="{{ offer.offerId }}"
+        data-price-type-id="{{ firstPrice.priceTypeId }}"
         onclick="zpdStoreAddToCart()">
         Agregar al carrito
       </button>
@@ -96,58 +108,54 @@
 
   <script>
   (function () {
-    var stepper = document.querySelector('#zpd-store-card .z-stepper');
-    if (!stepper) return;
-    var valEl = stepper.querySelector('.z-stepper-val');
-    var hidden = document.getElementById('zpd-qty');
-    var min = parseInt(stepper.dataset.min) || 1;
-    var max = parseInt(stepper.dataset.max) || 99;
-    stepper.querySelector('[data-dec]').addEventListener('click', function () {
-      var v = parseInt(valEl.textContent) - 1;
-      if (v < min) v = min;
-      valEl.textContent = v;
-      if (hidden) hidden.value = v;
-    });
-    stepper.querySelector('[data-inc]').addEventListener('click', function () {
-      var v = parseInt(valEl.textContent) + 1;
-      if (v > max) v = max;
-      valEl.textContent = v;
-      if (hidden) hidden.value = v;
+    var card   = document.getElementById('zpd-store-card');
+    var addBtn = document.getElementById('zpd-store-add-btn');
+
+    // ── Selector de price type ───────────────────────────────
+    card && card.querySelectorAll('input[name="zpd_sidebar_pt"]').forEach(function (radio) {
+      radio.addEventListener('change', function () {
+        // Actualizar precio visible
+        var priceEl = document.getElementById('zpd-sidebar-price');
+        if (priceEl) priceEl.innerHTML = '$' + this.dataset.price + ' <span class="zpd-card-unit">/ unidad</span>';
+
+        // Marcar fila activa
+        card.querySelectorAll('.zpd-store-pt-row').forEach(function (r) { r.classList.remove('is-selected'); });
+        this.closest('label').classList.add('is-selected');
+
+        // Sincronizar price_type_id en el botón
+        if (addBtn) addBtn.dataset.priceTypeId = this.value;
+      });
     });
   })();
 
   function zpdStoreAddToCart() {
-    var btn     = document.getElementById('zpd-store-add-btn');
-    var msgEl   = document.getElementById('zpd-store-msg');
-    var qty     = document.getElementById('zpd-qty')?.value || 1;
-    var offerId = btn.dataset.offerId;
+    var btn         = document.getElementById('zpd-store-add-btn');
+    var msgEl       = document.getElementById('zpd-store-msg');
+    var qtyEl       = document.querySelector('#zpd-store-card .z-stepper-val');
+    var qty         = qtyEl ? parseInt(qtyEl.textContent) || 1 : 1;
+    var offerId     = btn.dataset.offerId;
+    var priceTypeId = btn.dataset.priceTypeId || '';
 
-    btn.disabled = true;
+    btn.disabled    = true;
     btn.textContent = 'Agregando…';
 
-    window.oc.request(btn, '{{ __SELF__ }}::onAddToCart', {
-      data: { offer_id: offerId, quantity: qty },
+    window.oc.request(btn, 'productDetail::onAddToCart', {
+      data: { offer_id: offerId, price_type_id: priceTypeId, quantity: qty },
       success: function (data) {
-        msgEl.textContent = data.message || 'Añadido al carrito.';
-        msgEl.className = 'zpd-store-msg zpd-store-msg--ok';
+        msgEl.textContent   = data.message || 'Añadido al carrito.';
+        msgEl.className     = 'zpd-store-msg zpd-store-msg--ok';
         msgEl.style.display = '';
-        btn.textContent = '✓ Añadido';
-        if (data.cartCount !== undefined) {
-          var badge = document.querySelector('.z-cart-badge');
-          if (badge) badge.textContent = data.cartCount;
-        }
-        setTimeout(function () {
-          btn.disabled = false;
-          btn.textContent = 'Agregar al carrito';
-        }, 2000);
+        btn.textContent     = '✓ Añadido';
+        zCartOnAdd(data);
+        setTimeout(function () { btn.disabled = false; btn.textContent = 'Agregar al carrito'; }, 2000);
       },
       error: function (xhr) {
-        var err = xhr.responseJSON?.error || 'Error al agregar.';
-        msgEl.textContent = err;
-        msgEl.className = 'zpd-store-msg zpd-store-msg--err';
+        var err = (xhr.responseJSON && xhr.responseJSON.error) ? xhr.responseJSON.error : 'Error al agregar.';
+        msgEl.textContent   = err;
+        msgEl.className     = 'zpd-store-msg zpd-store-msg--err';
         msgEl.style.display = '';
-        btn.disabled = false;
-        btn.textContent = 'Agregar al carrito';
+        btn.disabled        = false;
+        btn.textContent     = 'Agregar al carrito';
       }
     });
   }
