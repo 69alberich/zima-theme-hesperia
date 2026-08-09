@@ -1,0 +1,100 @@
+##
+url = "/cuenta/login"
+layout = "default"
+title = "Iniciar sesión"
+
+[authentication]
+redirect = "account"
+==
+{% if user %}{% do redirect('account') %}{% endif %}
+
+<div class="z-auth-page">
+  <div class="z-auth-card">
+
+    <a href="{{ 'index'|page }}" class="z-auth-logo">
+      {% if this.theme.logo %}
+        <img src="{{ this.theme.logo|media }}" alt="{{ this.theme.site_name }}" style="height:36px;width:auto;">
+      {% else %}
+        {{ this.theme.site_name|default('Hesperia') }}
+      {% endif %}
+    </a>
+
+    <h1 class="z-auth-title">Bienvenido de vuelta</h1>
+    <p class="z-auth-subtitle">Accede a tu cuenta para ver tus reservas</p>
+
+    <div id="z-login-alert" class="z-auth-alert z-auth-alert--err" style="display:none"></div>
+
+    <div class="z-auth-field">
+      <label class="z-auth-label" for="login-email">Correo electrónico</label>
+      <input id="login-email" class="z-auth-input" type="email" placeholder="tu@correo.com" autocomplete="email">
+    </div>
+
+    <div class="z-auth-field">
+      <label class="z-auth-label" for="login-pass">Contraseña</label>
+      <input id="login-pass" class="z-auth-input" type="password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+
+    <a href="{{ 'forgot-password'|page }}" class="z-auth-forgot">¿Olvidaste tu contraseña?</a>
+
+    <button id="z-login-btn" class="z-auth-btn" onclick="zLogin()">
+      Iniciar sesión
+    </button>
+
+    <div class="z-auth-footer">
+      ¿Aún no tienes cuenta?
+      <a href="{{ 'register'|page }}">Crear una cuenta</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var zUrlAccount = {{ 'account'|page|json_encode|raw }};
+
+function zLogin() {
+  var btn   = document.getElementById('z-login-btn');
+  var alert = document.getElementById('z-login-alert');
+  var email = document.getElementById('login-email').value.trim();
+  var pass  = document.getElementById('login-pass').value;
+
+  alert.style.display = 'none';
+
+  if (!email || !pass) {
+    alert.textContent    = 'Por favor completa todos los campos.';
+    alert.style.display  = '';
+    return;
+  }
+
+  btn.disabled    = true;
+  btn.textContent = 'Entrando…';
+
+  oc.request(document.body, 'authentication::onLogin', {
+    data: { email: email, password: pass },
+    success: function () { window.location.href = zUrlAccount; },
+    error: function (data, statusCode, xhr) {
+      var env = data && data.$env;
+      var messages = [];
+
+      if (env && env.invalid && Object.keys(env.invalid).length) {
+        for (var field in env.invalid) {
+          var errs = env.invalid[field];
+          (Array.isArray(errs) ? errs : [errs]).forEach(function(m) { messages.push(m); });
+        }
+      } else if (env && env.message) {
+        messages.push(env.message);
+      } else {
+        messages.push('Correo o contraseña incorrectos.');
+      }
+
+      alert.innerHTML     = messages.join('<br>');
+      alert.style.display = '';
+      btn.disabled        = false;
+      btn.textContent     = 'Iniciar sesión';
+    }
+  });
+}
+
+document.getElementById('login-pass').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') zLogin();
+});
+</script>

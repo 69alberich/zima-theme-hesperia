@@ -62,6 +62,19 @@
                     placeholder="Solicitudes especiales, alergias, preferencias…" rows="3"></textarea>
         </section>
 
+        {# ── Registro opcional ── #}
+        {% if not user %}
+        <section class="zco-section zco-section--register">
+          <label class="zco-register-check">
+            <input type="checkbox" name="register_after_checkout" value="1" id="zco-register">
+            <span class="zco-register-label">
+              Crear una cuenta con este correo
+              <span class="zco-register-hint">Recibirás un enlace para establecer tu contraseña y podrás ver el historial de tus reservas.</span>
+            </span>
+          </label>
+        </section>
+        {% endif %}
+
         {# ── Submit ── #}
         <div class="zco-submit-row">
           <button type="submit" class="z-btn z-btn-primary zco-submit-btn" id="zco-submit">

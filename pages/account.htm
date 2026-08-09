@@ -1,0 +1,322 @@
+##
+url = "/cuenta"
+layout = "default"
+title = "Mi cuenta"
+
+[frontAccount]
+==
+{% set tabUrl = 'account'|page %}
+
+<div class="z-acct-page">
+  <div class="z-acct-wrap">
+
+    {# ── Encabezado ── #}
+    <div class="z-acct-header">
+      {% set initials = authUser.full_name|split(' ')|map(w => w|slice(0,1))|join('')|upper|slice(0,2) %}
+      <div class="z-acct-avatar">{{ initials }}</div>
+      <div>
+        <div class="z-acct-name">{{ authUser.full_name }}</div>
+        <div class="z-acct-email">{{ authUser.email }}</div>
+      </div>
+      <button class="z-acct-logout" onclick="zLogout()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Cerrar sesión
+      </button>
+    </div>
+
+    {# ── Tabs ── #}
+    <div class="z-acct-tabs">
+      <a href="{{ tabUrl }}?tab=ordenes"
+         class="z-acct-tab {% if activeTab == 'ordenes' %}is-active{% endif %}">
+        Reservas
+      </a>
+      <a href="{{ tabUrl }}?tab=pagos"
+         class="z-acct-tab {% if activeTab == 'pagos' %}is-active{% endif %}">
+        Pagos
+      </a>
+      <a href="{{ tabUrl }}?tab=perfil"
+         class="z-acct-tab {% if activeTab == 'perfil' %}is-active{% endif %}">
+        Perfil
+      </a>
+    </div>
+
+    {# ══════════════════════════════════════════════════════════════
+       TAB: ÓRDENES
+    ══════════════════════════════════════════════════════════════ #}
+    {% if activeTab == 'ordenes' %}
+
+      {# Conteo por status #}
+      <div class="z-acct-toolbar">
+        {% set orderStatuses = [
+          { key: 'pending',           label: 'Pendientes',          color: '#f59e0b' },
+          { key: 'payment-in-review', label: 'En revisión de pago', color: '#3b82f6' },
+          { key: 'confirmed',         label: 'Confirmadas',         color: '#22c55e' },
+          { key: 'completed',         label: 'Completadas',         color: '#8b5cf6' },
+        ] %}
+        {% for item in orderStatuses %}
+          <div class="z-acct-stat">
+            <span class="z-acct-stat-num" style="color:{{ item.color }}">
+              {{ orderCounts[item.key] ?? 0 }}
+            </span>
+            <span class="z-acct-stat-label">{{ item.label }}</span>
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if orders is not defined or orders.count() == 0 %}
+        <div class="z-acct-empty">
+          <div class="z-acct-empty-icon">🧳</div>
+          <p class="z-acct-empty-msg">Aún no tienes reservas registradas.</p>
+          <a href="{{ 'index'|page }}" class="z-btn z-btn-primary">Explorar productos</a>
+        </div>
+      {% else %}
+        {% for order in orders %}
+          {% set orderCode   = order.code %}
+          {% set statusObj   = statusMap[order.status] ?? null %}
+          {% set statusColor = statusObj ? statusObj.color : '#607d8b' %}
+
+          <div class="z-order-card">
+            <div class="z-order-card-head">
+              <span class="z-order-card-id">{{ orderCode ?? ('ORD-%05d'|format(order.id)) }}</span>
+              <span class="z-order-card-date">{{ order.created_at|date('d M Y') }}</span>
+              {% if statusObj %}
+                <span class="z-order-card-status"
+                      style="background:{{ statusColor }}22; color:{{ statusColor }};">
+                  {{ statusObj.name }}
+                </span>
+              {% endif %}
+            </div>
+
+            <div class="z-order-card-body">
+              {% for item in order.items|slice(0, 3) %}
+                <div class="z-order-card-item">
+                  {% if item.offer.product.preview_image %}
+                    <img class="z-order-card-item-img"
+                         src="{{ item.offer.product.preview_image.getThumb(80, 80, {mode: 'crop'}) }}"
+                         alt="{{ item.offer.product.name }}">
+                  {% else %}
+                    <div class="z-order-card-item-img" style="background:var(--z-muted-bg);"></div>
+                  {% endif %}
+                  <span class="z-order-card-item-name">
+                    {{ item.offer.product.name ?? item.offer_name }}
+                    {% if item.date_from %}
+                      <span style="color:var(--z-text-muted); font-size:.8em;">
+                        · {{ item.date_from|date('d M') }}{% if item.date_to %} → {{ item.date_to|date('d M Y') }}{% endif %}
+                      </span>
+                    {% endif %}
+                    {% if item.quantity > 1 %}
+                      <span style="color:var(--z-text-muted); font-size:.8em;">× {{ item.quantity }}</span>
+                    {% endif %}
+                  </span>
+                  <span class="z-order-card-item-price">
+                    ${{ item.total_price|number_format(2, '.', ',') }}
+                  </span>
+                </div>
+              {% endfor %}
+              {% if order.items|length > 3 %}
+                <div style="font-size:.8125rem; color:var(--z-text-muted); padding-left:52px;">
+                  +{{ order.items|length - 3 }} ítem{{ order.items|length - 3 != 1 ? 's' : '' }} más
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="z-order-card-foot">
+              <span class="z-order-card-total">
+                Total: ${{ order.total_price|number_format(2, '.', ',') }}
+              </span>
+              {% if orderCode %}
+                <a href="{{ 'order'|page({code: orderCode}) }}" class="z-order-card-link">Ver detalle →</a>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+
+        {% if orders.lastPage() > 1 %}
+          <div class="z-pagination">
+            {% if orders.currentPage() > 1 %}
+              <a class="z-page-btn" href="{{ tabUrl }}?tab=ordenes&page={{ orders.currentPage() - 1 }}">← Anterior</a>
+            {% endif %}
+            <span class="z-page-info">Página {{ orders.currentPage() }} de {{ orders.lastPage() }}</span>
+            {% if orders.currentPage() < orders.lastPage() %}
+              <a class="z-page-btn" href="{{ tabUrl }}?tab=ordenes&page={{ orders.currentPage() + 1 }}">Siguiente →</a>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endif %}
+
+    {# ══════════════════════════════════════════════════════════════
+       TAB: PAGOS
+    ══════════════════════════════════════════════════════════════ #}
+    {% elseif activeTab == 'pagos' %}
+
+      {# Conteo por status de pago #}
+      <div class="z-acct-toolbar">
+        {% set paymentStatuses = [
+          { key: 'pending',   label: 'Pendientes',   color: '#f59e0b' },
+          { key: 'in_review', label: 'En revisión',  color: '#3b82f6' },
+          { key: 'confirmed', label: 'Confirmados',  color: '#22c55e' },
+          { key: 'failed',    label: 'Fallidos',     color: '#ef4444' },
+          { key: 'refunded',  label: 'Reembolsados', color: '#8b5cf6' },
+        ] %}
+        {% for item in paymentStatuses %}
+          <div class="z-acct-stat">
+            <span class="z-acct-stat-num" style="color:{{ item.color }}">
+              {{ paymentCounts[item.key] ?? 0 }}
+            </span>
+            <span class="z-acct-stat-label">{{ item.label }}</span>
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if payments is not defined or payments.count() == 0 %}
+        <p style="color:var(--z-text-muted); font-size:.9rem; margin-top:1rem;">
+          No tienes pagos registrados.
+        </p>
+      {% else %}
+        <div class="z-payments-table">
+          <div class="z-payments-head">
+            <span>Orden</span>
+            <span>Método</span>
+            <span>Monto</span>
+            <span>Fecha</span>
+            <span>Estado</span>
+          </div>
+          {% for payment in payments %}
+            <div class="z-payments-row">
+              <span class="z-payments-order">
+                {{ payment.order.code ?? ('ORD-%05d'|format(payment.order_id)) }}
+              </span>
+              <span>{{ payment.paymentMethod.name ?? '—' }}</span>
+              <span class="z-payments-amount">
+                ${{ payment.amount|number_format(2, '.', ',') }}
+                {% if payment.currency %} {{ payment.currency.code }}{% endif %}
+              </span>
+              <span style="color:var(--z-text-muted); font-size:.85em;">
+                {{ payment.created_at|date('d M Y') }}
+              </span>
+              <span class="z-payments-status"
+                    style="background:{{ payment.statusColor }}22; color:{{ payment.statusColor }};">
+                {{ payment.statusLabel }}
+              </span>
+            </div>
+          {% endfor %}
+        </div>
+
+        {% if payments.lastPage() > 1 %}
+          <div class="z-pagination">
+            {% if payments.currentPage() > 1 %}
+              <a class="z-page-btn" href="{{ tabUrl }}?tab=pagos&page={{ payments.currentPage() - 1 }}">← Anterior</a>
+            {% endif %}
+            <span class="z-page-info">Página {{ payments.currentPage() }} de {{ payments.lastPage() }}</span>
+            {% if payments.currentPage() < payments.lastPage() %}
+              <a class="z-page-btn" href="{{ tabUrl }}?tab=pagos&page={{ payments.currentPage() + 1 }}">Siguiente →</a>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endif %}
+
+    {# ══════════════════════════════════════════════════════════════
+       TAB: PERFIL
+    ══════════════════════════════════════════════════════════════ #}
+    {% elseif activeTab == 'perfil' %}
+
+      <div class="z-profile-form">
+        <div id="z-profile-msg"></div>
+
+        <h3 class="z-profile-section">Datos personales</h3>
+
+        <div class="z-profile-row">
+          <div class="z-auth-field">
+            <label class="z-auth-label" for="pf-first">Nombre</label>
+            <input id="pf-first" class="z-auth-input" type="text"
+                   value="{{ authUser.first_name }}" autocomplete="given-name">
+          </div>
+          <div class="z-auth-field">
+            <label class="z-auth-label" for="pf-last">Apellido</label>
+            <input id="pf-last" class="z-auth-input" type="text"
+                   value="{{ authUser.last_name }}" autocomplete="family-name">
+          </div>
+        </div>
+
+        <div class="z-auth-field" style="color:var(--z-text-muted); font-size:.85rem;">
+          Correo: <strong>{{ authUser.email }}</strong>
+        </div>
+
+        <h3 class="z-profile-section" style="margin-top:1.75rem;">Cambiar contraseña</h3>
+        <p style="font-size:.85rem; color:var(--z-text-muted); margin:0 0 .75rem;">
+          Deja en blanco si no deseas cambiarla.
+        </p>
+
+        {# Requisitos según la política configurada en RainLab.User #}
+        <ul class="z-pw-rules">
+          <li>Mínimo {{ pwMinLength }} caracteres</li>
+          {% if pwNeedNumber %}<li>Al menos un número</li>{% endif %}
+          {% if pwNeedMixed %}<li>Mayúsculas y minúsculas</li>{% endif %}
+          {% if pwNeedSymbol %}<li>Al menos un símbolo (!@#$…)</li>{% endif %}
+        </ul>
+
+        <div class="z-auth-field">
+          <label class="z-auth-label" for="pf-pass">Nueva contraseña</label>
+          <input id="pf-pass" class="z-auth-input" type="password"
+                 placeholder="Nueva contraseña" autocomplete="new-password">
+        </div>
+        <div class="z-auth-field">
+          <label class="z-auth-label" for="pf-pass2">Confirmar contraseña</label>
+          <input id="pf-pass2" class="z-auth-input" type="password"
+                 placeholder="Repite la nueva contraseña" autocomplete="new-password">
+        </div>
+
+        <button class="z-auth-btn" style="max-width:200px;" onclick="zSaveProfile()">
+          Guardar cambios
+        </button>
+      </div>
+
+    {% endif %}
+
+  </div>
+</div>
+
+<script>
+var zUrlLogin = {{ 'login'|page|json_encode|raw }};
+
+function zLogout() {
+  oc.request(document.body, 'frontAccount::onLogout', {
+    success: function () { window.location.href = zUrlLogin; }
+  });
+}
+
+function zSaveProfile() {
+  var alertEl = document.getElementById('z-profile-msg');
+  alertEl.innerHTML = '';
+
+  oc.request(document.body, 'frontAccount::onUpdateProfile', {
+    data: {
+      first_name:            document.getElementById('pf-first').value.trim(),
+      last_name:             document.getElementById('pf-last').value.trim(),
+      password:              document.getElementById('pf-pass').value,
+      password_confirmation: document.getElementById('pf-pass2').value,
+    },
+    error: function (data, statusCode, xhr) {
+      var env = data && data.$env;
+      var messages = [];
+
+      if (env && env.invalid && Object.keys(env.invalid).length) {
+        for (var field in env.invalid) {
+          var errs = env.invalid[field];
+          (Array.isArray(errs) ? errs : [errs]).forEach(function(m) { messages.push(m); });
+        }
+      } else if (env && env.message) {
+        messages.push(env.message);
+      } else {
+        messages.push('No se pudo guardar. Intenta nuevamente.');
+      }
+
+      alertEl.innerHTML = '<p class="z-profile-error">' + messages.join('<br>') + '</p>';
+    }
+  });
+}
+</script>

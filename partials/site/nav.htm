@@ -21,6 +21,17 @@
     <!-- Acciones (carrito + sesión) -->
     <div class="z-nav-actions">
 
+      <!-- Usuario autenticado / login -->
+      {% if user %}
+        {% set initials = user.full_name|split(' ')|map(w => w|slice(0,1))|join('')|upper|slice(0,2) %}
+        <a href="{{ 'account'|page }}" class="z-nav-user" title="Mi cuenta">
+          <span class="z-nav-user-avatar">{{ initials }}</span>
+          <span class="z-nav-user-name">{{ user.first_name }}</span>
+        </a>
+      {% else %}
+        <a href="{{ 'login'|page }}" class="z-nav-login">Iniciar sesión</a>
+      {% endif %}
+
       <!-- Botón carrito -->
       <button class="z-cart-btn" data-cart-open aria-label="Abrir carrito">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

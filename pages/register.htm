@@ -1,0 +1,143 @@
+##
+url = "/cuenta/registro"
+layout = "default"
+title = "Crear cuenta"
+
+[registration]
+redirect = "account"
+==
+<?php
+$policy = \RainLab\User\Models\Setting::instance();
+$this['pwMinLength']  = (int)  $policy->password_min_length;
+$this['pwNeedNumber'] = (bool) $policy->password_require_number;
+$this['pwNeedMixed']  = (bool) $policy->password_require_mixed_case;
+$this['pwNeedSymbol'] = (bool) $policy->password_require_symbol;
+?>
+==
+{% if user %}{% do redirect('account') %}{% endif %}
+
+<div class="z-auth-page">
+  <div class="z-auth-card">
+
+    <a href="{{ 'index'|page }}" class="z-auth-logo">
+      {% if this.theme.logo %}
+        <img src="{{ this.theme.logo|media }}" alt="{{ this.theme.site_name }}" style="height:36px;width:auto;">
+      {% else %}
+        {{ this.theme.site_name|default('Hesperia') }}
+      {% endif %}
+    </a>
+
+    <h1 class="z-auth-title">Crear una cuenta</h1>
+    <p class="z-auth-subtitle">Guarda tus reservas y gestiona tu historial</p>
+
+    <div id="z-reg-alert" class="z-auth-alert" style="display:none"></div>
+
+    <div class="z-auth-field">
+      <label class="z-auth-label" for="reg-name">Nombre completo</label>
+      <input id="reg-name" class="z-auth-input" type="text" placeholder="María González" autocomplete="name">
+    </div>
+
+    <div class="z-auth-field">
+      <label class="z-auth-label" for="reg-email">Correo electrónico</label>
+      <input id="reg-email" class="z-auth-input" type="email" placeholder="tu@correo.com" autocomplete="email">
+    </div>
+
+    <div class="z-auth-field">
+      <label class="z-auth-label" for="reg-pass">Contraseña</label>
+      <input id="reg-pass" class="z-auth-input" type="password"
+             placeholder="Contraseña" autocomplete="new-password">
+      <ul class="z-pw-rules">
+        <li>Mínimo {{ pwMinLength }} caracteres</li>
+        {% if pwNeedNumber %}<li>Al menos un número</li>{% endif %}
+        {% if pwNeedMixed %}<li>Mayúsculas y minúsculas</li>{% endif %}
+        {% if pwNeedSymbol %}<li>Al menos un símbolo (!@#$…)</li>{% endif %}
+      </ul>
+    </div>
+
+    <div class="z-auth-field">
+      <label class="z-auth-label" for="reg-pass2">Confirmar contraseña</label>
+      <input id="reg-pass2" class="z-auth-input" type="password" placeholder="Repite tu contraseña" autocomplete="new-password">
+    </div>
+
+    <button id="z-reg-btn" class="z-auth-btn" onclick="zRegister()">
+      Crear cuenta
+    </button>
+
+    <div class="z-auth-footer">
+      ¿Ya tienes cuenta?
+      <a href="{{ 'login'|page }}">Iniciar sesión</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var zUrlAccount = {{ 'account'|page|json_encode|raw }};
+
+function zRegister() {
+  var btn     = document.getElementById('z-reg-btn');
+  var alertEl = document.getElementById('z-reg-alert');
+  var name    = document.getElementById('reg-name').value.trim();
+  var email   = document.getElementById('reg-email').value.trim();
+  var pass    = document.getElementById('reg-pass').value;
+  var pass2   = document.getElementById('reg-pass2').value;
+
+  alertEl.className     = 'z-auth-alert z-auth-alert--err';
+  alertEl.style.display = 'none';
+
+  if (!name || !email || !pass || !pass2) {
+    alertEl.textContent   = 'Por favor completa todos los campos.';
+    alertEl.style.display = '';
+    return;
+  }
+  if (pass !== pass2) {
+    alertEl.textContent   = 'Las contraseñas no coinciden.';
+    alertEl.style.display = '';
+    return;
+  }
+  if (pass.length < 8) {
+    alertEl.textContent   = 'La contraseña debe tener al menos 8 caracteres.';
+    alertEl.style.display = '';
+    return;
+  }
+
+  btn.disabled    = true;
+  btn.textContent = 'Creando cuenta…';
+
+  // Separar nombre completo en first_name / last_name (Registration lo requiere así)
+  var parts     = name.split(' ');
+  var firstName = parts[0];
+  var lastName  = parts.slice(1).join(' ') || '';
+
+  oc.request(document.body, 'registration::onRegister', {
+    data: {
+      first_name: firstName,
+      last_name:  lastName,
+      email:      email,
+      password:   pass,
+      password_confirmation: pass2
+    },
+    success: function () { window.location.href = zUrlAccount; },
+    error: function (data, statusCode, xhr) {
+      var env = data && data.$env;
+      var messages = [];
+
+      if (env && env.invalid && Object.keys(env.invalid).length) {
+        for (var field in env.invalid) {
+          var errs = env.invalid[field];
+          (Array.isArray(errs) ? errs : [errs]).forEach(function(m) { messages.push(m); });
+        }
+      } else if (env && env.message) {
+        messages.push(env.message);
+      } else {
+        messages.push('No se pudo crear la cuenta. Intenta nuevamente.');
+      }
+
+      alertEl.innerHTML     = messages.join('<br>');
+      alertEl.style.display = '';
+      btn.disabled          = false;
+      btn.textContent       = 'Crear cuenta';
+    }
+  });
+}
+</script>
