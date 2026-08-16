@@ -297,8 +297,28 @@ function zpdApplyDates() {
   var currentOffer = new URLSearchParams(window.location.search).get('offer_id');
   if (currentOffer) params.set('offer_id', currentOffer);
 
+  // Recordar que tras la recarga hay que hacer scroll suave a las tarifas
+  try { sessionStorage.setItem('zpdScrollTo', 'zpd-offers'); } catch (e) {}
+
   window.location.href = window.location.pathname + '?' + params.toString();
 }
+
+// ── Scroll suave post-recarga ─────────────────────────────────────────────────
+(function () {
+  var target = null;
+  try { target = sessionStorage.getItem('zpdScrollTo'); } catch (e) {}
+  if (!target) return;
+  try { sessionStorage.removeItem('zpdScrollTo'); } catch (e) {}
+
+  // Esperar a que el layout esté completamente pintado antes de scrollear
+  window.addEventListener('load', function () {
+    var el = document.getElementById(target);
+    if (!el) return;
+    setTimeout(function () {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 120);
+  });
+})();
 
 document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape') zpdCloseModal();

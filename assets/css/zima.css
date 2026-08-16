@@ -38,6 +38,7 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 
 body {
   background: var(--z-bg);
@@ -339,8 +340,13 @@ img { max-width: 100%; display: block; }
 
 /* ── Hero ── */
 .z-hero     { position: relative; height: 560px; overflow: hidden; }
-.z-hero-bg  { position: absolute; inset: 0; background: linear-gradient(135deg,#051C2C 0%,#0d2e44 60%,#1a3d52 100%); }
-.z-hero-dim { position: absolute; inset: 0; background: linear-gradient(180deg,rgba(28,43,42,.1),rgba(28,43,42,.5)); pointer-events: none; }
+.z-hero-bg  {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 80% at 80% 20%, rgba(202,70,45,.18) 0%, transparent 60%),
+    linear-gradient(145deg, #051C2C 0%, #0b2539 45%, #112f4a 100%);
+}
+.z-hero-dim { position: absolute; inset: 0; background: linear-gradient(180deg,rgba(5,28,44,.08),rgba(5,28,44,.52)); pointer-events: none; }
 .z-hero-body {
   position: relative; z-index: 1; height: 100%;
   display: flex; flex-direction: column; justify-content: center; gap: 32px;
@@ -774,7 +780,7 @@ img { max-width: 100%; display: block; }
 .zpd-tab.is-active { color: var(--z-teal); border-bottom-color: var(--z-teal); }
 
 /* ── Sections ── */
-.zpd-section        { margin-bottom: 48px; }
+.zpd-section        { margin-bottom: 48px; scroll-margin-top: calc(var(--z-nav-height, 72px) + 16px); }
 .zpd-section-title  { font-size: 20px; font-weight: 700; margin: 0 0 16px; color: var(--z-text); }
 .zpd-section-sub    { font-size: 14px; color: var(--z-text-muted); margin: -10px 0 20px; }
 
@@ -1492,14 +1498,16 @@ img { max-width: 100%; display: block; }
 }
 .zop-hero:hover .zop-hero-bg { transform: scale(1); }
 .zop-hero-bg--empty {
-  background: linear-gradient(145deg, #0a3b3c 0%, var(--z-teal) 55%, #1a6e50 100%);
+  background:
+    radial-gradient(ellipse 70% 80% at 80% 20%, rgba(202,70,45,.18) 0%, transparent 60%),
+    linear-gradient(145deg, #051C2C 0%, #0b2539 45%, #112f4a 100%);
 }
 /* Vignette en capas */
 .zop-hero-overlay {
   position: absolute; inset: 0;
   background:
-    linear-gradient(to top,  rgba(8,22,20,.92) 0%,  rgba(8,22,20,.4) 45%, transparent 75%),
-    linear-gradient(to right, rgba(8,22,20,.35) 0%, transparent 60%);
+    linear-gradient(to top,  rgba(5,28,44,.94) 0%,  rgba(5,28,44,.45) 45%, transparent 75%),
+    linear-gradient(to right, rgba(5,28,44,.38) 0%, transparent 60%);
 }
 
 .zop-hero-content {

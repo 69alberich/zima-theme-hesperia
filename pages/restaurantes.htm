@@ -11,7 +11,13 @@ per_page = "12"
   <div class="z-wrap">
     <div class="z-oplist-header">
       <h1 class="z-oplist-title">Restaurantes</h1>
-      <p class="z-oplist-subtitle">Gastronomía y sabores del Caribe venezolano</p>
+      <p class="z-oplist-subtitle">
+        {% if activeCategory and activeCategory != 'restaurant' and category %}
+          Mostrando {{ category.name }} en el Caribe venezolano
+        {% else %}
+          Gastronomía y sabores del Caribe venezolano
+        {% endif %}
+      </p>
     </div>
     {% component 'amenityList' %}
   </div>

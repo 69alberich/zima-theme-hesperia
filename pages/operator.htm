@@ -5,4 +5,28 @@ title = "Operador"
 
 [frontOperator]
 ==
+{% set opName = operator.name ?? 'Operador' %}
+{% set opDesc = operator.preview_text ?? ('Conoce a ' ~ opName ~ ' en el Caribe venezolano.') %}
+{% set opImg  = operator.preview_image ? operator.preview_image.path : '' %}
+
+{% put meta %}
+<title>{{ opName }} | {{ this.theme.site_name|default('Zima') }}</title>
+<meta name="description" content="{{ opDesc|striptags|slice(0,160) }}">
+
+{# Open Graph #}
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{ opName }} | {{ this.theme.site_name|default('Zima') }}">
+<meta property="og:description" content="{{ opDesc|striptags|slice(0,200) }}">
+{% if opImg %}<meta property="og:image" content="{{ opImg }}">{% endif %}
+<meta property="og:url" content="{{ this.page.url }}">
+<meta property="og:site_name" content="{{ this.theme.site_name|default('Zima') }}">
+<meta property="og:locale" content="es_VE">
+
+{# Twitter Cards #}
+<meta name="twitter:card" content="{{ opImg ? 'summary_large_image' : 'summary' }}">
+<meta name="twitter:title" content="{{ opName }} | {{ this.theme.site_name|default('Zima') }}">
+<meta name="twitter:description" content="{{ opDesc|striptags|slice(0,160) }}">
+{% if opImg %}<meta name="twitter:image" content="{{ opImg }}">{% endif %}
+{% endput %}
+
 {% partial 'operator/landing' %}

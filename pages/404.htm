@@ -1,0 +1,198 @@
+##
+url = "/404"
+layout = "default"
+title = "Página no encontrada"
+==
+{% put meta %}
+<title>404 — No encontrada | {{ this.theme.site_name|default('Zima') }}</title>
+<meta name="robots" content="noindex,nofollow">
+{% endput %}
+
+<div class="z404-wrap">
+  <div class="z404-bg">
+    <div class="z404-bg-orb z404-bg-orb--1"></div>
+    <div class="z404-bg-orb z404-bg-orb--2"></div>
+    <div class="z404-bg-orb z404-bg-orb--3"></div>
+  </div>
+
+  <div class="z404-content">
+
+    <div class="z404-eyebrow">Error 404</div>
+
+    <div class="z404-number" aria-hidden="true">
+      <span class="z404-digit">4</span>
+      <span class="z404-wave">〰</span>
+      <span class="z404-digit">4</span>
+    </div>
+
+    <h1 class="z404-title">Esta página<br>se perdió en el mar</h1>
+
+    <p class="z404-body">
+      La dirección que buscas no existe o fue movida.<br>
+      Navega de vuelta y encuentra lo que necesitas.
+    </p>
+
+    <div class="z404-actions">
+      <a href="/" class="z404-btn z404-btn--primary">Volver al inicio</a>
+      <a href="/hoteles" class="z404-btn z404-btn--ghost">Ver hoteles</a>
+      <a href="/experiencias" class="z404-btn z404-btn--ghost">Experiencias</a>
+    </div>
+
+  </div>
+</div>
+
+<style>
+/* ── 404 page ─────────────────────────────────────────── */
+.z404-wrap {
+  position: relative;
+  min-height: calc(100vh - var(--z-nav-height, 72px));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--z-bg, #fff);
+  padding: 4rem 1.5rem;
+}
+
+/* Ambient orbs */
+.z404-bg { position: absolute; inset: 0; pointer-events: none; }
+.z404-bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.18;
+  animation: z404float 8s ease-in-out infinite;
+}
+.z404-bg-orb--1 {
+  width: 520px; height: 520px;
+  background: var(--z-teal, #2dd4c4);
+  top: -120px; left: -100px;
+  animation-delay: 0s;
+}
+.z404-bg-orb--2 {
+  width: 380px; height: 380px;
+  background: var(--z-orange, #f4835f);
+  bottom: -80px; right: -60px;
+  animation-delay: -3s;
+}
+.z404-bg-orb--3 {
+  width: 260px; height: 260px;
+  background: var(--z-teal, #2dd4c4);
+  top: 50%; right: 20%;
+  animation-delay: -5.5s;
+  opacity: 0.10;
+}
+
+@keyframes z404float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%       { transform: translateY(-32px) scale(1.05); }
+}
+
+/* Content */
+.z404-content {
+  position: relative;
+  text-align: center;
+  max-width: 600px;
+}
+
+.z404-eyebrow {
+  display: inline-block;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--z-orange, #f4835f);
+  margin-bottom: 1.25rem;
+  padding: 0.35em 0.9em;
+  border: 1px solid currentColor;
+  border-radius: 100px;
+  opacity: 0.85;
+}
+
+.z404-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1em;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(7rem, 22vw, 14rem);
+  font-weight: 700;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--z-teal, #2dd4c4);
+  margin-bottom: 0.15em;
+  user-select: none;
+}
+
+.z404-wave {
+  font-size: 0.55em;
+  color: var(--z-orange, #f4835f);
+  -webkit-text-stroke: 0;
+  opacity: 0.7;
+  animation: z404wave 2.5s ease-in-out infinite;
+}
+@keyframes z404wave {
+  0%, 100% { transform: rotate(-8deg) scaleX(0.9); }
+  50%       { transform: rotate(8deg)  scaleX(1.1); }
+}
+
+.z404-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.7rem, 4vw, 2.4rem);
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--z-text, #1a1a2e);
+  margin-bottom: 1rem;
+}
+
+.z404-body {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--z-text-soft, #6b7280);
+  margin-bottom: 2.5rem;
+}
+
+.z404-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.z404-btn {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0.7em 1.6em;
+  border-radius: 100px;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.z404-btn--primary {
+  background: var(--z-orange, #f4835f);
+  color: #fff;
+  box-shadow: 0 4px 18px rgba(244,131,95,.30);
+}
+.z404-btn--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 26px rgba(244,131,95,.40);
+}
+.z404-btn--ghost {
+  border: 1.5px solid var(--z-teal, #2dd4c4);
+  color: var(--z-teal, #2dd4c4);
+}
+.z404-btn--ghost:hover {
+  background: var(--z-teal, #2dd4c4);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 480px) {
+  .z404-actions { flex-direction: column; align-items: center; }
+  .z404-btn { width: 100%; max-width: 260px; justify-content: center; }
+}
+</style>

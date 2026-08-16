@@ -3,11 +3,48 @@
 {% set p = params ?? {} %}
 
 {# ── Tabs ── #}
-<nav class="zpd-tabs">
-  <a href="#zpd-desc"    class="zpd-tab is-active">Descripción</a>
-  <a href="#zpd-offers"  class="zpd-tab">Tarifas</a>
-  <a href="#zpd-reviews" class="zpd-tab">Reseñas</a>
+<nav class="zpd-tabs" id="zpd-tabs-nav">
+  <a href="#zpd-desc"   class="zpd-tab is-active">Descripción</a>
+  <a href="#zpd-offers" class="zpd-tab">Tarifas</a>
+  {# <a href="#zpd-reviews" class="zpd-tab">Reseñas</a> — pendiente #}
 </nav>
+
+<script>
+(function () {
+  var nav  = document.getElementById('zpd-tabs-nav');
+  if (!nav) return;
+  var tabs = nav.querySelectorAll('.zpd-tab');
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function (e) {
+      // Actualizar clase activa inmediatamente al hacer click
+      tabs.forEach(function (t) { t.classList.remove('is-active'); });
+      tab.classList.add('is-active');
+      // El scroll suave lo hace `scroll-behavior: smooth` del CSS vía href nativo
+    });
+  });
+
+  // Marcar tab activo cuando el usuario llega a la sección por scroll
+  var sections = ['zpd-desc', 'zpd-offers', 'zpd-reviews'].map(function (id) {
+    return document.getElementById(id);
+  }).filter(Boolean);
+
+  if (!sections.length || !window.IntersectionObserver) return;
+
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      var id   = entry.target.id;
+      var link = nav.querySelector('[href="#' + id + '"]');
+      if (!link) return;
+      tabs.forEach(function (t) { t.classList.remove('is-active'); });
+      link.classList.add('is-active');
+    });
+  }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+
+  sections.forEach(function (s) { io.observe(s); });
+})();
+</script>
 
 {# ══ Galería ══ #}
 {% set galleryItems = product.gallery is not empty ? product.gallery : [] %}
@@ -190,7 +227,7 @@
 {# ══ Operador ══ #}
 {% partial 'product/operator-card' %}
 
-{# ══ Ubicación ══ #}
+{# ══ Ubicación — pendiente de implementar ══
 <section class="zpd-section">
   <h2 class="zpd-section-title">Ubicación</h2>
   <div class="zpd-map-placeholder">
@@ -198,8 +235,9 @@
     <span>Próximamente</span>
   </div>
 </section>
+#}
 
-{# ══ Reseñas (mock) ══ #}
+{# ══ Reseñas — pendiente de implementar ══
 <section id="zpd-reviews" class="zpd-section">
   <h2 class="zpd-section-title">Reseñas</h2>
   <div class="zpd-offers-nodates" style="padding: 32px 0">
@@ -207,6 +245,7 @@
     <p class="zpd-offers-nodates-title">Las reseñas estarán disponibles próximamente.</p>
   </div>
 </section>
+#}
 
 {# ══ Lightbox modal ══ #}
 <div id="zpd-lightbox" class="zpd-lb" style="display:none" onclick="if(event.target===this)zpdLbClose()">

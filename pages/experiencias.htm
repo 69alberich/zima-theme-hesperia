@@ -10,7 +10,13 @@ category_code = "experience"
   <div class="z-wrap">
     <div class="z-oplist-header">
       <h1 class="z-oplist-title">Experiencias</h1>
-      <p class="z-oplist-subtitle">Actividades, tours y vivencias únicas en el Caribe venezolano</p>
+      <p class="z-oplist-subtitle">
+        {% if activeCategory and activeCategory != 'experience' and category %}
+          Mostrando {{ category.name }} en el Caribe venezolano
+        {% else %}
+          Actividades, tours y vivencias únicas en el Caribe venezolano
+        {% endif %}
+      </p>
     </div>
     {% component 'amenityList' %}
   </div>

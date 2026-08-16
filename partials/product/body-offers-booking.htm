@@ -137,7 +137,8 @@
                 <span class="zpd-offer-selected-pill">✓ Seleccionada</span>
               {% else %}
                 <a href="?{{ baseQuery }}&offer_id={{ offer.offerId }}"
-                   class="z-btn z-btn-teal z-btn--sm zpd-offer-btn">
+                   class="z-btn z-btn-teal z-btn--sm zpd-offer-btn"
+                   onclick="try{sessionStorage.setItem('zpdScrollTo','zpd-booking-card')}catch(e){}">
                   Seleccionar
                 </a>
               {% endif %}

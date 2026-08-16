@@ -5,6 +5,31 @@ title = "Detalle del producto"
 
 [productDetail]
 ==
+{% set pdName = product.name ?? 'Producto' %}
+{% set pdDesc = product.preview_text ?? ('Descubre ' ~ pdName ~ ' en el Caribe venezolano.') %}
+{% set pdImg  = product.preview_image ? product.preview_image.path : '' %}
+{% set pdBrand = (product.brand is not empty and product.brand) ? (' — ' ~ product.brand.name) : '' %}
+
+{% put meta %}
+<title>{{ pdName }}{{ pdBrand }} | {{ this.theme.site_name|default('Zima') }}</title>
+<meta name="description" content="{{ pdDesc|striptags|slice(0,160) }}">
+
+{# Open Graph #}
+<meta property="og:type" content="product">
+<meta property="og:title" content="{{ pdName }}{{ pdBrand }} | {{ this.theme.site_name|default('Zima') }}">
+<meta property="og:description" content="{{ pdDesc|striptags|slice(0,200) }}">
+{% if pdImg %}<meta property="og:image" content="{{ pdImg }}">{% endif %}
+<meta property="og:url" content="{{ this.page.url }}">
+<meta property="og:site_name" content="{{ this.theme.site_name|default('Zima') }}">
+<meta property="og:locale" content="es_VE">
+
+{# Twitter Cards #}
+<meta name="twitter:card" content="{{ pdImg ? 'summary_large_image' : 'summary' }}">
+<meta name="twitter:title" content="{{ pdName }}{{ pdBrand }} | {{ this.theme.site_name|default('Zima') }}">
+<meta name="twitter:description" content="{{ pdDesc|striptags|slice(0,160) }}">
+{% if pdImg %}<meta name="twitter:image" content="{{ pdImg }}">{% endif %}
+{% endput %}
+
 <div class="zpd-page">
 
   {# ── Hero ── #}

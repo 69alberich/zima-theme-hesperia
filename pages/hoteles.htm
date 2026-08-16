@@ -12,7 +12,13 @@ category_code = "hotel"
       <h1 class="z-oplist-title">
         {% if category %}{{ category.name }}{% else %}Hoteles & Posadas{% endif %}
       </h1>
-      <p class="z-oplist-subtitle">Alojamientos seleccionados en el Caribe venezolano</p>
+      <p class="z-oplist-subtitle">
+        {% if activeCategory and activeCategory != 'hotel' and category %}
+          Mostrando {{ category.name }} en el Caribe venezolano
+        {% else %}
+          Alojamientos seleccionados en el Caribe venezolano
+        {% endif %}
+      </p>
     </div>
     {% component 'operatorList' %}
   </div>

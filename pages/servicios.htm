@@ -15,7 +15,11 @@ per_page = "12"
         {% if category %}{{ category.name }}{% else %}Servicios{% endif %}
       </h1>
       <p class="z-oplist-subtitle">
-        Actividades y servicios disponibles en el Caribe venezolano
+        {% if category %}
+          {{ category.name }} en el Caribe venezolano
+        {% else %}
+          Actividades y servicios disponibles en el Caribe venezolano
+        {% endif %}
       </p>
     </div>
     {% component 'amenityList' %}
