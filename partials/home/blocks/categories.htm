@@ -1,0 +1,28 @@
+{# block.section_title, block.items[] → name, description, url, icon_type #}
+{% set iconMap = {
+  'hotel':        '🏨',
+  'nautica':      '⛵',
+  'experiencias': '🌞',
+  'tours':        '🗺',
+  'food':         '🍽',
+  'other':        '⭐'
+} %}
+
+{% if block.items is not empty %}
+<section class="z-section">
+  <h2 class="z-categories-title">{{ block.section_title ?: 'Explora por categoría' }}</h2>
+  <div class="z-categories-grid">
+    {% for cat in block.items %}
+    {% if cat.url %}
+    <a href="{{ cat.url }}" class="z-card z-category-card">
+    {% else %}
+    <div class="z-card z-category-card">
+    {% endif %}
+      <div class="z-icon-circle z-category-icon">{{ iconMap[cat.icon_type] ?? '⭐' }}</div>
+      <div class="z-category-name">{{ cat.name }}</div>
+      <div class="z-category-desc">{{ cat.description }}</div>
+    {% if cat.url %}</a>{% else %}</div>{% endif %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}

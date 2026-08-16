@@ -1,20 +1,20 @@
+{% set stats = tailor.global('hesperia/home-stats') %}
+
 <div class="z-stats-bar">
   <div class="z-stats-bar-inner">
-    <div>
-      <div class="z-stat-num">6</div>
-      <div class="z-stat-lbl">destinos en el Caribe venezolano</div>
-    </div>
-    <div>
-      <div class="z-stat-num">4.8★</div>
-      <div class="z-stat-lbl">calificación promedio</div>
-    </div>
-    <div>
-      <div class="z-stat-num">24/7</div>
-      <div class="z-stat-lbl">soporte durante tu viaje</div>
-    </div>
-    <div>
-      <div class="z-stat-num">48h</div>
-      <div class="z-stat-lbl">de cancelación gratuita</div>
-    </div>
+    {% if stats.items %}
+      {% for item in stats.items %}
+      <div>
+        <div class="z-stat-num">{{ item.number }}</div>
+        <div class="z-stat-lbl">{{ item.label }}</div>
+      </div>
+      {% endfor %}
+    {% else %}
+      {# Fallback por si aún no hay datos en Tailor #}
+      <div><div class="z-stat-num">6</div><div class="z-stat-lbl">destinos en el Caribe venezolano</div></div>
+      <div><div class="z-stat-num">4.8★</div><div class="z-stat-lbl">calificación promedio</div></div>
+      <div><div class="z-stat-num">24/7</div><div class="z-stat-lbl">soporte durante tu viaje</div></div>
+      <div><div class="z-stat-num">48h</div><div class="z-stat-lbl">de cancelación gratuita</div></div>
+    {% endif %}
   </div>
 </div>

@@ -59,6 +59,14 @@
 
     {% partial 'operator/highlights' %}
     {% partial 'operator/gallery' %}
+
+    {% if operator.description is not empty %}
+    <section class="zop-section zop-description-section">
+      <h2 class="zop-section-title">Descripción</h2>
+      <div class="zop-description-body">{{ operator.description|raw }}</div>
+    </section>
+    {% endif %}
+
     {% partial 'operator/attributes' %}
 
     {% if operator.catalogs is not empty %}

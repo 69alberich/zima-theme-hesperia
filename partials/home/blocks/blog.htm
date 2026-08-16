@@ -1,0 +1,76 @@
+{# block.section_eyebrow, block.section_title, block.view_all_url
+   block.fp_title, block.fp_excerpt, block.fp_category, block.fp_date, block.fp_url, block.fp_image
+   block.other_posts[] → title, category, url, image #}
+
+{% if block.fp_title or block.other_posts is not empty %}
+{% set uid = block.id ?? loop.index %}
+{% set featImg = block.fp_image is iterable ? block.fp_image|first : block.fp_image %}
+
+<section class="z-section z-section--bottom-lg">
+
+  <div class="z-blog-header">
+    <div>
+      {% if block.section_eyebrow %}
+        <div class="z-eyebrow">{{ block.section_eyebrow }}</div>
+      {% endif %}
+      <h2 class="z-catalog-title">{{ block.section_title ?: 'Del blog' }}</h2>
+    </div>
+    {% if block.view_all_url %}
+      <a href="{{ block.view_all_url }}" class="z-blog-view-all">Ver todas las publicaciones →</a>
+    {% endif %}
+  </div>
+
+  {# ── Post destacado ── #}
+  {% if block.fp_title %}
+  {% if block.fp_url %}
+  <a href="{{ block.fp_url }}" class="z-blog-featured">
+  {% else %}
+  <div class="z-blog-featured">
+  {% endif %}
+    <div class="z-blog-feat-thumb"
+      {% if featImg %}style="background-image:url('{{ featImg.path }}'); background-size:cover; background-position:center;"{% endif %}>
+    </div>
+    <div class="z-blog-feat-body">
+      <div class="z-blog-meta">
+        {% if block.fp_category %}
+          <span class="z-blog-cat">{{ block.fp_category }}</span>
+        {% endif %}
+        {% if block.fp_date %}
+          <span class="z-blog-date">{{ block.fp_date }}</span>
+        {% endif %}
+      </div>
+      <div class="z-blog-feat-title">{{ block.fp_title }}</div>
+      {% if block.fp_excerpt %}
+        <div class="z-blog-feat-excerpt">{{ block.fp_excerpt }}</div>
+      {% endif %}
+      <span class="z-blog-readmore">Leer más →</span>
+    </div>
+  {% if block.fp_url %}</a>{% else %}</div>{% endif %}
+  {% endif %}
+
+  {# ── Posts secundarios ── #}
+  {% if block.other_posts is not empty and block.other_posts|length > 0 %}
+  <div class="z-blog-grid">
+    {% for post in block.other_posts %}
+    {% set postImg = post.image is iterable ? post.image|first : post.image %}
+    {% if post.url %}
+    <a href="{{ post.url }}" class="z-blog-card">
+    {% else %}
+    <div class="z-blog-card">
+    {% endif %}
+      <div class="z-blog-card-thumb"
+        {% if postImg %}style="background-image:url('{{ postImg.path }}'); background-size:cover; background-position:center;"{% endif %}>
+      </div>
+      <div class="z-blog-card-body">
+        {% if post.category %}
+          <div class="z-blog-card-cat">{{ post.category }}</div>
+        {% endif %}
+        <div class="z-blog-card-title">{{ post.title }}</div>
+      </div>
+    {% if post.url %}</a>{% else %}</div>{% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+
+</section>
+{% endif %}

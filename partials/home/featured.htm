@@ -1,59 +1,70 @@
+{% set featured = tailor.collection('hesperia/home-featured').get() %}
+
+{% set categoryBadge = {
+  'hotel':        '🏨 Hotel',
+  'nautica':      '⛵ Náutica',
+  'experiencias': '🤿 Experiencia'
+} %}
+
+{% set thumbClass = {
+  'hotel':        'z-thumb-hotel',
+  'nautica':      'z-thumb-nautica',
+  'experiencias': 'z-thumb-exp'
+} %}
+
 <section class="z-section">
-  <div class="z-eyebrow">Ofertas destacadas</div>
-  <h2 class="z-featured-title">No te lo pierdas esta temporada</h2>
+  {% if featured|length %}
+    {% set meta = featured|first %}
+    <div class="z-eyebrow">{{ meta.section_eyebrow ?? 'Ofertas destacadas' }}</div>
+    <h2 class="z-featured-title">{{ meta.section_title ?? 'No te lo pierdas esta temporada' }}</h2>
+  {% else %}
+    <div class="z-eyebrow">Ofertas destacadas</div>
+    <h2 class="z-featured-title">No te lo pierdas esta temporada</h2>
+  {% endif %}
+
   <div class="z-featured-grid">
-
-    <a href="/hoteles/casa-la-laguna" class="z-card z-feat-card">
-      <div class="z-feat-thumb z-thumb-hotel">
-        <span class="z-pill z-thumb-badge">🏨 Hotel</span>
-      </div>
-      <div class="z-feat-body">
-        <div class="z-feat-name">Casa La Laguna</div>
-        <div class="z-feat-location">Los Roques, Venezuela</div>
-        <div class="z-feat-pricing">
-          <div class="z-feat-price-group">
-            <span class="z-feat-price-orig">$180</span>
-            <span class="z-feat-price">$140</span>
-            <span class="z-feat-price-unit">/noche</span>
-          </div>
-          <span class="z-btn z-btn-primary z-btn--sm">Reservar</span>
+    {% if featured|length %}
+      {% for item in featured %}
+      <a href="{{ item.url }}" class="z-card z-feat-card">
+        <div class="z-feat-thumb {{ thumbClass[item.category] ?? 'z-thumb-hotel' }}"
+          {% if item.image %}style="background-image:url('{{ item.image.path }}'); background-size:cover; background-position:center;"{% endif %}>
+          <span class="z-pill z-thumb-badge">{{ categoryBadge[item.category] ?? item.category }}</span>
         </div>
-      </div>
-    </a>
-
-    <a href="/nautica/catamaranvenezuela" class="z-card z-feat-card">
-      <div class="z-feat-thumb z-thumb-nautica">
-        <span class="z-pill z-thumb-badge">⛵ Náutica</span>
-      </div>
-      <div class="z-feat-body">
-        <div class="z-feat-name">Catamarán Brisa</div>
-        <div class="z-feat-location">Morrocoy, Venezuela</div>
-        <div class="z-feat-pricing">
-          <div class="z-feat-price-group">
-            <span class="z-feat-price">$320</span>
-            <span class="z-feat-price-unit">/día</span>
+        <div class="z-feat-body">
+          <div class="z-feat-name">{{ item.name }}</div>
+          <div class="z-feat-location">{{ item.location }}</div>
+          <div class="z-feat-pricing">
+            <div class="z-feat-price-group">
+              {% if item.price_original %}
+                <span class="z-feat-price-orig">{{ item.price_original }}</span>
+              {% endif %}
+              <span class="z-feat-price">{{ item.price }}</span>
+              <span class="z-feat-price-unit">{{ item.price_unit }}</span>
+            </div>
+            <span class="z-btn z-btn-primary z-btn--sm">Reservar</span>
           </div>
-          <span class="z-btn z-btn-primary z-btn--sm">Reservar</span>
         </div>
-      </div>
-    </a>
-
-    <a href="/experiencias/snorkel-los-roques" class="z-card z-feat-card">
-      <div class="z-feat-thumb z-thumb-exp">
-        <span class="z-pill z-thumb-badge">🤿 Experiencia</span>
-      </div>
-      <div class="z-feat-body">
-        <div class="z-feat-name">Snorkel en Los Roques</div>
-        <div class="z-feat-location">Los Roques, Venezuela</div>
-        <div class="z-feat-pricing">
-          <div class="z-feat-price-group">
-            <span class="z-feat-price">$45</span>
-            <span class="z-feat-price-unit">/persona</span>
+      </a>
+      {% endfor %}
+    {% else %}
+      {# Fallback hardcodeado mientras no haya datos en Tailor #}
+      <a href="/hoteles/casa-la-laguna" class="z-card z-feat-card">
+        <div class="z-feat-thumb z-thumb-hotel">
+          <span class="z-pill z-thumb-badge">🏨 Hotel</span>
+        </div>
+        <div class="z-feat-body">
+          <div class="z-feat-name">Casa La Laguna</div>
+          <div class="z-feat-location">Los Roques, Venezuela</div>
+          <div class="z-feat-pricing">
+            <div class="z-feat-price-group">
+              <span class="z-feat-price-orig">$180</span>
+              <span class="z-feat-price">$140</span>
+              <span class="z-feat-price-unit">/noche</span>
+            </div>
+            <span class="z-btn z-btn-primary z-btn--sm">Reservar</span>
           </div>
-          <span class="z-btn z-btn-primary z-btn--sm">Reservar</span>
         </div>
-      </div>
-    </a>
-
+      </a>
+    {% endif %}
   </div>
 </section>

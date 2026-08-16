@@ -45,7 +45,7 @@
       <div class="zpd-modal-occ">
 
         {# Condiciones de capacidad #}
-        {% if cfg and cfg.has_capacity %}
+        {% if cfg and cfg.max_capacity > 0 %}
           <div class="zpd-modal-conditions">
             <div class="zpd-modal-cond-item">
               <span class="zpd-modal-cond-icon">👥</span>

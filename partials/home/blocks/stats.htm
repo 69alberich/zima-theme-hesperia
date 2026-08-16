@@ -1,0 +1,13 @@
+{# block.items[] → number, label #}
+{% if block.items is not empty %}
+<div class="z-stats-bar">
+  <div class="z-stats-bar-inner">
+    {% for item in block.items %}
+    <div>
+      <div class="z-stat-num">{{ item.number }}</div>
+      <div class="z-stat-lbl">{{ item.label }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}

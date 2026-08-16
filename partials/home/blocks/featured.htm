@@ -1,0 +1,93 @@
+{# block.section_eyebrow, block.section_title, block.items[] → name, location, url, category, price, price_original, price_unit, image #}
+{% set categoryBadge = {
+  'hotel':        '🏨 Hotel',
+  'nautica':      '⛵ Náutica',
+  'experiencias': '🤿 Experiencia'
+} %}
+
+{% set thumbClass = {
+  'hotel':        'z-thumb-cat-1',
+  'nautica':      'z-thumb-cat-2',
+  'experiencias': 'z-thumb-cat-3'
+} %}
+
+{% set uid = block.id ?? loop.index %}
+
+{% if block.items is not empty %}
+<section class="z-section z-section--bottom-lg">
+
+  <div class="z-catalog-header">
+    <div>
+      {% if block.section_eyebrow %}
+        <div class="z-eyebrow">{{ block.section_eyebrow }}</div>
+      {% endif %}
+      <h2 class="z-catalog-title">{{ block.section_title ?: 'Ofertas destacadas' }}</h2>
+    </div>
+
+    {% if block.layout == 'tabs' %}
+    <div class="z-tabs" id="feat-tabs-{{ uid }}">
+      <button class="z-tab is-active" data-filter="all">Todo</button>
+      {% set seen = [] %}
+      {% for item in block.items %}
+        {% if item.category not in seen %}
+          {% set seen = seen|merge([item.category]) %}
+          <button class="z-tab" data-filter="{{ item.category }}">
+            {{ categoryBadge[item.category] ?? item.category }}
+          </button>
+        {% endif %}
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="z-catalog-grid z-featured-grid" id="feat-grid-{{ uid }}">
+    {% for item in block.items %}
+    {% if item.url %}
+    <a href="{{ item.url }}" class="z-card z-catalog-card" data-filter-item="{{ item.category }}">
+    {% else %}
+    <div class="z-card z-catalog-card" data-filter-item="{{ item.category }}">
+    {% endif %}
+      {% set img = item.image is iterable ? item.image|first : item.image %}
+      <div class="z-catalog-thumb {{ thumbClass[item.category] ?? 'z-thumb-cat-1' }}"
+        {% if img %}style="background-image:url('{{ img.path }}'); background-size:cover; background-position:center;"{% endif %}>
+        <span class="z-pill z-thumb-badge">{{ categoryBadge[item.category] ?? item.category }}</span>
+      </div>
+      <div class="z-catalog-body">
+        <div class="z-catalog-name">{{ item.name }}</div>
+        {% if item.location %}
+          <div class="z-catalog-location">{{ item.location }}</div>
+        {% endif %}
+        <div class="z-catalog-price-row">
+          {% if item.price_original %}
+            <span class="z-feat-price-orig">{{ item.price_original }}</span>
+          {% endif %}
+          <span class="z-catalog-price">{{ item.price }}</span>
+          <span class="z-catalog-price-unit">{{ item.price_unit }}</span>
+        </div>
+      </div>
+    {% if item.url %}</a>{% else %}</div>{% endif %}
+    {% endfor %}
+  </div>
+
+</section>
+
+{% if block.layout == 'tabs' %}
+<script>
+(function () {
+  var tabs  = document.querySelectorAll('#feat-tabs-{{ uid }} .z-tab');
+  var cards = document.querySelectorAll('#feat-grid-{{ uid }} .z-catalog-card');
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      tabs.forEach(function (t) { t.classList.remove('is-active'); });
+      tab.classList.add('is-active');
+      var filter = tab.dataset.filter;
+      cards.forEach(function (card) {
+        card.style.display = (filter === 'all' || card.dataset.filterItem === filter) ? '' : 'none';
+      });
+    });
+  });
+})();
+</script>
+{% endif %}
+{% endif %}

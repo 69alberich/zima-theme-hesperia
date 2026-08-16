@@ -1,40 +1,73 @@
+{% set categories = tailor.collection('hesperia/home-categories').get() %}
+
+{% macro category_icon(type) %}
+  {% if type == 'hotel' %}
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--z-teal)" stroke-width="1.8">
+      <path d="M3 18v-7a2 2 0 012-2h14a2 2 0 012 2v7"/>
+      <path d="M3 18h18M3 11V7a1 1 0 011-1h4a1 1 0 011 1v1"/>
+    </svg>
+  {% elseif type == 'nautica' %}
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--z-teal)" stroke-width="1.8">
+      <path d="M3 17l1.5-6h15L21 17"/>
+      <path d="M12 11V3l4 3"/>
+      <path d="M2 20c2 1.2 4 1.2 6 0s4-1.2 6 0 4 1.2 6 0"/>
+    </svg>
+  {% elseif type == 'experiencias' %}
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--z-teal)" stroke-width="1.8">
+      <circle cx="12" cy="12" r="4.5"/>
+      <path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/>
+    </svg>
+  {% elseif type == 'tours' %}
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--z-teal)" stroke-width="1.8">
+      <path d="M3 12h18M3 6l9-3 9 3M3 18l9 3 9-3"/>
+    </svg>
+  {% elseif type == 'food' %}
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--z-teal)" stroke-width="1.8">
+      <path d="M3 3h4v10a2 2 0 01-2 2H5a2 2 0 01-2-2V3zM21 3v7a3 3 0 01-3 3h-1v8h-2V3h6z"/>
+    </svg>
+  {% else %}
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--z-teal)" stroke-width="1.8">
+      <circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/>
+    </svg>
+  {% endif %}
+{% endmacro %}
+
 <section class="z-section">
-  <h2 class="z-categories-title">Explora por categoría</h2>
+  {% if categories|length %}
+    {% set firstItem = categories|first %}
+    <h2 class="z-categories-title">{{ firstItem.title ?? 'Explora por categoría' }}</h2>
+  {% else %}
+    <h2 class="z-categories-title">Explora por categoría</h2>
+  {% endif %}
+
   <div class="z-categories-grid">
-
-    <a href="/hoteles" class="z-card z-category-card">
-      <div class="z-icon-circle z-category-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--z-teal)" stroke-width="1.8">
-          <path d="M3 18v-7a2 2 0 012-2h14a2 2 0 012 2v7"/>
-          <path d="M3 18h18M3 11V7a1 1 0 011-1h4a1 1 0 011 1v1"/>
-        </svg>
-      </div>
-      <div class="z-category-name">Hoteles y Posadas</div>
-      <div class="z-category-desc">Villas y posadas frente al mar</div>
-    </a>
-
-    <a href="/nautica" class="z-card z-category-card">
-      <div class="z-icon-circle z-category-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--z-teal)" stroke-width="1.8">
-          <path d="M3 17l1.5-6h15L21 17"/>
-          <path d="M12 11V3l4 3"/>
-          <path d="M2 20c2 1.2 4 1.2 6 0s4-1.2 6 0 4 1.2 6 0"/>
-        </svg>
-      </div>
-      <div class="z-category-name">Náutica</div>
-      <div class="z-category-desc">Lanchas y catamaranes por día</div>
-    </a>
-
-    <a href="/experiencias" class="z-card z-category-card">
-      <div class="z-icon-circle z-category-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--z-teal)" stroke-width="1.8">
-          <circle cx="12" cy="12" r="4.5"/>
-          <path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/>
-        </svg>
-      </div>
-      <div class="z-category-name">Experiencias</div>
-      <div class="z-category-desc">Tours, equipo y detalles de playa</div>
-    </a>
-
+    {% if categories|length %}
+      {% for cat in categories %}
+      <a href="{{ cat.url }}" class="z-card z-category-card">
+        <div class="z-icon-circle z-category-icon">
+          {{ _self.category_icon(cat.icon_type) }}
+        </div>
+        <div class="z-category-name">{{ cat.name }}</div>
+        <div class="z-category-desc">{{ cat.description }}</div>
+      </a>
+      {% endfor %}
+    {% else %}
+      {# Fallback hardcodeado #}
+      <a href="/hoteles" class="z-card z-category-card">
+        <div class="z-icon-circle z-category-icon">{{ _self.category_icon('hotel') }}</div>
+        <div class="z-category-name">Hoteles y Posadas</div>
+        <div class="z-category-desc">Villas y posadas frente al mar</div>
+      </a>
+      <a href="/nautica" class="z-card z-category-card">
+        <div class="z-icon-circle z-category-icon">{{ _self.category_icon('nautica') }}</div>
+        <div class="z-category-name">Náutica</div>
+        <div class="z-category-desc">Lanchas y catamaranes por día</div>
+      </a>
+      <a href="/experiencias" class="z-card z-category-card">
+        <div class="z-icon-circle z-category-icon">{{ _self.category_icon('experiencias') }}</div>
+        <div class="z-category-name">Experiencias</div>
+        <div class="z-category-desc">Tours, equipo y detalles de playa</div>
+      </a>
+    {% endif %}
   </div>
 </section>

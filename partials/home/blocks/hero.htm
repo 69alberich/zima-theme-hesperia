@@ -1,0 +1,15 @@
+{# block.eyebrow, block.title, block.subtitle, block.background_image #}
+<div class="z-hero">
+  <div class="z-hero-bg"{% if block.background_image %} style="background-image: url('{{ block.background_image.path }}')"{% endif %}></div>
+  <div class="z-hero-dim"></div>
+  <div class="z-wrap z-hero-body">
+    <div class="z-hero-text">
+      <div class="z-hero-eyebrow">{{ block.eyebrow ?: 'Caribe venezolano' }}</div>
+      <h1 class="z-hero-title">{{ block.title ?: 'Tu escapada frente al mar empieza aquí' }}</h1>
+      <p class="z-hero-subtitle">
+        {{ block.subtitle ?: 'Hoteles, embarcaciones y experiencias en Los Roques, Morrocoy, Choroní y más — todo en una sola reserva.' }}
+      </p>
+    </div>
+    {% partial 'home/search-box' %}
+  </div>
+</div>
