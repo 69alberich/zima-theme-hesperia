@@ -1,8 +1,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{% if this.page.meta_title %}{{ this.page.meta_title }} — {{ this.theme.site_name|default('Hesperia') }}{% else %}{{ this.theme.site_name|default('Hesperia Venezuela') }} — {{ this.theme.tagline|default('Make it exceptional.') }}{% endif %}</title>
-<meta name="description" content="{{ this.page.meta_description }}">
-{% if this.theme.og_image %}<meta property="og:image" content="{{ this.theme.og_image|media }}">{% endif %}
+
+{# Bloque de meta tags — las páginas pueden sobreescribirlo con {% put meta %} #}
 {% meta %}
 
 <!-- CSS base -->

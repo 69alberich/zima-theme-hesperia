@@ -10,8 +10,32 @@ redirect = 1
 destinationPage = "search"
 
 [section landing]
-handle = "Hesperia\ZimaLanding"
+handle = "Zima\Landing"
+entrySlug = "home"
 ==
+{% if landing %}
+{% put meta %}
+<title>{{ landing.meta_title ?: this.page.meta_title }} — {{ this.theme.site_name|default('Zima') }}</title>
+<meta name="description" content="{{ landing.meta_description ?: this.page.meta_description }}">
+{% if landing.og_image %}
+{% set ogImg = landing.og_image is iterable ? landing.og_image|first : landing.og_image %}
+<meta property="og:image" content="{{ ogImg.path }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+{% endif %}
+<meta property="og:title" content="{{ landing.meta_title ?: this.page.meta_title }}">
+<meta property="og:description" content="{{ landing.meta_description ?: this.page.meta_description }}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ this.page.baseFileName|page }}">
+<meta property="og:site_name" content="{{ this.theme.site_name|default('Zima') }}">
+<meta property="og:locale" content="es_VE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ landing.meta_title ?: this.page.meta_title }}">
+<meta name="twitter:description" content="{{ landing.meta_description ?: this.page.meta_description }}">
+{% if landing.og_image %}<meta name="twitter:image" content="{{ ogImg.path }}">{% endif %}
+{% endput %}
+{% endif %}
+
 {% for block in landing.blocks %}
     {% partial 'home/blocks/' ~ block.type block=block %}
 {% endfor %}

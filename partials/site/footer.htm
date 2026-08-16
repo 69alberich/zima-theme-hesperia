@@ -31,37 +31,71 @@
       </div>
     </div>
 
-    <!-- Explorar -->
-    <div>
-      <div class="z-footer-col-title">Explorar</div>
-      <nav class="z-footer-nav">
-        <a href="/hoteles"      class="z-footer-link">Hoteles</a>
-        <a href="/restaurantes" class="z-footer-link">Restaurantes</a>
-        <a href="/experiencias" class="z-footer-link">Experiencias</a>
-      </nav>
-    </div>
+    <!-- Columna 1 -->
+    {% if config and config.footer_col1_links %}
+      <div>
+        <div class="z-footer-col-title">{{ config.footer_col1_title }}</div>
+        <nav class="z-footer-nav">
+          {% for item in config.footer_col1_links %}
+            <a href="{{ item.url }}" class="z-footer-link">{{ item.label }}</a>
+          {% endfor %}
+        </nav>
+      </div>
+    {% else %}
+      <div>
+        <div class="z-footer-col-title">Explorar</div>
+        <nav class="z-footer-nav">
+          <a href="/hoteles"      class="z-footer-link">Hoteles</a>
+          <a href="/restaurantes" class="z-footer-link">Restaurantes</a>
+          <a href="/experiencias" class="z-footer-link">Experiencias</a>
+        </nav>
+      </div>
+    {% endif %}
 
-    <!-- Servicios -->
-    <div>
-      <div class="z-footer-col-title">Servicios</div>
-      <nav class="z-footer-nav">
-        <a href="#" class="z-footer-link">Conferencias</a>
-        <a href="#" class="z-footer-link">Bodas & Eventos</a>
-        <a href="#" class="z-footer-link">Spa & Bienestar</a>
-        <a href="#" class="z-footer-link">Gastronomía</a>
-      </nav>
-    </div>
+    <!-- Columna 2 -->
+    {% if config and config.footer_col2_links %}
+      <div>
+        <div class="z-footer-col-title">{{ config.footer_col2_title }}</div>
+        <nav class="z-footer-nav">
+          {% for item in config.footer_col2_links %}
+            <a href="{{ item.url }}" class="z-footer-link">{{ item.label }}</a>
+          {% endfor %}
+        </nav>
+      </div>
+    {% else %}
+      <div>
+        <div class="z-footer-col-title">Servicios</div>
+        <nav class="z-footer-nav">
+          <a href="#" class="z-footer-link">Conferencias</a>
+          <a href="#" class="z-footer-link">Bodas & Eventos</a>
+          <a href="#" class="z-footer-link">Spa & Bienestar</a>
+          <a href="#" class="z-footer-link">Gastronomía</a>
+        </nav>
+      </div>
+    {% endif %}
 
-    <!-- Ayuda -->
-    <div>
-      <div class="z-footer-col-title">Ayuda</div>
-      <nav class="z-footer-nav">
-        <a href="/contacto"    class="z-footer-link">Contacto</a>
-        <a href="/mis-ordenes" class="z-footer-link">Mis reservas</a>
-        <a href="#"            class="z-footer-link">Política de cancelación</a>
-        <a href="#"            class="z-footer-link">Términos y condiciones</a>
-      </nav>
-    </div>
+    <!-- Columna 3 -->
+    {% if config and config.footer_col3_links %}
+      <div>
+        <div class="z-footer-col-title">{{ config.footer_col3_title }}</div>
+        <nav class="z-footer-nav">
+          {% for item in config.footer_col3_links %}
+            <a href="{{ item.url }}" class="z-footer-link">{{ item.label }}</a>
+          {% endfor %}
+        </nav>
+      </div>
+    {% else %}
+      <div>
+        <div class="z-footer-col-title">Ayuda</div>
+        <nav class="z-footer-nav">
+          <a href="/contacto"    class="z-footer-link">Contacto</a>
+          <a href="/mis-ordenes" class="z-footer-link">Mis reservas</a>
+          <a href="#"            class="z-footer-link">Política de cancelación</a>
+          <a href="#"            class="z-footer-link">Términos y condiciones</a>
+        </nav>
+      </div>
+    {% endif %}
+
   </div>
 
   <div class="z-footer-divider">

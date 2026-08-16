@@ -1,7 +1,16 @@
 description = "Layout principal de Zima Hesperia"
 [frontCart]
 [session]
+[section siteConfig]
+handle = "Zima\SiteConfig"
 ==
+{% put meta %}
+<title>{% if this.page.meta_title %}{{ this.page.meta_title }} — {{ this.theme.site_name|default('Zima') }}{% else %}{{ this.theme.site_name|default('Zima') }}{% if this.theme.tagline %} — {{ this.theme.tagline }}{% endif %}{% endif %}</title>
+<meta name="description" content="{{ this.page.meta_description }}">
+{% if this.theme.og_image %}<meta property="og:image" content="{{ this.theme.og_image|media }}">{% endif %}
+<meta property="og:site_name" content="{{ this.theme.site_name|default('Zima') }}">
+<meta property="og:locale" content="es_VE">
+{% endput %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -32,13 +41,13 @@ description = "Layout principal de Zima Hesperia"
 </head>
 <body>
 
-  {% partial 'site/nav' %}
+  {% partial 'site/nav' config=siteConfig %}
 
   <main id="z-main">
     {% page %}
   </main>
 
-  {% partial 'site/footer' %}
+  {% partial 'site/footer' config=siteConfig %}
 
   {% partial 'site/cart-drawer' %}
 
