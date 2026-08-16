@@ -1,0 +1,23 @@
+##
+url = "/servicios"
+layout = "default"
+title = "Servicios"
+
+[amenityList]
+category_code = ""
+operator_code = ""
+per_page = "12"
+==
+<section class="z-section z-oplist-page">
+  <div class="z-wrap">
+    <div class="z-oplist-header">
+      <h1 class="z-oplist-title">
+        {% if category %}{{ category.name }}{% else %}Servicios{% endif %}
+      </h1>
+      <p class="z-oplist-subtitle">
+        Actividades y servicios disponibles en el Caribe venezolano
+      </p>
+    </div>
+    {% component 'amenityList' %}
+  </div>
+</section>

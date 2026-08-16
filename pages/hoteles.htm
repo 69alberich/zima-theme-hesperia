@@ -1,0 +1,19 @@
+##
+url = "/hoteles"
+layout = "default"
+title = "Hoteles"
+
+[operatorList]
+category_code = "hotel"
+==
+<section class="z-section z-oplist-page">
+  <div class="z-wrap">
+    <div class="z-oplist-header">
+      <h1 class="z-oplist-title">
+        {% if category %}{{ category.name }}{% else %}Hoteles & Posadas{% endif %}
+      </h1>
+      <p class="z-oplist-subtitle">Alojamientos seleccionados en el Caribe venezolano</p>
+    </div>
+    {% component 'operatorList' %}
+  </div>
+</section>

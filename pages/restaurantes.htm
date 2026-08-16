@@ -1,0 +1,18 @@
+##
+url = "/restaurantes"
+layout = "default"
+title = "Restaurantes"
+
+[amenityList]
+category_code = "restaurant"
+per_page = "12"
+==
+<section class="z-section z-oplist-page">
+  <div class="z-wrap">
+    <div class="z-oplist-header">
+      <h1 class="z-oplist-title">Restaurantes</h1>
+      <p class="z-oplist-subtitle">Gastronomía y sabores del Caribe venezolano</p>
+    </div>
+    {% component 'amenityList' %}
+  </div>
+</section>
