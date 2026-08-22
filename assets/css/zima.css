@@ -188,7 +188,6 @@ img { max-width: 100%; display: block; }
 /* ── Stats bar ── */
 .z-stats-bar {
   background: var(--z-teal);
-  margin-top: 64px;
 }
 .z-stats-bar-inner {
   display: grid;

@@ -6,13 +6,13 @@ title = "Crear cuenta"
 [registration]
 redirect = "account"
 ==
-<?php
-$policy = \RainLab\User\Models\Setting::instance();
-$this['pwMinLength']  = (int)  $policy->password_min_length;
-$this['pwNeedNumber'] = (bool) $policy->password_require_number;
-$this['pwNeedMixed']  = (bool) $policy->password_require_mixed_case;
-$this['pwNeedSymbol'] = (bool) $policy->password_require_symbol;
-?>
+function onInit() {
+    $policy = \RainLab\User\Models\Setting::instance();
+    $this['pwMinLength']  = (int)  $policy->password_min_length;
+    $this['pwNeedNumber'] = (bool) $policy->password_require_number;
+    $this['pwNeedMixed']  = (bool) $policy->password_require_mixed_case;
+    $this['pwNeedSymbol'] = (bool) $policy->password_require_symbol;
+}
 ==
 {% if user %}{% do redirect('account') %}{% endif %}
 
@@ -72,7 +72,8 @@ $this['pwNeedSymbol'] = (bool) $policy->password_require_symbol;
 </div>
 
 <script>
-var zUrlAccount = {{ 'account'|page|json_encode|raw }};
+var zUrlAccount  = {{ 'account'|page|json_encode|raw }};
+var zPwMinLength = {{ pwMinLength }};
 
 function zRegister() {
   var btn     = document.getElementById('z-reg-btn');
@@ -95,8 +96,8 @@ function zRegister() {
     alertEl.style.display = '';
     return;
   }
-  if (pass.length < 8) {
-    alertEl.textContent   = 'La contraseña debe tener al menos 8 caracteres.';
+  if (pass.length < zPwMinLength) {
+    alertEl.textContent   = 'La contraseña debe tener al menos ' + zPwMinLength + ' caracteres.';
     alertEl.style.display = '';
     return;
   }
