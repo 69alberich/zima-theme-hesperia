@@ -156,7 +156,21 @@
 
 function zcoOnError(data) {
   var errBox = document.getElementById('zco-errors');
-  errBox.textContent = 'Ocurrió un error al procesar el pedido. Intenta nuevamente.';
+  var env = data && data.$env;
+  var messages = [];
+
+  if (env && env.invalid && Object.keys(env.invalid).length) {
+    for (var field in env.invalid) {
+      var errs = env.invalid[field];
+      (Array.isArray(errs) ? errs : [errs]).forEach(function(m) { messages.push(m); });
+    }
+  } else if (env && env.message) {
+    messages.push(env.message);
+  } else {
+    messages.push('Ocurrió un error al procesar el pedido. Intenta nuevamente.');
+  }
+
+  errBox.textContent = messages.join(' ');
   errBox.style.display = 'block';
 }
 
