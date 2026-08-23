@@ -16,11 +16,6 @@
         {% for item in config.nav_links %}
           <a href="{{ item.url }}" class="z-nav-link">{{ item.label }}</a>
         {% endfor %}
-      {% else %}
-        <a href="/hoteles"      class="z-nav-link">Hoteles</a>
-        <a href="/restaurantes" class="z-nav-link">Restaurantes</a>
-        <a href="/experiencias" class="z-nav-link">Experiencias</a>
-        <a href="/contacto"     class="z-nav-link">Contacto</a>
       {% endif %}
     </div>
 
@@ -70,11 +65,6 @@
         {% for item in config.nav_links %}
           <a href="{{ item.url }}" class="z-mobile-nav-link">{{ item.label }}</a>
         {% endfor %}
-      {% else %}
-        <a href="/hoteles"      class="z-mobile-nav-link">Hoteles</a>
-        <a href="/restaurantes" class="z-mobile-nav-link">Restaurantes</a>
-        <a href="/experiencias" class="z-mobile-nav-link">Experiencias</a>
-        <a href="/contacto"     class="z-mobile-nav-link">Contacto</a>
       {% endif %}
     </div>
   </div>
