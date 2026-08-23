@@ -1,0 +1,95 @@
+{# ── operator/products.htm ─────────────────────────────────────────── #}
+{# Card enriquecida 2a para el landing del operador.                  #}
+{# Reemplaza el grid simple dentro del loop de catalog en landing.htm #}
+{# Variables esperadas: catalog (Eloquent con products eager-loaded)  #}
+{# CSS: .zop2-* definido en assets/css/zima.css                      #}
+
+<div class="zop2-list">
+{% for product in catalog.products %}
+  {% set galleryItems = product.gallery ?? [] %}
+  {% set activeOffers = product.offers|filter(o => o.active) %}
+
+  <a class="zop2-card"
+     href="{{ 'product'|page({'slug': product.slug}) }}">
+
+    {# ── Imagen + galería ── #}
+    <div class="zop2-media">
+
+      {% if product.preview_image %}
+        <img class="zop2-main-img"
+             src="{{ product.preview_image.getThumb(720, 480, {mode: 'crop'}) }}"
+             alt="{{ product.name }}">
+      {% else %}
+        <div class="zop2-main-placeholder">🌊</div>
+      {% endif %}
+
+      {# Badge: cantidad de ofertas activas #}
+      {% if activeOffers is not empty %}
+        <span class="zop2-badge">
+          {{ activeOffers|length }} tarifa{{ activeOffers|length != 1 ? 's' : '' }}
+        </span>
+      {% endif %}
+
+      {# Thumbnails de galería o franja vacía #}
+      {% if galleryItems is not empty %}
+        <div class="zop2-thumbs">
+          {% for thumb in galleryItems|slice(0, 3) %}
+            <img class="zop2-thumb"
+                 src="{{ thumb.getThumb(120, 88, {mode: 'crop'}) }}"
+                 alt="">
+          {% endfor %}
+          {% if galleryItems|length > 3 %}
+            <div class="zop2-thumb-more">+{{ galleryItems|length - 3 }}</div>
+          {% endif %}
+        </div>
+      {% else %}
+        <div class="zop2-no-gallery"></div>
+      {% endif %}
+
+    </div>
+
+    {# ── Contenido ── #}
+    <div class="zop2-body">
+
+      <div class="zop2-title">{{ product.name }}</div>
+
+      {% if product.preview_text %}
+        <div class="zop2-desc">{{ product.preview_text }}</div>
+      {% endif %}
+
+      {# Nombres de las tarifas (offers activos) #}
+      {% if activeOffers is not empty %}
+        <div>
+          <div class="zop2-rates-lbl">Tarifas disponibles</div>
+          <div class="zop2-rates">
+            {% for offer in activeOffers|slice(0, 5) %}
+              <span class="zop2-rate-pill">{{ offer.name }}</span>
+            {% endfor %}
+            {% if activeOffers|length > 5 %}
+              <span class="zop2-rate-more">+{{ activeOffers|length - 5 }} más</span>
+            {% endif %}
+          </div>
+        </div>
+      {% else %}
+        <div class="zop2-rates-lbl" style="color:var(--z-text-dim)">Sin tarifas activas</div>
+      {% endif %}
+
+      {# Footer #}
+      <div class="zop2-footer">
+        <span class="zop2-meta">
+          {{ activeOffers|length }} oferta{{ activeOffers|length != 1 ? 's' : '' }}
+          {% if galleryItems is not empty %}
+            · {{ galleryItems|length + 1 }} foto{{ (galleryItems|length + 1) != 1 ? 's' : '' }}
+          {% endif %}
+          · descripción completa
+        </span>
+        <span class="zop2-cta">Ver detalle →</span>
+      </div>
+
+    </div>
+  </a>
+
+{% else %}
+  <p class="zop-empty">Este catálogo no tiene productos activos.</p>
+{% endfor %}
+</div>

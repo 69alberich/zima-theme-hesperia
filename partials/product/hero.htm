@@ -12,15 +12,7 @@
     <div class="zpd-hero-overlay">
       <div class="z-wrap zpd-hero-content">
 
-        <nav class="zpd-breadcrumb">
-          <a href="/">Inicio</a>
-          <span class="zpd-breadcrumb-sep">›</span>
-          <a href="/buscar{% if params is not empty %}?{{ baseQuery }}{% endif %}">Resultados</a>
-          <span class="zpd-breadcrumb-sep">›</span>
-          <span>{{ productName }}</span>
-        </nav>
-
-        <div class="zpd-hero-badges">
+<div class="zpd-hero-badges">
           <span class="zpd-badge zpd-badge--type">{{ isStore ? 'Tienda' : 'Booking' }}</span>
           {% if category %}
             <span class="zpd-badge zpd-badge--cat">{{ category }}</span>
