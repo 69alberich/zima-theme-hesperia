@@ -74,6 +74,9 @@ function onInit() {
 <script>
 var zUrlAccount  = {{ 'account'|page|json_encode|raw }};
 var zPwMinLength = {{ pwMinLength }};
+var zPwNeedNumber = {{ pwNeedNumber ? 'true' : 'false' }};
+var zPwNeedMixed  = {{ pwNeedMixed  ? 'true' : 'false' }};
+var zPwNeedSymbol = {{ pwNeedSymbol ? 'true' : 'false' }};
 
 function zRegister() {
   var btn     = document.getElementById('z-reg-btn');
@@ -98,6 +101,21 @@ function zRegister() {
   }
   if (pass.length < zPwMinLength) {
     alertEl.textContent   = 'La contraseña debe tener al menos ' + zPwMinLength + ' caracteres.';
+    alertEl.style.display = '';
+    return;
+  }
+  if (zPwNeedNumber && !/[0-9]/.test(pass)) {
+    alertEl.textContent   = 'La contraseña debe incluir al menos un número.';
+    alertEl.style.display = '';
+    return;
+  }
+  if (zPwNeedMixed && (!/[a-z]/.test(pass) || !/[A-Z]/.test(pass))) {
+    alertEl.textContent   = 'La contraseña debe incluir mayúsculas y minúsculas.';
+    alertEl.style.display = '';
+    return;
+  }
+  if (zPwNeedSymbol && !/[^a-zA-Z0-9]/.test(pass)) {
+    alertEl.textContent   = 'La contraseña debe incluir al menos un símbolo (!@#$…).';
     alertEl.style.display = '';
     return;
   }
