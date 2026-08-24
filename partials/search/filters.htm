@@ -1,14 +1,26 @@
+{# ── search/filters.htm — sidebar filters + mobile drawer ── #}
+
+<link rel="stylesheet" href="{{ 'assets/css/filters.css'|theme }}">
+<script src="{{ 'assets/js/filters.js'|theme }}" defer></script>
+
+<div id="z-filters-overlay" class="z-filters-overlay" onclick="zFiltersClose()"></div>
+
 <aside id="z-filters" class="z-filters">
 
   {# ── Header ── #}
   <div class="z-filters-header">
     <span class="z-filters-title">Filtros</span>
-    <button type="button" class="z-filters-clear" onclick="
-      document.getElementById('zf-price-min').value = '';
-      document.getElementById('zf-price-max').value = '';
-    ">
-      Limpiar
-    </button>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <button type="button" class="z-filters-clear" onclick="
+        document.getElementById('zf-price-min').value = '';
+        document.getElementById('zf-price-max').value = '';
+      ">Limpiar</button>
+      <button type="button" class="z-filters-close" onclick="zFiltersClose()" aria-label="Cerrar filtros">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
   </div>
 
   {# ── Rango de precio ── #}
