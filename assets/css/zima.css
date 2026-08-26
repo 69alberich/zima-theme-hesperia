@@ -21,10 +21,10 @@
   --z-text-soft: #8a9aaa;
   --z-text-dim:  #aab4be;
 
-  /* Typography — Cormorant Garamond + Inter (loaded via layout Google Fonts) */
-  --z-font-serif:  'Cormorant Garamond', Georgia, serif;
-  --z-font-sans:   'Inter', system-ui, sans-serif;
-  --z-font-mono:   'Inter', system-ui, sans-serif;
+  /* Typography — Instrument Serif · Archivo · JetBrains Mono */
+  --z-font-serif:  'Instrument Serif', Georgia, serif;
+  --z-font-sans:   'Archivo', system-ui, sans-serif;
+  --z-font-mono:   'JetBrains Mono', monospace;
 
   /* Nav / footer dark chrome */
   --z-nav-bg:    #051C2C;

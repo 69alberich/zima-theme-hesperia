@@ -1,0 +1,49 @@
+{# block.section_title, block.subtitle
+   block.items[] → name, description, url, url_label, image
+   Mixin: Zima\Blocks\CardsDark
+   Renderiza: sección oscura navy con grid de tarjetas tipo destinos #}
+<section class="hsp-cdark">
+
+  <div class="hsp-cdark-header">
+    {% if block.section_title %}
+    <h2 class="hsp-cdark-title" data-reveal>{{ block.section_title|raw }}</h2>
+    {% endif %}
+    {% if block.subtitle %}
+    <p class="hsp-cdark-sub" data-reveal>{{ block.subtitle }}</p>
+    {% endif %}
+  </div>
+
+  <div class="hsp-cdark-grid">
+    {% for item in block.items %}
+    {% set img = item.image is iterable ? item.image|first : item.image %}
+    {% set num = loop.index|format('%02d') %}
+
+    {% if item.url %}
+    <a href="{{ item.url }}" class="hsp-cdark-card" data-reveal data-tilt>
+    {% else %}
+    <div class="hsp-cdark-card" data-reveal>
+    {% endif %}
+
+      <div class="hsp-cdark-img">
+        {% if img and img.path %}
+          <img src="{{ img.path }}" alt="{{ item.name }}">
+        {% else %}
+          <div class="hsp-cdark-img-slot">[ FOTO — {{ item.name|upper }} ]</div>
+        {% endif %}
+        <span class="hsp-cdark-num">{{ num }}</span>
+      </div>
+
+      <div class="hsp-cdark-name">{{ item.name }}</div>
+      {% if item.description %}
+      <div class="hsp-cdark-desc">{{ item.description }}</div>
+      {% endif %}
+      {% if item.url and item.url_label %}
+      <div class="hsp-cdark-cta">{{ item.url_label }} →</div>
+      {% endif %}
+
+    {% if item.url %}</a>{% else %}</div>{% endif %}
+    {% endfor %}
+
+  </div>
+
+</section>

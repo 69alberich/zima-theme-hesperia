@@ -64,7 +64,7 @@
 .zsb2-checkbox-box svg { display: none; }
 .zsb2-checkbox-input:checked + .zsb2-checkbox-box { background: var(--z-muted-bg); }
 .zsb2-checkbox-input:checked + .zsb2-checkbox-box svg { display: block; }
-.zsb2-search-btn { flex: 1; min-width: 160px; text-align: center; padding: 15px 28px; border-radius: 999px; background: var(--z-teal); color: #fff; font: 700 15.5px/1 var(--z-font-sans); border: none; cursor: pointer; transition: opacity .2s; }
+.zsb2-search-btn { flex: none; min-width: 90px; max-width: 100px; text-align: center; padding: 13px 20px; border-radius: 999px; background: var(--z-teal); color: #fff; font: 700 14px/1 var(--z-font-sans); border: none; cursor: pointer; transition: opacity .2s; }
 .zsb2-search-btn:hover { opacity: .88; }
 
 /* Store tab */

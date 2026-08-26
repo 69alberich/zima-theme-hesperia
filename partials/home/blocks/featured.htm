@@ -1,38 +1,31 @@
-{# block.section_eyebrow, block.section_title, block.items[] → name, location, url, category, price, price_original, price_unit, image #}
-{% set categoryBadge = {
-  'hotel':        '🏨 Hotel',
-  'nautica':      '⛵ Náutica',
-  'experiencias': '🤿 Experiencia'
-} %}
-
-{% set thumbClass = {
-  'hotel':        'z-thumb-cat-1',
-  'nautica':      'z-thumb-cat-2',
-  'experiencias': 'z-thumb-cat-3'
-} %}
-
+{# block.section_eyebrow, block.section_title, block.layout, block.items[]
+   → name, location, url, category, price, price_unit, image #}
 {% set uid = block.id ?? loop.index %}
-
 {% if block.items is not empty %}
-<section class="z-section">
+<section class="hsp-offers" id="hsp-offers-section">
 
-  <div class="z-catalog-header">
+  <div class="hsp-header">
     <div>
       {% if block.section_eyebrow %}
-        <div class="z-eyebrow">{{ block.section_eyebrow }}</div>
+        <div class="hsp-eyebrow">{{ block.section_eyebrow }}</div>
       {% endif %}
-      <h2 class="z-catalog-title">{{ block.section_title ?: 'Ofertas destacadas' }}</h2>
+      <h2 class="hsp-h2--md" style="font-family:var(--z-font-serif);font-weight:400;font-size:clamp(36px,5vw,68px);line-height:1;letter-spacing:-0.02em;margin:0">
+        {{ block.section_title ?: 'Ofertas de esta semana' }}
+      </h2>
     </div>
 
     {% if block.layout == 'tabs' %}
-    <div class="z-tabs" id="feat-tabs-{{ uid }}">
-      <button class="z-tab is-active" data-filter="all">Todo</button>
+    <div class="hsp-chips">
+      <button class="hsp-chip is-active" data-chip="all">Todo</button>
       {% set seen = [] %}
       {% for item in block.items %}
         {% if item.category not in seen %}
           {% set seen = seen|merge([item.category]) %}
-          <button class="z-tab" data-filter="{{ item.category }}">
-            {{ categoryBadge[item.category] ?? item.category }}
+          <button class="hsp-chip" data-chip="{{ item.category }}">
+            {% if item.category == 'hotel' %}Hotel
+            {% elseif item.category == 'experiencias' %}Experiencia
+            {% elseif item.category == 'nautica' %}Náutica
+            {% else %}{{ item.category|capitalize }}{% endif %}
           </button>
         {% endif %}
       {% endfor %}
@@ -40,54 +33,52 @@
     {% endif %}
   </div>
 
-  <div class="z-catalog-grid z-featured-grid" id="feat-grid-{{ uid }}">
+  <div class="hsp-offers-grid">
     {% for item in block.items %}
+    {% set img = item.image is iterable ? item.image|first : item.image %}
+    {% set cardMod = loop.index0 is even ? 'hsp-offer-card--1' : 'hsp-offer-card--2' %}
+
     {% if item.url %}
-    <a href="{{ item.url }}" class="z-card z-catalog-card" data-filter-item="{{ item.category }}">
+    <a href="{{ item.url }}" class="hsp-offer-card {{ cardMod }}" data-offer-kind="{{ item.category }}" data-tilt>
     {% else %}
-    <div class="z-card z-catalog-card" data-filter-item="{{ item.category }}">
+    <div class="hsp-offer-card {{ cardMod }}" data-offer-kind="{{ item.category }}">
     {% endif %}
-      {% set img = item.image is iterable ? item.image|first : item.image %}
-      <div class="z-catalog-thumb {{ thumbClass[item.category] ?? 'z-thumb-cat-1' }}"
-        {% if img %}style="background-image:url('{{ img.path }}'); background-size:cover; background-position:center;"{% endif %}>
-        <span class="z-pill z-thumb-badge">{{ categoryBadge[item.category] ?? item.category }}</span>
-      </div>
-      <div class="z-catalog-body">
-        <div class="z-catalog-name">{{ item.name }}</div>
+
+      {% if img %}
+      <div style="position:absolute;inset:0;background-image:url('{{ img.path }}');background-size:cover;background-position:center;"></div>
+      {% endif %}
+      <div class="hsp-offer-overlay"></div>
+
+      <div class="hsp-offer-top">
+        <span class="hsp-offer-tag">
+          {% if item.category == 'hotel' %}HOTEL
+          {% elseif item.category == 'experiencias' %}EXPERIENCIA
+          {% elseif item.category == 'nautica' %}NÁUTICA
+          {% else %}{{ item.category|upper }}{% endif %}
+        </span>
         {% if item.location %}
-          <div class="z-catalog-location">{{ item.location }}</div>
+        <span class="hsp-offer-place">{{ item.location|upper }}</span>
         {% endif %}
-        <div class="z-catalog-price-row">
-          {% if item.price_original %}
-            <span class="z-feat-price-orig">{{ item.price_original }}</span>
-          {% endif %}
-          <span class="z-catalog-price">{{ item.price }}</span>
-          <span class="z-catalog-price-unit">{{ item.price_unit }}</span>
-        </div>
       </div>
+
+      <div class="hsp-offer-bottom">
+        <div class="hsp-offer-title">{{ item.name }}</div>
+        {% if item.price %}
+        <div class="hsp-offer-price-row">
+          <span class="hsp-offer-price">{{ item.price }}</span>
+          {% if item.price_unit %}
+          <span class="hsp-offer-unit">{{ item.price_unit }}</span>
+          {% endif %}
+        </div>
+        {% endif %}
+        {% if item.url %}
+        <span class="hsp-arrow" data-arrow>RESERVAR →</span>
+        {% endif %}
+      </div>
+
     {% if item.url %}</a>{% else %}</div>{% endif %}
     {% endfor %}
   </div>
 
 </section>
-
-{% if block.layout == 'tabs' %}
-<script>
-(function () {
-  var tabs  = document.querySelectorAll('#feat-tabs-{{ uid }} .z-tab');
-  var cards = document.querySelectorAll('#feat-grid-{{ uid }} .z-catalog-card');
-
-  tabs.forEach(function (tab) {
-    tab.addEventListener('click', function () {
-      tabs.forEach(function (t) { t.classList.remove('is-active'); });
-      tab.classList.add('is-active');
-      var filter = tab.dataset.filter;
-      cards.forEach(function (card) {
-        card.style.display = (filter === 'all' || card.dataset.filterItem === filter) ? '' : 'none';
-      });
-    });
-  });
-})();
-</script>
-{% endif %}
 {% endif %}

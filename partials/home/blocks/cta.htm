@@ -1,0 +1,37 @@
+{# block.eyebrow, block.section_title, block.subtitle
+   block.items[] → name, description, url, url_label, image
+   Mixin: Zima\Blocks\CardsDark #}
+<section class="hsp-cta">
+
+  <div class="hsp-cta-inner" data-reveal>
+    {% if block.eyebrow or not block %}
+    <div class="hsp-eyebrow hsp-eyebrow--light">{{ block.eyebrow ?: '¿Listo para reservar?' }}</div>
+    {% endif %}
+    <h2 class="hsp-cta-title">{{ block.section_title ? block.section_title|raw : 'Make it<br>exceptional.' }}</h2>
+    <p class="hsp-cta-sub">{{ block.subtitle ?: 'Hoteles, náutica y experiencias en Venezuela. Un solo carrito para armar tu viaje completo.' }}</p>
+
+    {% if block.items is not empty %}
+    <div class="hsp-cta-actions">
+      {% for item in block.items %}
+      {% if item.url %}
+      <a href="{{ item.url }}" class="hsp-btn {{ loop.first ? 'hsp-btn--light' : 'hsp-btn--ghost' }}">
+        {{ item.url_label ?: item.name }}
+      </a>
+      {% endif %}
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="hsp-cta-actions">
+      <a href="/buscar" class="hsp-btn hsp-btn--light">Explorar disponibilidad</a>
+      <a href="/contacto" class="hsp-btn hsp-btn--ghost">Hablar con un asesor</a>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="hsp-cta-deco" aria-hidden="true">
+    <span>HESPERIA</span>
+    <span>HESPERIA</span>
+    <span>HESPERIA</span>
+  </div>
+
+</section>

@@ -1,0 +1,59 @@
+{# block.section_title, block.subtitle, block.items[] → name, coords, kind, image
+   Sección hardcodeada — integrar con Tailor cuando esté disponible. #}
+<section class="hsp-destinos">
+
+  <div class="hsp-destinos-header">
+    <h2 class="hsp-h2" style="max-width:16ch">
+      {{ block.section_title ?: 'Cuatro destinos,<br>un solo carrito' }}
+    </h2>
+    {% if block.subtitle %}
+    <p class="hsp-subtitle hsp-subtitle--dark">{{ block.subtitle }}</p>
+    {% else %}
+    <p class="hsp-subtitle hsp-subtitle--dark">Del Caribe a la ciudad. Elige el punto del mapa y nosotros armamos el resto del viaje.</p>
+    {% endif %}
+  </div>
+
+  <div class="hsp-destinos-grid">
+    {% set destinos = block.items is not empty ? block.items : [
+      { name: 'Isla Margarita', coords: '11.0°N 63.9°W', kind: 'VACACIONAL' },
+      { name: 'Morrocoy',       coords: '10.5°N 68.2°W', kind: 'VACACIONAL' },
+      { name: 'Playa el Agua',  coords: '11.1°N 63.8°W', kind: 'VACACIONAL' },
+      { name: 'WTC Valencia',   coords: '10.2°N 68.0°W', kind: 'URBANO'     }
+    ] %}
+    {% for d in destinos %}
+    {% set num = loop.index|format('%02d') %}
+    {% set img = d.image is defined and d.image ? (d.image is iterable ? d.image|first : d.image) : null %}
+    <div class="hsp-destino-cell" data-reveal>
+      <div class="hsp-destino-img">
+        {% if img %}
+          <img src="{{ img.path }}" alt="{{ d.name }}">
+        {% else %}
+          <div class="hsp-destino-placeholder">{{ d.name|upper }}</div>
+        {% endif %}
+        <span class="hsp-destino-num">{{ num }}</span>
+      </div>
+      <div class="hsp-destino-name">{{ d.name }}</div>
+      <div class="hsp-destino-meta">
+        <span class="hsp-destino-coords">{{ d.coords ?? '' }}</span>
+        <span class="hsp-destino-kind">{{ d.kind ?? '' }}</span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="hsp-marquee-strip">
+    <div class="hsp-marquee-track">
+      <span>Isla Margarita</span><span class="hsp-marquee-dot">◆</span>
+      <span>Morrocoy</span><span class="hsp-marquee-dot">◆</span>
+      <span>Playa el Agua</span><span class="hsp-marquee-dot">◆</span>
+      <span>WTC Valencia</span><span class="hsp-marquee-dot">◆</span>
+      <span>Maracay</span><span class="hsp-marquee-dot">◆</span>
+      <span>Isla Margarita</span><span class="hsp-marquee-dot">◆</span>
+      <span>Morrocoy</span><span class="hsp-marquee-dot">◆</span>
+      <span>Playa el Agua</span><span class="hsp-marquee-dot">◆</span>
+      <span>WTC Valencia</span><span class="hsp-marquee-dot">◆</span>
+      <span>Maracay</span><span class="hsp-marquee-dot">◆</span>
+    </div>
+  </div>
+
+</section>

@@ -1,13 +1,18 @@
-{# block.items[] → number, label #}
-{% if block.items is not empty %}
-<div class="z-stats-bar">
-  <div class="z-stats-bar-inner">
-    {% for item in block.items %}
-    <div>
-      <div class="z-stat-num">{{ item.number }}</div>
-      <div class="z-stat-lbl">{{ item.label }}</div>
+{# block.items[] → number, label  (mixin: Zima\Blocks\Stats) #}
+{% set stats = block.items is not empty ? block.items : block.metrics %}
+{% if stats is not empty %}
+<section class="hsp-stats">
+  <div class="hsp-stats-grid">
+    {% for metric in stats %}
+    <div class="hsp-stats-cell" data-reveal>
+      {% set rawNum = metric.number|replace({'+':'','%':'','★':'','H':'','h':''})|trim %}
+      <div class="hsp-stat-num {{ loop.first ? '' : 'hsp-stat-num--neutral' }}"
+           {% if rawNum matches '/^\\d+$/' %}data-count="{{ rawNum }}"{% endif %}>
+        {{ metric.number }}
+      </div>
+      <div class="hsp-stat-lbl">{{ metric.label ?: metric.description }}</div>
     </div>
     {% endfor %}
   </div>
-</div>
+</section>
 {% endif %}

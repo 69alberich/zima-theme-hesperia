@@ -1,28 +1,46 @@
-{# block.section_title, block.items[] → name, description, url, icon_type #}
-{% set iconMap = {
-  'hotel':        '🏨',
-  'nautica':      '⛵',
-  'experiencias': '🌞',
-  'tours':        '🗺',
-  'food':         '🍽',
-  'other':        '⭐'
-} %}
-
+{# block.section_title, block.subtitle, block.items[] → name, description, url, image, counter_label #}
 {% if block.items is not empty %}
-<section class="z-section">
-  <h2 class="z-categories-title">{{ block.section_title ?: 'Explora por categoría' }}</h2>
-  <div class="z-categories-grid">
-    {% for cat in block.items %}
-    {% if cat.url %}
-    <a href="{{ cat.url }}" class="z-card z-category-card">
-    {% else %}
-    <div class="z-card z-category-card">
+<section class="hsp-ways">
+
+  <div class="hsp-header" style="margin-bottom:56px">
+    <h2 class="hsp-h2">{{ block.section_title ?: 'Explora las maneras<br>de estar aquí' }}</h2>
+    {% if block.subtitle %}
+    <p class="hsp-subtitle">{{ block.subtitle }}</p>
     {% endif %}
-      <div class="z-icon-circle z-category-icon">{{ iconMap[cat.icon_type] ?? '⭐' }}</div>
-      <div class="z-category-name">{{ cat.name }}</div>
-      <div class="z-category-desc">{{ cat.description }}</div>
-    {% if cat.url %}</a>{% else %}</div>{% endif %}
+  </div>
+
+  <div class="hsp-ways-grid">
+    {% set patterns = ['hsp-way-pattern-1','hsp-way-pattern-2','hsp-way-pattern-3'] %}
+    {% for item in block.items %}
+    {% set img = item.image is iterable ? item.image|first : item.image %}
+    {% if item.url %}
+    <a href="{{ item.url }}" class="hsp-way-card" data-tilt data-reveal>
+    {% else %}
+    <div class="hsp-way-card" data-reveal>
+    {% endif %}
+
+      <div class="hsp-way-bg {{ not img ? patterns[loop.index0 % 3] }}"
+        {% if img %}style="background-image:url('{{ img.path }}'); background-size:cover; background-position:center;"{% endif %}></div>
+
+      <div class="hsp-way-overlay"></div>
+
+      <div class="hsp-way-counter">
+        {{ (item.counter_label ?: (loop.index|format('%02d') ~ ' / ' ~ item.name|upper)) }}
+      </div>
+
+      <div class="hsp-way-body">
+        <div class="hsp-way-title">{{ item.name }}</div>
+        {% if item.description %}
+        <div class="hsp-way-desc">{{ item.description }}</div>
+        {% endif %}
+        {% if item.url %}
+        <span class="hsp-arrow" data-arrow>VER MÁS →</span>
+        {% endif %}
+      </div>
+
+    {% if item.url %}</a>{% else %}</div>{% endif %}
     {% endfor %}
   </div>
+
 </section>
 {% endif %}
