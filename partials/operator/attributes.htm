@@ -10,10 +10,11 @@
           <div class="zop-amenity">
 
             <div class="zop-amenity-icon">
-              {% if attr.icon %}
-                <img src="{{ attr.icon.path }}" alt="{{ attr.name }}" style="width:28px;height:28px;object-fit:contain;">
+              {% set iconHtml = attr.getIconHtml('zop-attr-icon', 28) %}
+              {% if iconHtml is not empty %}
+                {{ iconHtml|raw }}
               {% else %}
-                ◈
+                <span class="zop-attr-icon--fallback">◈</span>
               {% endif %}
             </div>
 

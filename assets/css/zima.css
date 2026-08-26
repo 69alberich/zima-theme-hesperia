@@ -190,17 +190,19 @@ img { max-width: 100%; display: block; }
   background: var(--z-surface);
   border-top: 1px solid var(--z-border-lt);
   border-bottom: 1px solid var(--z-border-lt);
+  overflow: hidden;
 }
 .z-stats-bar-inner {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(140px, 200px));
+  justify-content: center;
   gap: 0;
   text-align: center;
   max-width: var(--z-max-w);
   margin: 0 auto;
 }
 .z-stats-bar-inner > div {
-  padding: 28px 24px;
+  padding: 28px 20px;
   border-right: 1px solid var(--z-border-lt);
 }
 .z-stats-bar-inner > div:last-child { border-right: none; }
@@ -657,7 +659,7 @@ img { max-width: 100%; display: block; }
   :root { --z-px: 20px; }
   .z-two-col, .z-two-col-wide { grid-template-columns: 1fr; }
   .z-sticky-panel { position: static; top: auto; }
-  .z-stats-bar-inner { grid-template-columns: repeat(2, 1fr); }
+  .z-stats-bar-inner { grid-template-columns: repeat(2, 1fr); justify-content: stretch; }
   .z-nav-links  { display: none; }
   .z-nav-toggle { display: flex; }
   .z-mobile-nav.is-open { display: block; }
@@ -676,7 +678,11 @@ img { max-width: 100%; display: block; }
   .z-featured-grid .z-catalog-thumb { height: 200px; }
 }
 @media (max-width: 540px) {
-  .z-stats-bar-inner { grid-template-columns: 1fr 1fr; gap: 16px; }
+  .z-stats-bar-inner { grid-template-columns: 1fr 1fr; justify-content: stretch; gap: 0; }
+  .z-stats-bar-inner > div { padding: 20px 12px; }
+  .z-stats-bar-inner > div:nth-child(even) { border-right: none; }
+  .z-stats-bar-inner > div:nth-child(1),
+  .z-stats-bar-inner > div:nth-child(2) { border-bottom: 1px solid var(--z-border-lt); }
 }
 @media (max-width: 480px) {
   .z-footer-grid   { grid-template-columns: 1fr; }
@@ -817,7 +823,10 @@ img { max-width: 100%; display: block; }
   background: var(--z-surface); border: 1px solid var(--z-border-lt);
   border-radius: 12px; padding: 12px 14px;
 }
-.zpd-highlight-icon  { font-size: 20px; flex-shrink: 0; }
+.zpd-highlight-icon  { font-size: 20px; flex-shrink: 0; display:flex; align-items:center; justify-content:center; width:32px; }
+.zpd-attr-icon       { display:block; }
+.zpd-attr-icon img   { display:block; border-radius:4px; object-fit:cover; }
+.zpd-attr-icon--fallback { font-size:18px; color: var(--z-teal); }
 .zpd-highlight-label { font-size: 13px; font-weight: 600; color: var(--z-text-md); }
 
 /* ── Offer cards ── */
@@ -1973,7 +1982,7 @@ img { max-width: 100%; display: block; }
 /* ── Amenities ──────────────────────────────────────────────────────── */
 .zop-amenities {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
   gap: 2px;
   background: var(--z-border);
   border: 1px solid var(--z-border);
@@ -1992,6 +2001,9 @@ img { max-width: 100%; display: block; }
   display: flex; align-items: center; justify-content: center;
   background: var(--z-bg); border-radius: 10px;
 }
+.zop-attr-icon       { display:flex; align-items:center; justify-content:center; width:100%; height:100%; }
+.zop-attr-icon img   { display:block; border-radius:6px; object-fit:cover; }
+.zop-attr-icon--fallback { display:flex; align-items:center; justify-content:center; width:100%; height:100%; font-size:22px; color: var(--z-teal); }
 .zop-amenity-body           { min-width: 0; }
 .zop-amenity-name           { font-size: 14px; font-weight: 800; color: var(--z-text); margin-bottom: 2px; }
 .zop-amenity-val            { font-weight: 600; color: var(--z-teal); }

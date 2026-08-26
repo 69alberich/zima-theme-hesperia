@@ -134,7 +134,14 @@
   <div class="zpd-highlights">
     {% for attr in productAttributes %}
       <div class="zpd-highlight-item">
-        <span class="zpd-highlight-icon">{{ attr.icon is not empty ? attr.icon : '✓' }}</span>
+        <span class="zpd-highlight-icon">
+          {% set iconHtml = attr.getIconHtml('zpd-attr-icon', 28) %}
+          {% if iconHtml is not empty %}
+            {{ iconHtml|raw }}
+          {% else %}
+            <span class="zpd-attr-icon zpd-attr-icon--fallback">✓</span>
+          {% endif %}
+        </span>
         <div>
           <span class="zpd-highlight-label">{{ attr.name }}</span>
           {% if attr.pivot.value is not empty %}
