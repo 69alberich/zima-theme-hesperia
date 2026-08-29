@@ -22,8 +22,8 @@
   --z-text-dim:  #aab4be;
 
   /* Typography — Instrument Serif · Archivo · JetBrains Mono */
-  --z-font-serif:  'Instrument Serif', Georgia, serif;
-  --z-font-sans:   'Archivo', system-ui, sans-serif;
+  --z-font-serif:  'Canela', 'Cormorant Garamond', Georgia, serif;
+  --z-font-sans:   'GT Walsheim', 'Archivo', system-ui, sans-serif;
   --z-font-mono:   'JetBrains Mono', monospace;
 
   /* Nav / footer dark chrome */

@@ -1,0 +1,96 @@
+/*
+ * Hesperia — Fuentes oficiales
+ *
+ * Canela (Commercial Type) — display serif → headings
+ * GT Walsheim (Grilli Type) — humanist sans → body / UI
+ *
+ * Coloca los archivos .woff2 en assets/fonts/ con estos nombres exactos.
+ * Pesos usados en el tema: Canela 300 400 700 · GT Walsheim 300 400 500 600 700
+ *
+ * Mientras los archivos no estén presentes, el navegador usa el fallback
+ * definido en zima.css (Cormorant Garamond / Archivo).
+ */
+
+/* ── Canela ─────────────────────────────────────────────── */
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela-Light.woff2') format('woff2'),
+       url('../fonts/Canela-Light.woff')  format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela-LightItalic.woff2') format('woff2'),
+       url('../fonts/Canela-LightItalic.woff')  format('woff');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela-Regular.woff2') format('woff2'),
+       url('../fonts/Canela-Regular.woff')  format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela-RegularItalic.woff2') format('woff2'),
+       url('../fonts/Canela-RegularItalic.woff')  format('woff');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela-Bold.woff2') format('woff2'),
+       url('../fonts/Canela-Bold.woff')  format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela-BoldItalic.woff2') format('woff2'),
+       url('../fonts/Canela-BoldItalic.woff')  format('woff');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ── GT Walsheim ────────────────────────────────────────── */
+@font-face {
+  font-family: 'GT Walsheim';
+  src: url('../fonts/GTWalsheim-Light.woff2') format('woff2'),
+       url('../fonts/GTWalsheim-Light.woff')  format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'GT Walsheim';
+  src: url('../fonts/GTWalsheim-Regular.woff2') format('woff2'),
+       url('../fonts/GTWalsheim-Regular.woff')  format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'GT Walsheim';
+  src: url('../fonts/GTWalsheim-Medium.woff2') format('woff2'),
+       url('../fonts/GTWalsheim-Medium.woff')  format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'GT Walsheim';
+  src: url('../fonts/GTWalsheim-Bold.woff2') format('woff2'),
+       url('../fonts/GTWalsheim-Bold.woff')  format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
