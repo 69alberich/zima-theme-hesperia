@@ -352,6 +352,13 @@ img { max-width: 100%; display: block; }
 }
 .z-cart-item-remove:hover { background: #fde8e2; color: #b03a22; }
 
+.z-cart-item--invalid { filter: grayscale(1); opacity: .55; }
+.z-cart-item--invalid .z-cart-item-remove { filter: grayscale(0); opacity: 1; }
+.z-cart-item-unavailable {
+  font-size: 11px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase;
+  color: #8a8a8a; margin-bottom: 2px;
+}
+
 /* Badge animado al añadir */
 @keyframes z-badge-pop { 0%,100% { transform: scale(1); } 50% { transform: scale(1.5); } }
 .z-cart-count.pop { animation: z-badge-pop .3s ease; }
