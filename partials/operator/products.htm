@@ -23,10 +23,10 @@
         <div class="zop2-main-placeholder">🌊</div>
       {% endif %}
 
-      {# Badge: cantidad de ofertas activas #}
-      {% if activeOffers is not empty %}
+      {# Badge: cantidad de fotos #}
+      {% if galleryItems is not empty %}
         <span class="zop2-badge">
-          {{ activeOffers|length }} tarifa{{ activeOffers|length != 1 ? 's' : '' }}
+          {{ galleryItems|length + 1 }} foto{{ (galleryItems|length + 1) != 1 ? 's' : '' }}
         </span>
       {% endif %}
 
@@ -57,10 +57,27 @@
         <div class="zop2-desc">{{ product.preview_text }}</div>
       {% endif %}
 
-      {# Nombres de las tarifas (offers activos) #}
+      {# Características: atributos reales del producto (product.productAttributes), con
+         viñeta ◆. Y presentaciones/tarifas disponibles. Son datos independientes — un
+         producto puede tener ambos, solo uno, o ninguno — así que se muestran en bloques
+         separados, no uno reemplazando al otro. #}
+      {% set namedAttrs = product.productAttributes|filter(a => a.name is not empty) %}
+      {% if namedAttrs is not empty %}
+        <div class="zop2-feats">
+          {% for attr in namedAttrs|slice(0, 6) %}
+            <div class="zop2-feat">
+              <span class="zop2-feat-bullet">◆</span>
+              <span>{{ attr.name }}{% if attr.pivot.value %} · {{ attr.pivot.value }}{% endif %}</span>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
       {% if activeOffers is not empty %}
-        <div>
-          <div class="zop2-rates-lbl">Tarifas disponibles</div>
+        <div class="zop2-rates-block">
+          <div class="zop2-rates-lbl">
+            {{ activeOffers|length }} presentaci{{ activeOffers|length != 1 ? 'ones' : 'ón' }} disponible{{ activeOffers|length != 1 ? 's' : '' }}
+          </div>
           <div class="zop2-rates">
             {% for offer in activeOffers|slice(0, 5) %}
               <span class="zop2-rate-pill">{{ offer.name }}</span>
@@ -70,19 +87,10 @@
             {% endif %}
           </div>
         </div>
-      {% else %}
-        <div class="zop2-rates-lbl" style="color:var(--z-text-dim)">Sin tarifas activas</div>
       {% endif %}
 
       {# Footer #}
       <div class="zop2-footer">
-        <span class="zop2-meta">
-          {{ activeOffers|length }} oferta{{ activeOffers|length != 1 ? 's' : '' }}
-          {% if galleryItems is not empty %}
-            · {{ galleryItems|length + 1 }} foto{{ (galleryItems|length + 1) != 1 ? 's' : '' }}
-          {% endif %}
-          · descripción completa
-        </span>
         <span class="zop2-cta">Ver detalle →</span>
       </div>
 
