@@ -2,15 +2,21 @@
 {% if attrGroups is not empty %}
   {% for group in attrGroups %}
     {% if group.category %}
-    <section class="zop-section">
-      <h2 class="zop-section-title">{{ group.category.name }}</h2>
+    <section class="zop-attrs-group-section">
+
+      <div class="zop-attrs-header">
+        <h2 class="zop-attrs-title">{{ group.category.name }}</h2>
+        {% if group.category.description %}
+          <p class="zop-attrs-desc">{{ group.category.description }}</p>
+        {% endif %}
+      </div>
 
       <div class="zop-amenities">
         {% for attr in group.attributes %}
           <div class="zop-amenity">
 
             <div class="zop-amenity-icon">
-              {% set iconHtml = attr.getIconHtml('zop-attr-icon', 28) %}
+              {% set iconHtml = attr.getIconHtml('zop-attr-icon', 26) %}
               {% if iconHtml is not empty %}
                 {{ iconHtml|raw }}
               {% else %}
@@ -18,19 +24,17 @@
               {% endif %}
             </div>
 
-            <div class="zop-amenity-body">
-              <div class="zop-amenity-name">
-                {{ attr.name }}
-                {% if attr.pivot.value %}
-                  <span class="zop-amenity-val"> · {{ attr.pivot.value }}</span>
-                {% endif %}
-              </div>
-              {% if attr.pivot.description %}
-                <div class="zop-amenity-sub">{{ attr.pivot.description }}</div>
-              {% elseif attr.description %}
-                <div class="zop-amenity-sub">{{ attr.description }}</div>
+            <div class="zop-amenity-name">
+              {{ attr.name }}
+              {% if attr.pivot.value %}
+                <span class="zop-amenity-val"> · {{ attr.pivot.value }}</span>
               {% endif %}
             </div>
+            {% if attr.pivot.description %}
+              <div class="zop-amenity-sub">{{ attr.pivot.description }}</div>
+            {% elseif attr.description %}
+              <div class="zop-amenity-sub">{{ attr.description }}</div>
+            {% endif %}
 
           </div>
         {% endfor %}

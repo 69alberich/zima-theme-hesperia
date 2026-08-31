@@ -13,18 +13,15 @@
 
     <div class="zop-hero-content">
 
-      {% if operator.preview_image %}
-        <img class="zop-hero-avatar"
-             src="{{ operator.preview_image.getThumb(100, 100, {mode: 'crop'}) }}"
-             alt="{{ operator.name }}">
-      {% else %}
-        <div class="zop-hero-avatar zop-hero-avatar--placeholder">🏢</div>
-      {% endif %}
-
-      <div class="zop-hero-text">
-        {% if operator.groups is not empty %}
-          <div class="zop-hero-group">{{ operator.groups|map(g => g.name)|join(' · ') }}</div>
-        {% endif %}
+      <div class="zop-hero-main">
+        <div class="zop-hero-tags">
+          {% if operator.category %}
+            <span class="zop-hero-badge">{{ operator.category.name }}</span>
+          {% endif %}
+          {% if operator.groups is not empty %}
+            <span class="zop-hero-location">{{ operator.groups|map(g => g.name)|join(' · ') }}</span>
+          {% endif %}
+        </div>
         <h1 class="zop-hero-name">{{ operator.name }}</h1>
         {% if operator.preview_text %}
           <p class="zop-hero-tagline">{{ operator.preview_text }}</p>
@@ -33,72 +30,62 @@
 
       <div class="zop-hero-stats">
         <div class="zop-hero-stat">
-          <span class="zop-hero-stat-val">{{ productCount }}</span>
-          <span class="zop-hero-stat-lbl">Producto{{ productCount != 1 ? 's' : '' }}</span>
+          <div class="zop-hero-stat-val">{{ productCount }}</div>
+          <div class="zop-hero-stat-lbl">Producto{{ productCount != 1 ? 's' : '' }}</div>
         </div>
         <div class="zop-hero-stat">
-          <span class="zop-hero-stat-val">{{ catalogCount }}</span>
-          <span class="zop-hero-stat-lbl">Catálogo{{ catalogCount != 1 ? 's' : '' }}</span>
+          <div class="zop-hero-stat-val">{{ catalogCount }}</div>
+          <div class="zop-hero-stat-lbl">Catálogo{{ catalogCount != 1 ? 's' : '' }}</div>
         </div>
       </div>
 
     </div>
   </div>
 
-  {# ── Subbar ── #}
-  <div class="zop-subbar">
-    <div class="zop-subbar-inner">
-      <a href="{{ '/'|page }}">Inicio</a>
-      <span class="zop-subbar-sep">›</span>
-      <span class="zop-subbar-current">{{ operator.name }}</span>
-    </div>
-  </div>
+  {# ── Highlights y Galería: full-width, fuera de .zop-body para no quedar acotadas por su max-width ── #}
+  {% partial 'operator/highlights' %}
+  {% partial 'operator/gallery' %}
 
-  {# ── Cuerpo ── #}
-  <div class="zop-body">
+  {# ── Descripción (texto enriquecido): full-width, fuera de .zop-body ── #}
+  {% if operator.description is not empty %}
+  <section class="zop-description-section">
+    <h2 class="zop-description-title">Descripción</h2>
+    <div class="zop-description-body">{{ operator.description|raw }}</div>
+  </section>
+  {% endif %}
 
-    {% partial 'operator/highlights' %}
-    {% partial 'operator/gallery' %}
+  {# ── Atributos: full-width, fuera de .zop-body ── #}
+  {% partial 'operator/attributes' %}
 
-    {% if operator.description is not empty %}
-    <section class="zop-section zop-description-section">
-      <h2 class="zop-section-title">Descripción</h2>
-      <div class="zop-description-body">{{ operator.description|raw }}</div>
-    </section>
-    {% endif %}
+  {# ── Catálogos (habitaciones / productos): full-width, fuera de .zop-body ── #}
+  {% if operator.catalogs is not empty %}
+    {% for catalog in operator.catalogs %}
+      <section class="zop-catalog-section">
 
-    {% partial 'operator/attributes' %}
-
-    {% if operator.catalogs is not empty %}
-      {% for catalog in operator.catalogs %}
-        <section class="zop-section">
-
-          <div class="zop-catalog-header">
-            <div class="zop-catalog-pill">📂 Catálogo</div>
-            <h2 class="zop-catalog-title">{{ catalog.name }}</h2>
-            {% if catalog.preview_text %}
-              <p class="zop-catalog-sub">{{ catalog.preview_text }}</p>
-            {% endif %}
-          </div>
-
-          {% if catalog.products is not empty %}
-
-            {% partial 'operator/products' %}
-
+        <div class="zop-catalog-header">
+          <h2 class="zop-catalog-title">{{ catalog.name }}</h2>
+          {% if catalog.preview_text %}
+            <p class="zop-catalog-sub">{{ catalog.preview_text }}</p>
           {% else %}
-            <p class="zop-empty">Este catálogo no tiene productos activos.</p>
+            <div class="zop-catalog-meta">{{ catalog.products|length }} PRODUCTO{{ catalog.products|length != 1 ? 'S' : '' }}</div>
           {% endif %}
+        </div>
 
-        </section>
-      {% endfor %}
+        {% if catalog.products is not empty %}
+          {% partial 'operator/products' %}
+        {% else %}
+          <p class="zop-empty">Este catálogo no tiene productos activos.</p>
+        {% endif %}
 
-    {% else %}
-      <section class="zop-section">
-        <p class="zop-empty">Este operador no tiene catálogos activos.</p>
       </section>
-    {% endif %}
+    {% endfor %}
 
-    {% partial 'operator/amenities' %}
+  {% else %}
+    <section class="zop-catalog-section">
+      <p class="zop-empty">Este operador no tiene catálogos activos.</p>
+    </section>
+  {% endif %}
 
-  </div>
+  {# ── Espacios & Experiencias: full-width, fuera de .zop-body ── #}
+  {% partial 'operator/amenities' %}
 </div>

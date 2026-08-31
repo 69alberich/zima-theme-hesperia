@@ -1,14 +1,15 @@
 {# ── operator/amenities.htm ── espacios y experiencias del operador #}
 {% if operator.amenities is not empty %}
-<section class="zop-section zop-amenities-section">
+<section class="zop-amenities-section">
 
   <div class="zop-amenities-header">
-    <h2 class="zop-section-title">Espacios & Experiencias</h2>
+    <h2 class="zop-amenities-title">Espacios &amp; Experiencias</h2>
+    <div class="zop-amenities-meta">{{ operator.amenities|length }} ESPACIO{{ operator.amenities|length != 1 ? 'S' : '' }}</div>
   </div>
 
   <div class="zop-am-grid">
     {% for amenity in operator.amenities %}
-      <article class="zop-am-card{% if loop.first %} zop-am-card--featured{% endif %}"
+      <article class="zop-am-card"
                onclick="location.href='{{ 'amenity'|page({'operatorSlug': operator.slug, 'amenitySlug': amenity.slug}) }}'"
                style="cursor:pointer">
 
@@ -32,7 +33,6 @@
           {% if amenity.preview_text %}
             <p class="zop-am-excerpt">{{ amenity.preview_text }}</p>
           {% endif %}
-          <span class="zop-am-cta">Conocer más →</span>
         </div>
 
       </article>
