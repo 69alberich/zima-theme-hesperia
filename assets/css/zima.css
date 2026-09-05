@@ -23,8 +23,11 @@
   --z-text-soft: #8a9aaa;
   --z-text-dim:  #aab4be;
 
-  /* Typography — Instrument Serif · Archivo · JetBrains Mono */
-  --z-font-serif:  'Canela', 'Cormorant Garamond', Georgia, serif;
+  /* Typography — Canela/GT Walsheim son las fuentes oficiales de Hesperia (ver fonts.css);
+     mientras no se instalen los archivos reales, el fallback funcional del sitio es
+     Instrument Serif + Archivo + JetBrains Mono (cargadas desde Google Fonts) — un único
+     fallback consistente, no una mezcla de varios "mientras tanto" distintos por sección. */
+  --z-font-serif:  'Canela', 'Instrument Serif', Georgia, serif;
   --z-font-sans:   'GT Walsheim', 'Archivo', system-ui, sans-serif;
   --z-font-mono:   'JetBrains Mono', monospace;
 
@@ -229,7 +232,7 @@ img { max-width: 100%; display: block; }
 }
 .z-nav-inner {
   display: flex; align-items: center; justify-content: space-between; gap: 24px;
-  padding-top: 16px; padding-bottom: 16px;
+  padding: 16px var(--z-px);
 }
 .z-nav-logo {
   font-family: var(--z-font-serif); font-size: 25px; font-weight: 600;
@@ -273,7 +276,7 @@ img { max-width: 100%; display: block; }
 .z-footer { background: var(--z-footer-bg); color: rgba(255,255,255,.65); margin-top: 100px; }
 .z-footer-grid {
   display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;
-  padding-top: 56px; padding-bottom: 56px;
+  padding: 56px var(--z-px);
 }
 .z-footer-brand-name {
   font-family: var(--z-font-serif); font-size: 26px; font-weight: 600;
@@ -290,7 +293,7 @@ img { max-width: 100%; display: block; }
 .z-footer-divider { border-top: 1px solid rgba(255,255,255,.08); }
 .z-footer-bottom {
   display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 12px; padding-top: 20px; padding-bottom: 24px;
+  flex-wrap: wrap; gap: 12px; padding: 20px var(--z-px) 24px;
 }
 .z-footer-copy { font-size: 13px; color: rgba(255,255,255,.4); }
 
@@ -706,88 +709,91 @@ img { max-width: 100%; display: block; }
    PRODUCT DETAIL  (zpd-*)
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── Hero (estático) ── */
-.zpd-hero      { background: #051C2C; }
-.zpd-hero-main { position: relative; height: 340px; overflow: hidden; }
-.zpd-slide-color {
-  width: 100%; height: 100%;
-  background: linear-gradient(135deg, #051C2C 0%, #0d2e44 60%, #1a3d52 100%);
+/* ── Hero: encabezado — sin banner, solo tipo/operador + título ── */
+.zpd-hero         { padding: clamp(28px, 4vw, 56px) var(--z-px) clamp(24px, 3vw, 40px); }
+.zpd-hero-content { min-width: 0; }
+.zpd-hero-row {
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
+  gap: clamp(20px, 3vw, 48px);
 }
-.zpd-hero-overlay {
-  position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(to top, rgba(10,30,28,.78) 0%, rgba(10,30,28,.1) 60%, transparent 100%);
-  display: flex; align-items: flex-end;
+.zpd-hero-main { min-width: 0; flex: 1 1 420px; }
+.zpd-hero-jump { display: flex; flex-wrap: wrap; gap: 14px; padding-bottom: 6px; }
+
+.zpd-hero-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 16px; }
+.zpd-hero-kind {
+  font-family: var(--z-font-mono); font-size: 9px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  padding: 6px 11px; border-radius: 999px; color: #fff;
 }
-.zpd-hero-overlay a { pointer-events: auto; }
-.zpd-hero-content   { padding-bottom: 32px; }
-.zpd-breadcrumb {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 13px; color: rgba(255,255,255,.65); margin-bottom: 14px;
+.zpd-hero-kind--booking { background: var(--z-orange); }
+.zpd-hero-kind--store   { background: var(--z-text); }
+.zpd-hero-operator {
+  font-family: var(--z-font-mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--z-orange);
 }
-.zpd-breadcrumb a       { color: rgba(255,255,255,.65); }
-.zpd-breadcrumb a:hover { color: #fff; }
-.zpd-breadcrumb-sep     { opacity: .5; }
-.zpd-hero-badges        { display: flex; gap: 8px; margin-bottom: 12px; }
+.zpd-hero-operator:hover { color: var(--z-text); }
+.zpd-hero-cat {
+  font-family: var(--z-font-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--z-text-muted);
+}
+
 .zpd-hero-title {
-  font-family: var(--z-font-serif);
-  font-size: clamp(24px, 4vw, 40px); font-weight: 700;
-  color: #fff; margin: 0 0 8px; line-height: 1.15;
+  margin: 0; font-family: var(--z-font-serif); font-weight: 400;
+  font-size: clamp(40px, 6vw, 88px); line-height: .95; letter-spacing: -.02em; color: var(--z-text);
 }
-.zpd-hero-location { font-size: 15px; color: rgba(255,255,255,.75); margin: 0; }
 
 /* ── Galería ── */
 .zpd-section--gallery { margin-bottom: 40px; }
-.zpd-gallery          { display: flex; flex-direction: column; gap: 8px; }
 
-/* Slide principal — cuadrado */
-.zpd-gal-main         { width: 100%; border-radius: 14px; overflow: hidden; }
-.zpd-gal-slide {
-  aspect-ratio: 1 / 1;
+/* Grid bento — se adapta a 1, 2 o N fotos.
+   Base: 4 columnas, la primera foto (si hay 3+) ocupa un tile 2×2 "hero" y el resto
+   fluye en tiles parejos de 1×1 sin dejar huecos, sin importar cuántas fotos haya. */
+.zpd-gallery {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: clamp(140px, 15vw, 210px);
+  gap: 8px;
+}
+.zpd-gal-item {
+  position: relative; grid-column: span 1; grid-row: span 1;
+  border: 0; padding: 0; margin: 0; cursor: pointer; overflow: hidden; border-radius: 2px;
   background: var(--z-muted-bg);
-  overflow: hidden;
 }
-.zpd-gal-slide img    { width: 100%; height: 100%; object-fit: cover; display: block; }
+.zpd-gal-item img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform .5s cubic-bezier(.25,.46,.45,.94);
+}
+.zpd-gal-item:hover img { transform: scale(1.04); }
 
-/* Flechas de navegación */
-.zpd-swiper-prev,
-.zpd-swiper-next {
-  color: #fff !important;
-  background: rgba(10,30,28,.5) !important;
-  width: 36px !important; height: 36px !important;
-  border-radius: 50%;
-  backdrop-filter: blur(4px);
-  transition: background .15s;
+.zpd-gal-num {
+  position: absolute; top: 10px; left: 12px;
+  font-family: var(--z-font-mono); font-size: 10px; letter-spacing: .1em; color: #fff;
+  text-shadow: 0 1px 5px rgba(0,0,0,.55);
 }
-.zpd-swiper-prev:hover,
-.zpd-swiper-next:hover  { background: rgba(10,30,28,.8) !important; }
-.zpd-swiper-prev::after,
-.zpd-swiper-next::after { font-size: 13px !important; font-weight: 800; }
 
-/* Thumbs — cuadrados pequeños */
-.zpd-gal-thumbs       { padding: 2px 0; }
-.zpd-gal-thumb-slide  {
-  width: 72px !important;
-  aspect-ratio: 1 / 1;
-  border-radius: 8px; overflow: hidden;
-  border: 2px solid transparent; cursor: pointer;
-  opacity: .55; transition: opacity .15s, border-color .15s;
+/* 1 foto: un solo tile a todo lo ancho */
+.zpd-gallery--one .zpd-gal-item { grid-column: span 4; grid-row: span 2; }
+/* 2 fotos: mitad y mitad, altas */
+.zpd-gallery--two .zpd-gal-item { grid-column: span 2; grid-row: span 2; }
+/* 3+ fotos: la primera es el tile "hero" 2×2, el resto son 1×1 y fluyen solas */
+.zpd-gal-item--hero { grid-column: span 2; grid-row: span 2; }
+
+@media (max-width: 640px) {
+  .zpd-gallery { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 42vw; gap: 6px; }
+  .zpd-gal-item,
+  .zpd-gal-item--hero,
+  .zpd-gallery--two .zpd-gal-item { grid-column: span 1; grid-row: span 1; }
+  .zpd-gallery--one .zpd-gal-item { grid-column: span 2; grid-row: span 1; height: 60vw; }
 }
-.zpd-gal-thumb-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.zpd-gal-thumb-slide:hover { opacity: .8; }
-.swiper-slide-thumb-active.zpd-gal-thumb-slide { border-color: var(--z-orange); opacity: 1; }
 
 /* ── Badges ── */
 .zpd-badge {
-  display: inline-flex; align-items: center;
-  font-size: 11px; font-weight: 700; letter-spacing: .4px;
-  padding: 4px 10px; border-radius: 20px; text-transform: uppercase;
+  display: inline-flex; align-items: center; flex: none; margin-top: 2px;
+  font-family: var(--z-font-mono); font-size: 10px; font-weight: 500; letter-spacing: .1em;
+  text-transform: uppercase; white-space: nowrap;
 }
-.zpd-badge--type   { background: var(--z-teal);   color: #fff; }
-.zpd-badge--cat    { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.3); }
-.zpd-badge--avail  { background: #d4f0e8; color: #0a5940; font-size: 12px; }
+.zpd-badge--avail  { color: #1f7a52; }
 
-/* ── Page layout ── */
-.zpd-wrap   { padding-top: 40px; padding-bottom: 80px; }
+/* ── Page layout — full-width, sin el max-width de 1240px de .z-wrap; mismo criterio
+   que las secciones full-bleed del landing de operador (padding propio, sin cap). ── */
+.zpd-wrap   { width: 100%; padding: 40px var(--z-px) 80px; }
 .zpd-layout {
   display: grid;
   grid-template-columns: 1fr 360px;
@@ -797,119 +803,214 @@ img { max-width: 100%; display: block; }
 .zpd-body   { min-width: 0; }
 .zpd-sidebar { position: sticky; top: calc(var(--z-nav-h) + 20px); }
 
-/* ── Tabs ── */
-.zpd-tabs {
-  display: flex; gap: 0; border-bottom: 2px solid var(--z-border);
-  margin-bottom: 36px; overflow-x: auto; scrollbar-width: none;
-}
-.zpd-tabs::-webkit-scrollbar { display: none; }
+/* ── Tabs / jump-nav — vive junto al título en el hero (ver .zpd-hero-jump) ── */
 .zpd-tab {
-  padding: 12px 20px; font-size: 14px; font-weight: 600;
-  color: var(--z-text-muted); border-bottom: 2px solid transparent;
-  margin-bottom: -2px; white-space: nowrap; transition: color .15s, border-color .15s;
-  text-decoration: none;
+  font-family: var(--z-font-mono); font-size: 10px; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--z-text-muted); border-bottom: 1px solid var(--z-border); padding-bottom: 4px;
+  white-space: nowrap; text-decoration: none; transition: color .15s, border-color .15s;
 }
-.zpd-tab:hover   { color: var(--z-teal); }
-.zpd-tab.is-active { color: var(--z-teal); border-bottom-color: var(--z-teal); }
+.zpd-tab:hover,
+.zpd-tab.is-active { color: var(--z-orange); border-bottom-color: var(--z-orange); }
 
 /* ── Sections ── */
 .zpd-section        { margin-bottom: 48px; scroll-margin-top: calc(var(--z-nav-height, 72px) + 16px); }
 .zpd-section-title  { font-size: 20px; font-weight: 700; margin: 0 0 16px; color: var(--z-text); }
+.zpd-section-h2 {
+  margin: 0 0 22px; font-family: var(--z-font-serif); font-weight: 400;
+  font-size: clamp(26px, 3vw, 38px); line-height: 1.05; letter-spacing: -.01em; color: var(--z-text);
+}
 .zpd-section-sub    { font-size: 14px; color: var(--z-text-muted); margin: -10px 0 20px; }
 
 /* ── Description ── */
-.zpd-description p      { margin: 0 0 14px; line-height: 1.7; color: var(--z-text-md); }
+.zpd-desc-eyebrow {
+  font-family: var(--z-font-mono); font-size: 13px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--z-orange);
+}
+.zpd-description { margin-top: 20px; }
 .zpd-desc-more          { background: none; border: none; color: var(--z-teal); font-weight: 600; font-size: 14px; cursor: pointer; padding: 0; }
 .zpd-desc-more:hover    { color: var(--z-teal-dark); }
 
-/* ── Highlights grid ── */
-.zpd-highlights {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 12px;
-}
+/* ── "¿Qué incluye?" — nube de pills (flex-wrap, no grid).
+   Deliberadamente distinta de .zpd-conditions: acá la cantidad de atributos es
+   irregular por producto, así que un grid con líneas divisorias dejaba huecos
+   feos en la última fila cuando no cerraba parejo. Flexbox no tiene ese problema
+   (no hay "celdas" vacías que rellenar), y de paso separa visualmente esta lista
+   de features del spec-sheet de Condiciones. ── */
+.zpd-highlights { display: flex; flex-wrap: wrap; gap: 10px; }
 .zpd-highlight-item {
-  display: flex; align-items: center; gap: 10px;
-  background: var(--z-surface); border: 1px solid var(--z-border-lt);
-  border-radius: 12px; padding: 12px 14px;
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--z-surface); border: 1px solid var(--z-border);
+  border-radius: 999px; padding: 6px 18px 6px 6px; min-width: 0;
+  transition: border-color .15s, background .15s;
 }
-.zpd-highlight-icon  { font-size: 20px; flex-shrink: 0; display:flex; align-items:center; justify-content:center; width:32px; }
+.zpd-highlight-item:hover { border-color: var(--z-orange); background: var(--z-bg); }
+.zpd-highlight-icon {
+  width: 34px; height: 34px; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 999px; background: var(--z-bg); overflow: hidden;
+}
 .zpd-attr-icon       { display:block; }
-.zpd-attr-icon img   { display:block; border-radius:4px; object-fit:cover; }
-.zpd-attr-icon--fallback { font-size:18px; color: var(--z-teal); }
-.zpd-highlight-label { font-size: 13px; font-weight: 600; color: var(--z-text-md); }
+.zpd-attr-icon img   { display:block; border-radius:6px; object-fit:cover; }
+.zpd-attr-icon--fallback { font-size:20px; color: var(--z-orange); }
+.zpd-highlight-body  { min-width: 0; }
+.zpd-highlight-label { font-size: 14px; color: var(--z-text); line-height: 1.3; white-space: nowrap; }
 
-/* ── Offer cards ── */
+/* ── Offer cards ── media a la izquierda + contenido a la derecha en desktop,
+   apilados en mobile (ver el media query al final de este bloque). ── */
+.zpd-section-sub {
+  font-family: var(--z-font-mono); font-size: 11px; letter-spacing: .06em; color: var(--z-text-muted);
+}
+.zpd-section-sub strong { color: var(--z-text); font-weight: 600; }
+.zpd-occ-hint a { color: var(--z-orange); }
+
 .zpd-offers          { display: flex; flex-direction: column; gap: 16px; }
 .zpd-offer-card {
-  background: var(--z-surface); border: 1.5px solid var(--z-border);
-  border-radius: 16px; overflow: hidden; position: relative; transition: box-shadow .18s;
+  background: var(--z-surface); border: 1px solid var(--z-border);
+  border-radius: 2px; overflow: hidden; transition: border-color .2s;
 }
-.zpd-offer-card:hover { box-shadow: 0 8px 30px -10px rgba(28,43,42,.18); }
-.zpd-offer-card--featured { border-color: var(--z-teal); }
+/* "Menor precio": borde coral fino, sin relleno — un aviso sutil, no compite con "seleccionada". */
+.zpd-offer-card--featured { border-color: var(--z-orange); }
+
+/* Oferta seleccionada: solo borde coral más grueso, fondo blanco igual que el resto —
+   nada de wash ni texto en blanco, el acento es exclusivamente el borde + el badge. */
+.zpd-offer-card--selected {
+  border-color: var(--z-orange); border-width: 2px; background: var(--z-surface);
+}
+
+.zpd-offer-title-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+/* Solo se usa para "Menor precio" — el estado "seleccionada" ya lo indican el borde
+   coral de la tarjeta y el pill navy junto al CTA, no hace falta un tercer aviso. */
 .zpd-offer-badge {
-  background: var(--z-teal); color: #fff;
-  font-size: 11px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase;
-  padding: 6px 16px;
+  display: inline-flex; align-items: center; padding: 5px 12px; border-radius: 999px;
+  font-family: var(--z-font-mono); font-size: 9px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+  border: 1px solid var(--z-orange); color: var(--z-orange); background: transparent;
 }
-.zpd-offer-body  { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 24px 20px; }
-.zpd-offer-info  { flex: 1; min-width: 0; }
-.zpd-offer-name  { font-size: 16px; font-weight: 700; color: var(--z-text); margin-bottom: 4px; }
-.zpd-offer-features {
-  list-style: none; margin: 0 0 10px; padding: 0;
-  display: flex; flex-direction: column; gap: 4px;
+
+.zpd-offer-main {
+  display: grid; grid-template-columns: minmax(180px, 260px) 1fr; align-items: stretch;
 }
-.zpd-offer-features li  { font-size: 13px; color: var(--z-text-soft); }
+
+/* Media: foto principal + tira de miniaturas superpuesta abajo (mismo patrón que
+   las tarjetas de producto del operador — ver .zop2-media/.zop2-thumbs) */
+.zpd-offer-media { position: relative; min-height: 220px; background: var(--z-muted-bg); }
+.zpd-offer-main-img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: zoom-in; }
+.zpd-offer-media--empty {
+  display: flex; align-items: center; justify-content: center; font-size: 36px; min-height: 220px;
+}
+.zpd-offer-media-badge {
+  position: absolute; top: 10px; right: 10px;
+  font-family: var(--z-font-mono); font-size: 9px; letter-spacing: .1em; text-transform: uppercase;
+  background: var(--z-bg); color: var(--z-text); padding: 5px 10px; border-radius: 999px;
+}
+.zpd-offer-thumbs {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  display: flex; gap: 4px; padding: 6px; background: rgba(5,28,44,.35);
+}
+.zpd-offer-thumb {
+  flex: 1; height: 44px; min-width: 0; border: 0; padding: 0; cursor: zoom-in;
+  border-radius: 2px; overflow: hidden;
+}
+.zpd-offer-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.zpd-offer-thumb-more {
+  flex: 1; height: 44px; display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,.16); color: #fff;
+  font-family: var(--z-font-mono); font-size: 11px;
+}
+
+.zpd-offer-content { padding: clamp(18px, 2vw, 24px); display: flex; flex-direction: column; min-width: 0; }
+.zpd-offer-name {
+  font-family: var(--z-font-serif); font-weight: 400;
+  font-size: clamp(22px, 2.4vw, 28px); line-height: 1.1; color: var(--z-text);
+}
+.zpd-offer-preview-text { margin: 8px 0 0; font-size: 13.5px; line-height: 1.65; color: var(--z-text-muted); }
 
 /* Price-type tab selector */
-.zpd-price-type-tabs    { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
-.zpd-price-type-tab     { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; border: 1.5px solid var(--z-border); font-size: 12px; font-weight: 600; cursor: pointer; color: var(--z-text-md); transition: border-color .15s, color .15s, background .15s; }
+.zpd-price-type-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+.zpd-price-type-tab {
+  display: flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 999px;
+  border: 1px solid var(--z-border); cursor: pointer; transition: border-color .15s, color .15s, background .15s;
+  font-family: var(--z-font-mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--z-text-md);
+}
 .zpd-price-type-tab input[type="radio"] { display: none; }
-.zpd-price-type-tab.is-active { border-color: var(--z-teal); color: var(--z-teal); background: color-mix(in srgb, var(--z-teal) 10%, transparent); }
+.zpd-price-type-tab.is-active { border-color: var(--z-orange); color: #fff; background: var(--z-orange); }
 .zpd-price-type-tab:hover:not(.is-active) { border-color: var(--z-text-md); }
 
-/* Offer price lines table */
-.zpd-offer-prices       { list-style: none; margin: 0 0 10px; padding: 0; display: flex; flex-direction: column; gap: 5px; }
-.zpd-offer-price-line   { display: flex; align-items: baseline; gap: 8px; font-size: 13px; flex-wrap: wrap; }
-.zpd-offer-price-pax    { color: var(--z-text-md); font-weight: 600; flex: 1; }
-.zpd-offer-price-per    { color: var(--z-text-muted); }
-.zpd-offer-price-total  { color: var(--z-teal); font-weight: 700; }
-
-/* Selected offer state */
-.zpd-offer-card--selected  { border-color: var(--z-teal); background: var(--z-teal-lt); }
-.zpd-offer-badge--selected { background: #d4f0e8; color: #0a5940; }
+/* Offer price lines table.
+   .zpd-offer-price-nums agrupa "por noche" + "total" como una sola unidad: antes eran
+   2 items sueltos junto al pax label en un flex con space-between, así que cuando el
+   label empujaba y la fila envolvía (flex-wrap), cada uno se iba a un extremo con un
+   hueco enorme en el medio en vez de quedarse juntos. Ahora el line solo distribuye
+   2 bloques (label | números) y el grupo de números se mantiene unido siempre. */
+.zpd-offer-prices     { list-style: none; margin: 14px 0 0; padding: 0; }
+.zpd-offer-price-line {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  font-size: 13px; padding: 8px 0; border-top: 1px solid var(--z-border-lt);
+}
+.zpd-offer-price-line:first-child { border-top: 0; padding-top: 0; }
+.zpd-offer-price-pax  { color: var(--z-text-md); font-weight: 600; }
+.zpd-offer-price-nums { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.zpd-offer-price-per   { color: var(--z-text-muted); font-size: 12px; white-space: nowrap; }
+.zpd-offer-price-total {
+  color: var(--z-orange); font-weight: 600;
+  font-family: var(--z-font-mono); font-size: 12px; white-space: nowrap;
+}
+.zpd-offer-alloc-hint { margin: 14px 0 0; font-size: 13px; color: var(--z-text-muted); font-style: italic; }
 
 /* No-dates / empty state */
 .zpd-offers-nodates        { text-align: center; padding: 48px 24px; }
 .zpd-offers-nodates-icon   { font-size: 44px; margin-bottom: 16px; }
-.zpd-offers-nodates-title  { font-size: 17px; font-weight: 700; color: var(--z-text); margin: 0 0 8px; }
+.zpd-offers-nodates-title  {
+  font-family: var(--z-font-serif); font-weight: 400;
+  font-size: 24px; color: var(--z-text); margin: 0 0 8px;
+}
 .zpd-offers-nodates-sub    { font-size: 14px; color: var(--z-text-muted); margin: 0; line-height: 1.6; }
+.zpd-offers-nodates-sub a  { color: var(--z-orange); text-decoration: underline; }
 
 /* Sidebar states */
 .zpd-card-price--dim    { color: var(--z-text-dim); }
 .zpd-card-no-dates {
   display: flex; flex-direction: column; align-items: flex-start; gap: 12px;
-  background: var(--z-muted-bg); border-radius: 12px; padding: 16px;
+  background: var(--z-bg); padding: 18px;
   font-size: 13px; color: var(--z-text-soft); line-height: 1.5;
-  margin-bottom: 16px;
 }
 .zpd-card-no-dates-icon { font-size: 22px; }
 .zpd-card-no-dates-btn  { align-self: stretch; text-align: center; }
-.zpd-badge--unavail     { background: #fde8e2; color: #b03a22; font-size: 12px; }
+.zpd-badge--unavail     { color: var(--z-orange); }
 
 /* Highlight value sub-label */
-.zpd-highlight-value    { display: block; font-size: 11px; color: var(--z-text-muted); margin-top: 1px; }
+.zpd-highlight-value    { color: var(--z-orange); font-weight: 600; }
 .zpd-desc-empty         { color: var(--z-text-muted); font-style: italic; }
 
-.zpd-offer-stock          { font-size: 12px; font-weight: 600; margin-top: 4px; }
+.zpd-offer-stock {
+  margin-top: 14px;
+  font-family: var(--z-font-mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; font-weight: 500;
+}
 .zpd-offer-stock--low     { color: var(--z-orange); }
 .zpd-offer-stock--ok      { color: #2a7a4a; }
 .zpd-offer-stock--unavail { color: var(--z-text-muted); }
-.zpd-offer-action { text-align: right; flex-shrink: 0; }
-.zpd-offer-price-from  { font-size: 11px; color: var(--z-text-muted); }
-.zpd-offer-price       { font-size: 26px; font-weight: 800; color: var(--z-teal); line-height: 1; }
-.zpd-offer-price-unit  { font-size: 12px; color: var(--z-text-muted); margin-bottom: 12px; }
-.zpd-offer-btn         { white-space: nowrap; margin-top: 6px; }
-.zpd-offer-selected-pill { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; background: color-mix(in srgb, var(--z-teal) 12%, transparent); color: var(--z-teal); border: 1.5px solid var(--z-teal); white-space: nowrap; }
+
+.zpd-offer-footer {
+  margin-top: auto; padding-top: 18px;
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 14px;
+}
+.zpd-offer-price-block { min-width: 0; }
+.zpd-offer-price-from {
+  font-family: var(--z-font-mono); font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: var(--z-text-muted);
+}
+.zpd-offer-price {
+  margin-top: 4px; font-family: var(--z-font-serif); font-weight: 400;
+  font-size: clamp(26px, 2.6vw, 34px); line-height: 1; color: var(--z-orange);
+}
+.zpd-offer-price-unit  { margin-top: 2px; font-size: 11px; color: var(--z-text-muted); }
+.zpd-offer-actions     { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.zpd-offer-btn         { white-space: nowrap; }
+/* Navy sólido — distinto del "Seleccionar" coral de las otras tarjetas, para que quede
+   claro que esta ya no es una acción sino una confirmación. */
+.zpd-offer-selected-pill {
+  display: inline-flex; align-items: center; gap: 4px; padding: 9px 16px; border-radius: 999px;
+  font-family: var(--z-font-mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; font-weight: 500;
+  background: var(--z-text); color: #fff; white-space: nowrap;
+}
 
 /* ── Map placeholder ── */
 .zpd-map-placeholder {
@@ -947,107 +1048,137 @@ img { max-width: 100%; display: block; }
 }
 .zpd-reviews-more:hover { border-color: var(--z-teal); color: var(--z-teal); }
 
-/* ── Sidebar booking card ── */
+/* ── Sidebar booking / store card ── */
 .zpd-card {
-  background: var(--z-surface); border: 1.5px solid var(--z-border);
-  border-radius: 20px; padding: 24px; margin-bottom: 16px;
-  box-shadow: 0 8px 32px -12px rgba(28,43,42,.15);
+  --zpd-card-pad: clamp(20px, 2vw, 26px);
+  background: var(--z-surface); border: 1px solid var(--z-border);
+  padding: var(--zpd-card-pad); margin-bottom: 16px;
+  display: flex; flex-direction: column; gap: 20px;
 }
-.zpd-card--contact {
+.zpd-card > * { margin: 0; }
+
+/* Contacto — bloque diferenciado en navy, "unido" a la card (no es una card aparte),
+   con sangría negativa para que llegue a los bordes como una franja de cierre. */
+.zpd-card > .zpd-contact {
   display: flex; align-items: center; gap: 14px;
-  box-shadow: none; border-color: var(--z-border-lt);
+  margin: 0 calc(-1 * var(--zpd-card-pad)) calc(-1 * var(--zpd-card-pad));
+  padding: 18px var(--zpd-card-pad);
+  background: var(--z-text); color: var(--z-bg);
 }
-.zpd-contact-icon   { font-size: 26px; flex-shrink: 0; }
-.zpd-contact-title  { font-size: 14px; font-weight: 700; color: var(--z-text); }
-.zpd-contact-desc   { font-size: 12px; color: var(--z-text-muted); margin-top: 2px; }
-.zpd-contact-icon   { flex-shrink: 0; }
-.zpd-card--contact .z-btn { margin-left: auto; flex-shrink: 0; }
+.zpd-contact-icon {
+  flex: none; width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,.12); color: var(--z-orange); font-size: 15px;
+}
+.zpd-contact-body   { min-width: 0; }
+.zpd-contact-title  { font-size: 13px; font-weight: 600; color: #fff; }
+.zpd-contact-desc   { font-size: 11px; color: rgba(255,255,255,.6); margin-top: 2px; }
+.zpd-contact-btn {
+  flex: none; margin-left: auto; white-space: nowrap; text-decoration: none;
+  font-family: var(--z-font-mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--z-bg); border: 1px solid rgba(255,255,255,.35); padding: 8px 14px;
+  transition: background .15s, border-color .15s;
+}
+.zpd-contact-btn:hover { background: var(--z-orange); border-color: var(--z-orange); color: #fff; }
 
 /* ── Store product sidebar ─────────────────────────────────────── */
-.zpd-store-offers       { margin: 12px 0; display: flex; flex-direction: column; gap: 6px; }
-.zpd-store-offers-label { font-size: 11px; font-weight: 600; color: var(--z-text-muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
-.zpd-store-offer-row    { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border: 1.5px solid var(--z-border); border-radius: 4px; text-decoration: none; color: var(--z-text); font-size: 14px; transition: border-color .15s, background .15s; }
-.zpd-store-offer-row:hover          { border-color: var(--z-teal); background: color-mix(in srgb, var(--z-teal) 8%, transparent); }
-.zpd-store-offer-row.is-selected    { border-color: var(--z-teal); background: color-mix(in srgb, var(--z-teal) 8%, transparent); }
+.zpd-store-offers       { display: flex; flex-direction: column; gap: 8px; }
+.zpd-store-offers-label { font-family: var(--z-font-mono); font-size: 9px; letter-spacing: .16em; text-transform: uppercase; color: var(--z-text-dim); }
+.zpd-store-offer-row    {
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  padding: 12px 14px; background: var(--z-bg); outline: 1px solid var(--z-border); outline-offset: -1px;
+  text-decoration: none; color: var(--z-text); font-size: 13px;
+  transition: outline-color .15s, background .15s, box-shadow .15s;
+}
+.zpd-store-offer-row:hover          { outline-color: var(--z-orange); background: var(--z-surface); }
+.zpd-store-offer-row.is-selected    { outline-color: var(--z-orange); background: var(--z-surface); box-shadow: inset 3px 0 0 var(--z-orange); }
 .zpd-store-offer-name   { font-weight: 500; }
-.zpd-store-offer-price  { font-weight: 700; color: var(--z-teal); }
+.zpd-store-offer-price  { font-family: var(--z-font-mono); font-size: 12px; color: var(--z-orange); }
 /* ── Store variants comparison grid ───────────────────────────── */
-.zpd-store-variants   { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 8px; }
-.zpd-sv-card          { display: flex; flex-direction: column; gap: 8px; padding: 16px; border: 1.5px solid var(--z-border); border-radius: 12px; transition: border-color .15s; }
-.zpd-sv-card:hover    { border-color: var(--z-teal); }
-.zpd-sv-card--selected{ border-color: var(--z-teal); background: color-mix(in srgb, var(--z-teal) 6%, transparent); }
-.zpd-sv-selected-pill { font-size: 11px; font-weight: 700; color: var(--z-teal); text-transform: uppercase; letter-spacing: .04em; }
-.zpd-sv-name          { font-size: 14px; font-weight: 600; color: var(--z-text); line-height: 1.3; }
-.zpd-sv-price         { font-size: 13px; color: var(--z-text-soft); }
-.zpd-sv-stock         { font-size: 12px; }
-.zpd-sv-btn           { display: inline-block; margin-top: auto; padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; text-align: center; text-decoration: none; background: var(--z-teal); color: #fff; transition: opacity .15s; }
-.zpd-sv-btn:hover     { opacity: .85; color: #fff; }
-.zpd-sv-btn--active   { background: transparent; border: 1.5px solid var(--z-teal); color: var(--z-teal); padding: 6px 14px; cursor: default; }
-.zpd-sv-btn--disabled { background: var(--z-border); color: var(--z-text-muted); cursor: not-allowed; }
+.zpd-store-variants   { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-bottom: 8px; }
+.zpd-sv-card          {
+  display: flex; flex-direction: column; gap: 10px; padding: 20px;
+  background: var(--z-surface); border: 1px solid var(--z-border); transition: border-color .2s;
+}
+.zpd-sv-card:hover    { border-color: var(--z-orange); }
+/* Igual criterio que .zpd-offer-card--selected: solo borde coral más grueso, fondo
+   blanco — el pill navy del botón ya comunica el estado, no hace falta repetirlo arriba. */
+.zpd-sv-card--selected{ border-color: var(--z-orange); border-width: 2px; background: var(--z-surface); }
+.zpd-sv-name          { font-family: var(--z-font-serif); font-weight: 400; font-size: 19px; line-height: 1.25; color: var(--z-text); }
+.zpd-sv-price         { margin-top: -2px; display: flex; align-items: baseline; gap: 6px; }
+.zpd-sv-price-from    { font-family: var(--z-font-mono); font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: var(--z-text-muted); }
+.zpd-sv-price-val     { font-family: var(--z-font-serif); font-weight: 400; font-size: 20px; color: var(--z-orange); }
+.zpd-sv-stock         { font-family: var(--z-font-mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; font-weight: 500; }
 
-.zpd-card-section-label { font-size: 11px; font-weight: 600; color: var(--z-text-muted); text-transform: uppercase; letter-spacing: .04em; margin: 14px 0 6px; }
-.zpd-store-price-types  { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
-.zpd-store-pt-row       { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 1.5px solid var(--z-border); border-radius: 10px; cursor: pointer; transition: border-color .15s, background .15s; }
+.zpd-card-section-label { font-family: var(--z-font-mono); font-size: 9px; letter-spacing: .16em; text-transform: uppercase; color: var(--z-text-dim); }
+.zpd-store-price-types  { display: flex; flex-direction: column; gap: 1px; background: var(--z-border); border: 1px solid var(--z-border); }
+.zpd-store-pt-row       { display: flex; align-items: center; gap: 10px; padding: 11px 14px; background: var(--z-bg); cursor: pointer; transition: background .15s, box-shadow .15s; }
 .zpd-store-pt-row input[type="radio"] { display: none !important; }
-.zpd-store-pt-row.is-selected { border-color: var(--z-teal); background: color-mix(in srgb, var(--z-teal) 8%, transparent); }
-.zpd-store-pt-row:hover { border-color: var(--z-teal); }
+.zpd-store-pt-row.is-selected { background: var(--z-surface); box-shadow: inset 3px 0 0 var(--z-orange); }
+.zpd-store-pt-row:hover { background: var(--z-surface); }
 .zpd-store-pt-name      { flex: 1; font-size: 13px; font-weight: 500; color: var(--z-text); }
-.zpd-store-pt-price     { font-size: 14px; font-weight: 700; color: var(--z-teal); }
-.zpd-store-qty          { display: flex; align-items: center; justify-content: space-between; margin: 16px 0 12px; }
-.zpd-store-qty-label    { font-size: 14px; font-weight: 600; color: var(--z-text); }
-.zpd-store-msg          { margin-top: 10px; padding: 10px 14px; border-radius: 4px; font-size: 13px; font-weight: 500; }
+.zpd-store-pt-price     { font-family: var(--z-font-mono); font-size: 12px; color: var(--z-orange); }
+.zpd-store-qty          { display: flex; align-items: center; justify-content: space-between; }
+.zpd-store-qty-label    { font-size: 13px; font-weight: 500; color: var(--z-text); }
+.zpd-store-msg          { padding: 11px 14px; font-family: var(--z-font-mono); font-size: 11px; letter-spacing: .04em; }
 .zpd-store-msg--ok      { background: #e8f5e9; color: #2e7d32; }
 .zpd-store-msg--err     { background: #fdecea; color: #c62828; }
 
-.zpd-card-price-row { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; }
-.zpd-card-from      { font-size: 12px; color: var(--z-text-muted); }
-.zpd-card-price     { font-size: 30px; font-weight: 800; color: var(--z-teal); line-height: 1; }
-.zpd-card-unit      { font-size: 13px; font-weight: 400; color: var(--z-text-muted); }
+.zpd-card-price-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.zpd-card-from      { font-family: var(--z-font-mono); font-size: 9px; letter-spacing: .16em; text-transform: uppercase; color: var(--z-text-dim); }
+.zpd-card-price     {
+  margin-top: 6px; font-family: var(--z-font-serif); font-weight: 400;
+  font-size: clamp(34px, 3.2vw, 44px); line-height: 1; color: var(--z-orange);
+}
+.zpd-card-unit      { font-size: 12px; font-weight: 400; color: var(--z-text-muted); }
 
 .zpd-card-dates {
-  display: grid; grid-template-columns: 1fr auto 1fr 1fr;
-  align-items: center; gap: 8px;
-  background: var(--z-bg); border-radius: 12px; padding: 12px 14px;
-  margin-bottom: 12px;
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  align-items: stretch;
 }
-.zpd-card-date-arrow  { color: var(--z-text-dim); font-size: 16px; }
-.zpd-card-date-lbl    { font-size: 11px; color: var(--z-text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
-.zpd-card-date-val    { font-size: 15px; font-weight: 700; color: var(--z-text); margin-top: 2px; }
+.zpd-card-date-field  { background: var(--z-bg); outline: 1px solid var(--z-border); outline-offset: -1px; padding: 12px 14px; min-width: 0; }
+.zpd-card-date-lbl    { font-family: var(--z-font-mono); font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: var(--z-text-dim); }
+.zpd-card-date-val    { font-size: 14px; font-weight: 500; color: var(--z-text); margin-top: 6px; }
 
 .zpd-card-occ {
-  display: flex; align-items: center; justify-content: space-between;
-  font-size: 14px; color: var(--z-text-md);
-  padding: 10px 0; border-top: 1px solid var(--z-border-lt); border-bottom: 1px solid var(--z-border-lt);
-  margin-bottom: 12px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  font-size: 13px; color: var(--z-text-md);
+  padding: 14px 0; border-top: 1px solid var(--z-border-lt); border-bottom: 1px solid var(--z-border-lt);
 }
-.zpd-card-occ-edit  { background: none; border: 1.5px solid var(--z-teal); border-radius: 20px; color: var(--z-teal); font-size: 12px; font-weight: 700; cursor: pointer; padding: 3px 10px; transition: background .15s; }
-.zpd-card-occ-edit:hover { background: color-mix(in srgb, var(--z-teal) 12%, transparent); }
+.zpd-card-occ-lbl   { min-width: 0; }
+.zpd-card-occ-edit  {
+  flex: none; background: none; border: 1px solid var(--z-orange); cursor: pointer;
+  font-family: var(--z-font-mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--z-orange); padding: 7px 14px; transition: background .15s, color .15s;
+}
+.zpd-card-occ-edit:hover { background: var(--z-orange); color: #fff; }
 
 .zpd-card-rate {
   display: flex; align-items: center; justify-content: space-between;
-  font-size: 13px; margin-bottom: 16px;
+  font-size: 13px;
 }
-.zpd-card-rate-name   { font-weight: 600; color: var(--z-text); }
-.zpd-card-rate-change { color: var(--z-teal); cursor: pointer; }
-.zpd-card-rate-change:hover { color: var(--z-teal-dark); }
+.zpd-card-rate-name   { font-weight: 500; color: var(--z-text); }
+.zpd-card-rate-change { color: var(--z-orange); cursor: pointer; }
+.zpd-card-rate-change:hover { color: var(--z-text); }
 
-.zpd-card-breakdown { margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
+.zpd-card-breakdown { padding-top: 18px; border-top: 1px solid var(--z-border-lt); display: flex; flex-direction: column; gap: 8px; }
 .zpd-card-breakdown-row {
-  display: flex; justify-content: space-between;
-  font-size: 13px; color: var(--z-text-muted);
+  display: flex; justify-content: space-between; gap: 12px;
+  font-size: 12px; color: var(--z-text-muted);
 }
 .zpd-card-breakdown-row--total {
-  font-size: 15px; font-weight: 700; color: var(--z-text);
-  border-top: 1px solid var(--z-border-lt); padding-top: 8px; margin-top: 4px;
+  font-size: 14px; font-weight: 600; color: var(--z-text);
+  border-top: 1px solid var(--z-border-lt); padding-top: 10px; margin-top: 2px;
 }
 
-.zpd-card-cta     { width: 100%; border-radius: 12px; padding: 14px; font-size: 16px; font-weight: 700; }
-.zpd-card-policy  { font-size: 11.5px; color: var(--z-text-muted); text-align: center; margin: 10px 0 16px; line-height: 1.5; }
-.zpd-card-stock   { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--z-text-soft); }
-.zpd-card-stock-dot {
-  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-  background: var(--z-orange); box-shadow: 0 0 0 3px rgba(226,103,74,.2);
+.zpd-card-cta     { width: 100%; padding: 14px; font-size: 16px; font-weight: 700; }
+.zpd-card-policy  { font-size: 11.5px; color: var(--z-text-muted); text-align: center; line-height: 1.5; }
+.zpd-card-stock   {
+  display: flex; align-items: center; gap: 7px;
+  font-family: var(--z-font-mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--z-text-soft);
 }
+.zpd-card-stock-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; background: var(--z-orange); }
 
 /* ── Alt rates list ── */
 .zpd-card-alt-rates { margin-top: 18px; border-top: 1px solid var(--z-border); padding-top: 14px; }
@@ -1070,31 +1201,6 @@ img { max-width: 100%; display: block; }
 .zpd-card-alt-rate-name { flex: 1; font-size: 13.5px; }
 .zpd-card-alt-rate-price { font-size: 14px; font-weight: 700; color: var(--z-primary); white-space: nowrap; }
 .zpd-card-alt-rate-sold { font-size: 11px; color: var(--z-text-muted); margin-left: 4px; }
-
-/* ── Offer preview text ── */
-.zpd-offer-preview-text {
-  font-size: 13.5px; color: var(--z-text-soft); line-height: 1.55;
-  margin: 4px 0 12px; max-width: 520px;
-}
-
-/* ── Offer gallery strip ── */
-.zpd-offer-gallery {
-  display: flex; gap: 8px; overflow-x: auto;
-  padding: 14px 24px 0;
-  margin-bottom: 0;
-  scrollbar-width: thin;
-  scrollbar-color: var(--z-border) transparent;
-}
-.zpd-offer-gallery::-webkit-scrollbar { height: 4px; }
-.zpd-offer-gallery::-webkit-scrollbar-thumb { background: var(--z-border); border-radius: 4px; }
-.zpd-offer-gal-thumb {
-  flex-shrink: 0; width: 140px; height: 94px;
-  border-radius: 10px; overflow: hidden; border: none;
-  cursor: zoom-in; padding: 0; background: var(--z-surface-alt);
-  transition: transform .15s, box-shadow .15s;
-}
-.zpd-offer-gal-thumb:hover { transform: scale(1.03); box-shadow: 0 4px 16px rgba(0,0,0,.2); }
-.zpd-offer-gal-thumb img  { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 /* ── Lightbox ── */
 .zpd-lb {
@@ -1129,14 +1235,11 @@ img { max-width: 100%; display: block; }
 @media (max-width: 960px) {
   .zpd-layout { grid-template-columns: 1fr; }
   .zpd-sidebar { position: static; }
-  .zpd-hero-main { height: 340px; }
 }
-@media (max-width: 600px) {
-  .zpd-offer-body   { flex-direction: column; align-items: flex-start; }
-  .zpd-offer-action { text-align: left; }
-  .zpd-highlights   { grid-template-columns: 1fr 1fr; }
-  .zpd-card-dates   { grid-template-columns: 1fr 1fr; }
-  .zpd-card-date-arrow { display: none; }
+@media (max-width: 680px) {
+  .zpd-offer-main    { grid-template-columns: 1fr; }
+  .zpd-offer-footer  { flex-direction: column; align-items: stretch; }
+  .zpd-offer-actions { flex-direction: column; align-items: stretch; }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -1159,8 +1262,7 @@ img { max-width: 100%; display: block; }
 
 .zpd-modal-box {
   position: relative; z-index: 1;
-  background: var(--z-surface);
-  border-radius: 20px;
+  background: var(--z-surface); border: 1px solid var(--z-border);
   width: min(480px, calc(100vw - 32px));
   box-shadow: 0 24px 60px -16px rgba(10,28,28,.35);
   animation: zpd-slide-up .22s ease;
@@ -1175,13 +1277,13 @@ img { max-width: 100%; display: block; }
   padding: 20px 24px 16px;
   border-bottom: 1px solid var(--z-border-lt);
 }
-.zpd-modal-title  { font-size: 17px; font-weight: 700; margin: 0; color: var(--z-text); }
+.zpd-modal-title  { font-family: var(--z-font-serif); font-weight: 400; font-size: 24px; margin: 0; color: var(--z-text); }
 .zpd-modal-close  {
   background: none; border: none; cursor: pointer;
   font-size: 16px; color: var(--z-text-muted); padding: 4px 8px;
-  border-radius: 8px; transition: background .15s;
+  transition: color .15s;
 }
-.zpd-modal-close:hover { background: var(--z-muted-bg); }
+.zpd-modal-close:hover { color: var(--z-orange); }
 
 .zpd-modal-body   { padding: 24px; display: flex; flex-direction: column; gap: 24px; }
 
@@ -1189,18 +1291,18 @@ img { max-width: 100%; display: block; }
 .zpd-modal-dates {
   display: grid; grid-template-columns: 1fr auto 1fr;
   align-items: center; gap: 10px;
-  background: var(--z-bg); border-radius: 14px; padding: 14px 16px;
+  background: var(--z-bg); border: 1px solid var(--z-border); padding: 14px 16px;
   cursor: pointer;
 }
-.zpd-modal-date-sep   { color: var(--z-text-dim); font-size: 18px; text-align: center; }
-.zpd-modal-date-lbl   { font-size: 11px; font-weight: 700; color: var(--z-text-muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
-.zpd-modal-date-val   { font-size: 15px; font-weight: 600; color: var(--z-text); }
+.zpd-modal-date-sep   { color: var(--z-text-dim); font-size: 15px; text-align: center; }
+.zpd-modal-date-lbl   { font-family: var(--z-font-mono); font-size: 9px; font-weight: 500; color: var(--z-text-dim); text-transform: uppercase; letter-spacing: .14em; margin-bottom: 4px; }
+.zpd-modal-date-val   { font-size: 14px; font-weight: 500; color: var(--z-text); }
 .zpd-modal-date-val--dim { color: var(--z-text-dim); font-weight: 400; }
 
 /* Ocupación */
 .zpd-modal-occ        { display: flex; flex-direction: column; gap: 16px; }
 .zpd-modal-occ-row    { display: flex; align-items: center; justify-content: space-between; }
-.zpd-modal-occ-lbl    { font-size: 14px; font-weight: 600; color: var(--z-text); }
+.zpd-modal-occ-lbl    { font-size: 14px; font-weight: 500; color: var(--z-text); }
 .zpd-modal-occ-sub    { font-size: 12px; color: var(--z-text-muted); margin-top: 2px; }
 .zpd-modal-all-occ    { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--z-text-md); cursor: pointer; }
 
@@ -1215,20 +1317,20 @@ img { max-width: 100%; display: block; }
 /* Condiciones en modal */
 .zpd-modal-conditions {
   display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
-  background: var(--z-bg); border-radius: 12px; padding: 12px;
+  background: var(--z-bg); border: 1px solid var(--z-border); padding: 12px;
   margin-bottom: 4px;
 }
 .zpd-modal-cond-item  { display: flex; align-items: flex-start; gap: 8px; }
 .zpd-modal-cond-icon  { font-size: 18px; line-height: 1; flex-shrink: 0; margin-top: 1px; }
-.zpd-modal-cond-lbl   { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: var(--z-text-muted); }
+.zpd-modal-cond-lbl   { font-family: var(--z-font-mono); font-size: 9px; font-weight: 500; text-transform: uppercase; letter-spacing: .12em; color: var(--z-text-dim); }
 .zpd-modal-cond-val   { font-size: 13px; color: var(--z-text); margin-top: 2px; }
 
 /* Fila de niños desactivada */
 .zpd-modal-occ-row--disabled { opacity: .45; }
 .zpd-modal-occ-badge {
-  display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: .4px; background: var(--z-border-lt); color: var(--z-text-muted);
-  border-radius: 20px; padding: 1px 7px; margin-left: 6px; vertical-align: middle;
+  display: inline-block; font-family: var(--z-font-mono); font-size: 9px; font-weight: 500; text-transform: uppercase;
+  letter-spacing: .1em; background: var(--z-border-lt); color: var(--z-text-muted);
+  padding: 2px 7px; margin-left: 6px; vertical-align: middle;
 }
 .z-stepper.is-disabled { pointer-events: none; }
 
@@ -1236,13 +1338,13 @@ img { max-width: 100%; display: block; }
 
 .zpd-modal-cap-alert {
   display: flex; align-items: center; gap: 8px;
-  font-size: 13px; font-weight: 600; color: #b03a22;
-  background: #fde8e2; border-radius: 10px; padding: 10px 14px;
+  font-size: 13px; font-weight: 500; color: var(--z-orange);
+  background: var(--z-teal-lt); padding: 10px 14px;
 }
 
 /* Preview de tarifas */
 .zpd-modal-peek-wrap  { border-top: 1px solid var(--z-border-lt); padding-top: 20px; }
-.zpd-modal-peek-title { font-size: 13px; font-weight: 700; color: var(--z-text-muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 12px; }
+.zpd-modal-peek-title { font-family: var(--z-font-mono); font-size: 9px; font-weight: 500; color: var(--z-text-dim); text-transform: uppercase; letter-spacing: .16em; margin-bottom: 12px; }
 
 .zpd-peek-hint    { font-size: 13px; color: var(--z-text-dim); text-align: center; padding: 16px 0; }
 .zpd-peek-loading { font-size: 13px; color: var(--z-text-muted); text-align: center; padding: 16px 0; animation: zpd-pulse 1s infinite alternate; }
@@ -1253,32 +1355,43 @@ img { max-width: 100%; display: block; }
 .zpd-peek-list    { display: flex; flex-direction: column; gap: 8px; }
 .zpd-peek-row {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  background: var(--z-bg); border-radius: 10px; padding: 10px 14px;
+  background: var(--z-bg); outline: 1px solid var(--z-border); outline-offset: -1px; padding: 10px 14px;
 }
 .zpd-peek-name    { font-size: 13px; font-weight: 600; color: var(--z-text); flex: 1; min-width: 0; }
 .zpd-peek-right   { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-.zpd-peek-price   { font-size: 15px; font-weight: 800; color: var(--z-teal); }
+.zpd-peek-price   { font-family: var(--z-font-mono); font-size: 13px; font-weight: 500; color: var(--z-orange); }
 .zpd-peek-unit    { font-size: 12px; color: var(--z-text-muted); }
-.zpd-peek-stock   { font-size: 11px; font-weight: 700; color: var(--z-orange); background: #fef3ee; padding: 2px 8px; border-radius: 20px; }
+.zpd-peek-stock   { font-family: var(--z-font-mono); font-size: 9px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--z-orange); background: var(--z-teal-lt); padding: 3px 8px; }
 
-/* ── Condiciones (body de la página) ───────────────────────────── */
-.zpd-conditions {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 12px;
-}
+/* ── Condiciones (body de la página) — chips horizontales, del tamaño de su contenido.
+   Antes eran tiles verticales en grid con min-height:150px — con solo 1-2 condiciones
+   (el caso más común) y la página ahora full-width, eso dejaba cada tile enorme con
+   casi nada adentro. Con flex-wrap + ancho al contenido, cada condición ocupa solo lo
+   que necesita y no queda espacio vacío sin importar cuántas haya. ── */
+.zpd-conditions { display: flex; flex-wrap: wrap; gap: 10px; }
 .zpd-cond-card {
-  display: flex; align-items: flex-start; gap: 12px;
-  background: var(--z-bg); border: 1px solid var(--z-border-lt);
-  border-radius: 14px; padding: 16px;
+  display: flex; align-items: center; gap: 12px;
+  background: var(--z-bg); outline: 1px solid var(--z-border); outline-offset: -1px;
+  padding: 12px 18px 12px 12px; min-width: 0;
+  transition: background .15s, outline-color .15s;
 }
-.zpd-cond-icon  { font-size: 22px; line-height: 1; flex-shrink: 0; margin-top: 1px; }
+.zpd-cond-card:hover { background: var(--z-surface); outline-color: var(--z-orange); }
+.zpd-cond-icon {
+  width: 34px; height: 34px; flex: none; font-size: 15px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px; background: var(--z-surface);
+}
 .zpd-cond-body  { min-width: 0; }
-.zpd-cond-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--z-text-muted); margin-bottom: 4px; }
-.zpd-cond-value { font-size: 14px; color: var(--z-text); line-height: 1.4; }
+.zpd-cond-label {
+  font-family: var(--z-font-mono); font-size: 8px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--z-text-muted);
+}
+.zpd-cond-value {
+  margin-top: 2px; font-family: var(--z-font-serif); font-size: 16px;
+  line-height: 1.2; color: var(--z-text);
+}
 
 @media (max-width: 520px) {
-  .zpd-conditions { grid-template-columns: 1fr 1fr; }
   .zpd-modal-dates { grid-template-columns: 1fr; }
   .zpd-modal-date-sep { display: none; }
   .zpd-peek-row { flex-direction: column; align-items: flex-start; gap: 4px; }
@@ -1491,38 +1604,49 @@ img { max-width: 100%; display: block; }
    OPERATOR — card en producto + landing completo
    ══════════════════════════════════════════════════════════════════════ */
 
-/* ── Card en página de producto ──────────────────────────────────── */
-.zop-card {
-  display: flex; gap: 0; background: var(--z-surface);
-  border: 1px solid var(--z-border); border-radius: 20px;
-  overflow: hidden; box-shadow: 0 2px 16px -4px rgba(15,81,82,.08);
+/* ── Tarjeta del operador en página de producto — navy, único punto de contraste
+   oscuro de toda la página. Mismo lenguaje que "El hotel"/"Operador" del diseño. ── */
+.zpd-op-section { margin-bottom: 48px; }
+.zpd-op-eyebrow {
+  font-family: var(--z-font-mono); font-size: 13px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--z-text-md); margin-bottom: 20px;
 }
-.zop-card-img-col           { flex-shrink: 0; width: 130px; }
-.zop-card-img               { width: 100%; height: 100%; object-fit: cover; display: block; }
-.zop-card-img--placeholder  {
-  width: 100%; height: 100%; min-height: 110px;
-  background: linear-gradient(135deg, var(--z-teal-lt), var(--z-bg));
+.zpd-op-card {
+  display: grid; grid-template-columns: minmax(200px, 280px) 1fr; align-items: stretch;
+  background: var(--z-text); color: var(--z-bg);
+  border-radius: 2px; overflow: hidden;
+  text-decoration: none;
+}
+.zpd-op-media { min-height: 220px; background: var(--z-muted-bg); }
+.zpd-op-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.zpd-op-media--empty {
+  width: 100%; height: 100%; min-height: 220px;
   display: flex; align-items: center; justify-content: center; font-size: 40px;
 }
-.zop-card-body              { flex: 1; padding: 20px 22px; display: flex; flex-direction: column; gap: 8px; justify-content: center; }
-.zop-card-eyebrow           { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--z-teal); }
-.zop-card-name              { font-size: 17px; font-weight: 900; color: var(--z-text); line-height: 1.25; margin: 0; }
-.zop-card-desc              { font-size: 13px; color: var(--z-text-muted); line-height: 1.6; margin: 0; }
-.zop-card-footer            { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
-.zop-card-link {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 13px; font-weight: 800; color: var(--z-surface);
-  background: var(--z-teal); border-radius: 30px;
-  padding: 7px 16px; text-decoration: none;
-  transition: background .15s, transform .15s;
+.zpd-op-body { min-width: 0; padding: clamp(20px, 2.5vw, 32px); }
+.zpd-op-loc {
+  font-family: var(--z-font-mono); font-size: 10px; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--z-coral-lt);
 }
-.zop-card-link:hover        { background: var(--z-teal-dark); transform: translateY(-1px); color: var(--z-surface); }
+.zpd-op-name {
+  margin-top: 12px; font-family: var(--z-font-serif); font-weight: 400;
+  font-size: clamp(30px, 3vw, 42px); line-height: 1.02; color: #fff;
+}
+.zpd-op-desc { margin: 12px 0 0; font-size: 14px; line-height: 1.7; color: rgba(248,246,243,.72); }
+.zpd-op-arrow {
+  margin-top: 20px; display: inline-block;
+  font-family: var(--z-font-mono); font-size: 11px; letter-spacing: .16em; color: #fff;
+  transition: transform .3s cubic-bezier(.2,.8,.2,1);
+}
+.zpd-op-card:hover .zpd-op-arrow { transform: translateX(6px); }
+@media (max-width: 680px) {
+  .zpd-op-card { grid-template-columns: 1fr; }
+}
 
 /* ── Landing: página completa ─────────────────────────────────────── */
 
 /* Hero cinematográfico */
 .zop-hero {
-  --hero-serif:    'Instrument Serif', var(--z-font-serif);
   position: relative; min-height: clamp(480px, calc(100vh - var(--z-nav-h)), 900px);
   display: flex; flex-direction: column; justify-content: flex-end;
   overflow: hidden; color: #fff;
@@ -1565,7 +1689,7 @@ img { max-width: 100%; display: block; }
 }
 
 .zop-hero-name {
-  margin: 18px 0 0; font-family: var(--hero-serif); font-weight: 400;
+  margin: 18px 0 0; font-family: var(--z-font-serif); font-weight: 400;
   font-size: clamp(40px, 7vw, 108px); line-height: .95; letter-spacing: -.02em;
   max-width: 14ch; color: #fff;
 }
@@ -1582,7 +1706,7 @@ img { max-width: 100%; display: block; }
 }
 .zop-hero-stat  { background: rgba(5,28,44,.35); padding: 16px 18px; }
 .zop-hero-stat-val {
-  font-family: var(--hero-serif); font-size: clamp(28px,3vw,36px); line-height: 1; color: #fff;
+  font-family: var(--z-font-serif); font-size: clamp(28px,3vw,36px); line-height: 1; color: #fff;
 }
 .zop-hero-stat-lbl {
   margin-top: 6px; font-family: var(--z-font-mono); font-size: 9px; font-weight: 500;
@@ -1602,11 +1726,7 @@ img { max-width: 100%; display: block; }
 
 .zop-empty                  { color: var(--z-text-muted); font-size: 14px; font-style: italic; }
 
-/* ── Descripción — texto enriquecido (campo WYSIWYG del operador) ─────
-   Full-width, fuera de .zop-body; el contenido en sí queda en una
-   columna de lectura cómoda (no estira a todo el ancho). Estiliza
-   cualquier HTML que venga del editor: párrafos, negritas, itálicas,
-   listas, enlaces, citas, imágenes — no asume una estructura fija. ── */
+/* ── Descripción del operador (sección) — full-width, fuera de .zop-body ── */
 .zop-description-section {
   width: 100%;
   padding: clamp(64px, 8vw, 120px) var(--z-px);
@@ -1614,66 +1734,71 @@ img { max-width: 100%; display: block; }
 }
 .zop-description-title {
   margin: 0 0 clamp(32px, 4vw, 48px);
-  font-family: 'Instrument Serif', var(--z-font-serif); font-weight: 400;
+  font-family: var(--z-font-serif); font-weight: 400;
   font-size: clamp(36px, 5vw, 68px); line-height: 1; letter-spacing: -.02em; color: var(--z-text);
 }
 
-.zop-description-body {
+/* ── .z-richtext — renderer compartido para cualquier campo WYSIWYG del sitio
+   (descripción de operador, descripción de producto, etc.). Estiliza lo que venga
+   del editor sin asumir una estructura fija: párrafos, negritas, itálicas, headings
+   h1–h6, listas, enlaces, citas, imágenes. Fluido — no le pone max-width al texto,
+   eso lo decide el contenedor donde se use. ── */
+.z-richtext {
   font-size: 16px; line-height: 1.8; color: var(--z-text-md);
 }
-.zop-description-body > *:first-child { margin-top: 0; }
-.zop-description-body > *:last-child  { margin-bottom: 0; }
+.z-richtext > *:first-child { margin-top: 0; }
+.z-richtext > *:last-child  { margin-bottom: 0; }
 
-.zop-description-body p      { margin: 0 0 1.4em; }
-.zop-description-body strong { color: var(--z-text); font-weight: 700; }
-.zop-description-body em     { color: var(--z-orange); font-style: italic; }
+.z-richtext p      { margin: 0 0 1.4em; }
+.z-richtext strong { color: var(--z-text); font-weight: 700; }
+.z-richtext em     { color: var(--z-orange); font-style: italic; }
 
-.zop-description-body h1,
-.zop-description-body h2,
-.zop-description-body h3,
-.zop-description-body h4,
-.zop-description-body h5,
-.zop-description-body h6 {
-  font-family: 'Instrument Serif', var(--z-font-serif); font-weight: 400;
+.z-richtext h1,
+.z-richtext h2,
+.z-richtext h3,
+.z-richtext h4,
+.z-richtext h5,
+.z-richtext h6 {
+  font-family: var(--z-font-serif); font-weight: 400;
   letter-spacing: -.01em; color: var(--z-text); margin: 1.6em 0 .6em;
 }
-.zop-description-body h1 { font-size: clamp(32px, 3.6vw, 48px); line-height: 1.08; }
-.zop-description-body h2 { font-size: clamp(26px, 2.8vw, 36px); line-height: 1.12; }
-.zop-description-body h3 { font-size: clamp(22px, 2.4vw, 28px); line-height: 1.15; }
-.zop-description-body h4 { font-size: clamp(19px, 2vw, 22px); line-height: 1.2; }
-.zop-description-body h5 { font-size: 17px; line-height: 1.3; }
-.zop-description-body h6 {
+.z-richtext h1 { font-size: clamp(32px, 3.6vw, 48px); line-height: 1.08; }
+.z-richtext h2 { font-size: clamp(26px, 2.8vw, 36px); line-height: 1.12; }
+.z-richtext h3 { font-size: clamp(22px, 2.4vw, 28px); line-height: 1.15; }
+.z-richtext h4 { font-size: clamp(19px, 2vw, 22px); line-height: 1.2; }
+.z-richtext h5 { font-size: 17px; line-height: 1.3; }
+.z-richtext h6 {
   font-family: var(--z-font-mono); font-size: 12px; letter-spacing: .1em;
   text-transform: uppercase; line-height: 1.4;
 }
 
-.zop-description-body ul,
-.zop-description-body ol {
+.z-richtext ul,
+.z-richtext ol {
   list-style: none; margin: 0 0 1.4em; padding: 0;
   display: flex; flex-direction: column; gap: 10px;
 }
-.zop-description-body li  { position: relative; padding-left: 26px; }
-.zop-description-body li p { margin: 0; }
-.zop-description-body ul li::before {
+.z-richtext li  { position: relative; padding-left: 26px; }
+.z-richtext li p { margin: 0; }
+.z-richtext ul li::before {
   content: '\25C6'; position: absolute; left: 0; top: .65em; translate: 0 -50%;
   font-size: 9px; color: var(--z-orange);
 }
-.zop-description-body ol       { counter-reset: zop-desc-ol; }
-.zop-description-body ol li    { counter-increment: zop-desc-ol; }
-.zop-description-body ol li::before {
+.z-richtext ol       { counter-reset: zop-desc-ol; }
+.z-richtext ol li    { counter-increment: zop-desc-ol; }
+.z-richtext ol li::before {
   content: counter(zop-desc-ol) '.'; position: absolute; left: 0; top: 0;
   font-family: var(--z-font-mono); font-size: 12px; color: var(--z-orange);
 }
 
-.zop-description-body a {
+.z-richtext a {
   color: var(--z-orange); text-decoration: underline; text-underline-offset: 2px;
 }
-.zop-description-body blockquote {
+.z-richtext blockquote {
   margin: 1.6em 0; padding-left: 20px; border-left: 2px solid var(--z-orange);
-  font-family: 'Instrument Serif', var(--z-font-serif); font-size: 22px; font-style: italic;
+  font-family: var(--z-font-serif); font-size: 22px; font-style: italic;
   color: var(--z-text); line-height: 1.4;
 }
-.zop-description-body img {
+.z-richtext img {
   display: block; width: 100%; height: auto; border-radius: 2px; margin: 1.6em 0;
 }
 
@@ -1688,7 +1813,7 @@ img { max-width: 100%; display: block; }
   gap: 24px; margin-bottom: clamp(36px, 4vw, 56px);
 }
 .zop-catalog-title {
-  margin: 0; font-family: 'Instrument Serif', var(--z-font-serif); font-weight: 400;
+  margin: 0; font-family: var(--z-font-serif); font-weight: 400;
   font-size: clamp(36px, 5vw, 68px); line-height: 1; letter-spacing: -.02em; color: var(--z-text);
 }
 .zop-catalog-sub            { margin: 0; max-width: 32ch; font-size: 14px; line-height: 1.6; color: var(--z-text-muted); }
@@ -1756,8 +1881,6 @@ img { max-width: 100%; display: block; }
   .zop-hero-content         { padding-bottom: 32px; }
   .zop-hero-stats           { grid-template-columns: repeat(2, 1fr); }
   .zop-products             { grid-template-columns: 1fr; }
-  .zop-card                 { flex-direction: column; }
-  .zop-card-img-col         { width: 100%; height: 160px; }
 }
 
 /* ── Highlights ─────────────────────────────────────────────────────── */
@@ -1778,7 +1901,7 @@ img { max-width: 100%; display: block; }
 }
 .zop-highlight:first-child .zop-highlight-value { color: var(--z-orange); }
 .zop-highlight-value {
-  font-family: 'Instrument Serif', var(--z-font-serif);
+  font-family: var(--z-font-serif);
   font-size: clamp(40px, 6vw, 76px); font-weight: 400; line-height: .9;
   color: var(--z-text); letter-spacing: -.01em;
 }
@@ -1801,7 +1924,7 @@ img { max-width: 100%; display: block; }
   gap: 24px; margin-bottom: 40px;
 }
 .zop-gallery-title {
-  margin: 0; font-family: 'Instrument Serif', var(--z-font-serif); font-weight: 400;
+  margin: 0; font-family: var(--z-font-serif); font-weight: 400;
   font-size: clamp(36px, 5vw, 68px); line-height: 1; letter-spacing: -.02em; color: var(--z-text);
 }
 .zop-gallery-meta {
@@ -1881,7 +2004,7 @@ img { max-width: 100%; display: block; }
   gap: 24px; margin-bottom: clamp(36px, 4vw, 56px);
 }
 .zop-amenities-title {
-  margin: 0; font-family: 'Instrument Serif', var(--z-font-serif); font-weight: 400;
+  margin: 0; font-family: var(--z-font-serif); font-weight: 400;
   font-size: clamp(36px, 5vw, 68px); line-height: 1; letter-spacing: -.02em; color: var(--z-text);
 }
 .zop-amenities-meta {
@@ -1937,7 +2060,7 @@ img { max-width: 100%; display: block; }
 
 .zop-am-name {
   margin: 12px 0 0;
-  font-family: 'Instrument Serif', var(--z-font-serif); font-weight: 400;
+  font-family: var(--z-font-serif); font-weight: 400;
   font-size: clamp(30px, 3vw, 42px); line-height: 1.02;
   color: #fff;
 }
@@ -2033,7 +2156,7 @@ img { max-width: 100%; display: block; }
   gap: 24px; margin-bottom: clamp(32px, 4vw, 52px);
 }
 .zop-attrs-title {
-  margin: 0; font-family: 'Instrument Serif', var(--z-font-serif); font-weight: 400;
+  margin: 0; font-family: var(--z-font-serif); font-weight: 400;
   font-size: clamp(36px, 5vw, 68px); line-height: 1; letter-spacing: -.02em; color: var(--z-text);
 }
 .zop-attrs-desc {
@@ -2065,7 +2188,7 @@ img { max-width: 100%; display: block; }
 .zop-attr-icon--fallback { display:flex; align-items:center; justify-content:center; width:100%; height:100%; font-size:20px; color: var(--z-orange); }
 .zop-amenity-name {
   margin-top: 14px;
-  font-family: 'Instrument Serif', var(--z-font-serif); font-size: 24px; font-weight: 400;
+  font-family: var(--z-font-serif); font-size: 24px; font-weight: 400;
   line-height: 1.15; color: var(--z-text);
 }
 .zop-amenity-val            { font-family: var(--z-font-sans); font-size: 14px; font-weight: 600; color: var(--z-orange); }
@@ -2517,7 +2640,6 @@ img { max-width: 100%; display: block; }
 .z-featured-title,
 .z-catalog-title,
 .z-newsletter-title,
-.zpd-hero-title,
 .z-footer-brand-name {
   font-weight: 600;
   letter-spacing: -.02em;
@@ -2551,7 +2673,6 @@ img { max-width: 100%; display: block; }
 /* Cards: bordes más sutiles, esquinas menos redondeadas */
 .z-card,
 .zpd-card,
-.zpd-offer-card,
 .zpd-modal-box {
   border-radius: 4px;
 }
@@ -2578,8 +2699,7 @@ img { max-width: 100%; display: block; }
 
 /* Accent de la divisa/precio: usa el naranja terracota, peso más liviano */
 .z-result-price-amount,
-.zpd-card-price,
-.zpd-offer-price {
+.zpd-card-price {
   color: var(--z-teal);
   font-weight: 500;
 }
@@ -2589,9 +2709,6 @@ img { max-width: 100%; display: block; }
 .z-cart-total-val {
   color: var(--z-teal);
 }
-
-/* Thumb badge activo: borde terracota en galería */
-.swiper-slide-thumb-active.zpd-gal-thumb-slide { border-color: var(--z-teal); }
 
 /* Litepicker — paleta Hesperia */
 :root {
@@ -2904,7 +3021,7 @@ img { max-width: 100%; display: block; }
   background: var(--z-muted-bg);
 }
 .z-payments-order {
-  font-family: monospace;
+  font-family: var(--z-font-mono);
   font-size: .8rem;
   color: var(--z-text-muted);
 }
@@ -3364,7 +3481,7 @@ img { max-width: 100%; display: block; }
 .zop2-body { padding: clamp(4px, 1vw, 14px) 0; display: flex; flex-direction: column; gap: 0; min-width: 0; }
 
 .zop2-title {
-  font-family: 'Instrument Serif', var(--z-font-serif);
+  font-family: var(--z-font-serif);
   font-size: clamp(28px, 3vw, 40px); font-weight: 400; line-height: 1.02;
   color: var(--z-text);
 }

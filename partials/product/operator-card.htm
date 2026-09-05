@@ -1,29 +1,37 @@
-{# ── product/operator-card.htm ── #}
-{% if productOperator %}
-<section class="zpd-section zop-card-section">
-  <h2 class="zpd-section-title">Operador</h2>
+{# ── product/operator-card.htm ── tarjeta navy, mismo tratamiento que "El hotel" /
+   "Operador" del diseño — el único punto de la página de producto donde usamos el
+   fondo oscuro, a propósito, para que contraste con todo lo demás (blanco/cream).
 
-  <div class="zop-card">
-    <div class="zop-card-img-col">
+   El eyebrow depende del operador real, no del tipo de producto: un producto tipo
+   tienda (ej. "Fullday") puede pertenecer igual a un hotel (Hesperia WTC Valencia),
+   así que usar isStore aquí mostraba "Operador" para operadores que sí son hoteles.
+   Todas las categorías de operador actuales (Hotel, Posada, Hotel Urbano, Resort) son
+   de alojamiento — si el operador tiene categoría asignada, es un hotel; si no
+   (ej. "Tu Lancha Morrocoy"), es un operador genérico. #}
+{% if productOperator %}
+<section class="zpd-op-section">
+  <div class="zpd-op-eyebrow">{{ productOperator.category ? 'El hotel' : 'Operador' }}</div>
+
+  <a class="zpd-op-card" href="{{ 'operator'|page({'slug': productOperator.slug}) }}">
+    <div class="zpd-op-media">
       {% if productOperator.preview_image %}
-        <img class="zop-card-img"
-             src="{{ productOperator.preview_image.getThumb(200, 200, {mode: 'crop'}) }}"
+        <img src="{{ productOperator.preview_image.getThumb(700, 500, {mode: 'crop'}) }}"
              alt="{{ productOperator.name }}">
       {% else %}
-        <div class="zop-card-img zop-card-img--placeholder">🏢</div>
+        <div class="zpd-op-media--empty">🏢</div>
       {% endif %}
     </div>
 
-    <div class="zop-card-body">
-      <div class="zop-card-name">{{ productOperator.name }}</div>
-      {% if productOperator.preview_text %}
-        <p class="zop-card-desc">{{ productOperator.preview_text }}</p>
+    <div class="zpd-op-body">
+      {% if productOperator.groups is not empty %}
+        <div class="zpd-op-loc">{{ productOperator.groups|map(g => g.name)|join(' · ') }}</div>
       {% endif %}
-      <a class="zop-card-link"
-         href="{{ 'operator'|page({'slug': productOperator.slug}) }}">
-        Ver ficha completa →
-      </a>
+      <div class="zpd-op-name">{{ productOperator.name }}</div>
+      {% if productOperator.preview_text %}
+        <p class="zpd-op-desc">{{ productOperator.preview_text }}</p>
+      {% endif %}
+      <span class="zpd-op-arrow">Ver ficha completa →</span>
     </div>
-  </div>
+  </a>
 </section>
 {% endif %}

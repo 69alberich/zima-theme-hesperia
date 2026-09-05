@@ -2,13 +2,8 @@
 
 {% set p = params ?? {} %}
 
-{# ── Tabs ── #}
-<nav class="zpd-tabs" id="zpd-tabs-nav">
-  <a href="#zpd-desc"   class="zpd-tab is-active">Descripción</a>
-  <a href="#zpd-offers" class="zpd-tab">Tarifas</a>
-  {# <a href="#zpd-reviews" class="zpd-tab">Reseñas</a> — pendiente #}
-</nav>
-
+{# ── Tabs: el <nav id="zpd-tabs-nav"> vive ahora en product/hero.htm, junto al título
+   (como en el diseño) — este script solo controla su comportamiento, no su marcado. #}
 <script>
 (function () {
   var nav  = document.getElementById('zpd-tabs-nav');
@@ -47,81 +42,61 @@
 </script>
 
 {# ══ Galería ══ #}
+{# Grid tipo bento que se adapta a 1, 2 o N fotos (ver reglas .zpd-gallery--* en zima.css).
+   Reutiliza el mismo lightbox (zpdLightbox / #zpd-lightbox) que usan las fotos de cada oferta
+   más abajo — no se agrega ninguna librería ni modal nuevo. #}
 {% set galleryItems = product.gallery is not empty ? product.gallery : [] %}
 {% set allSlides    = [] %}
 {% if product.preview_image %}{% set allSlides = allSlides|merge([product.preview_image]) %}{% endif %}
 {% for f in galleryItems %}{% set allSlides = allSlides|merge([f]) %}{% endfor %}
+{% set slideCount = allSlides|length %}
 
-{% if allSlides|length > 0 %}
+{% if slideCount > 0 %}
 <section class="zpd-section zpd-section--gallery">
-
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-
-  <div class="zpd-gallery">
-
-    {# Slide principal grande #}
-    <div class="swiper zpd-gal-main">
-      <div class="swiper-wrapper">
-        {% for file in allSlides %}
-          <div class="swiper-slide">
-            <div class="zpd-gal-slide">
-              <img src="{{ file.path }}" alt="{{ product.name }}">
-            </div>
-          </div>
-        {% endfor %}
-      </div>
-      {% if allSlides|length > 1 %}
-        <div class="swiper-button-prev zpd-swiper-prev"></div>
-        <div class="swiper-button-next zpd-swiper-next"></div>
-      {% endif %}
-    </div>
-
-    {# Thumbs — solo si hay más de una imagen #}
-    {% if allSlides|length > 1 %}
-    <div class="swiper zpd-gal-thumbs">
-      <div class="swiper-wrapper">
-        {% for file in allSlides %}
-          <div class="swiper-slide zpd-gal-thumb-slide">
-            <img src="{{ file.path }}" alt="">
-          </div>
-        {% endfor %}
-      </div>
-    </div>
-    {% endif %}
-
+  <div class="zpd-gallery zpd-gallery--{{ slideCount == 1 ? 'one' : (slideCount == 2 ? 'two' : 'many') }}">
+    {% for file in allSlides %}
+      <button type="button"
+              class="zpd-gal-item{{ (loop.first and slideCount >= 3) ? ' zpd-gal-item--hero' : '' }}"
+              data-lightbox-src="{{ file.path }}"
+              data-lightbox-group="zpd-main-gallery"
+              onclick="zpdLightbox('{{ file.path }}', 'zpd-main-gallery', {{ loop.index0 }})">
+        <img src="{{ file.getThumb(900, 700, {mode: 'crop'}) }}"
+             alt="{{ product.name }} — foto {{ loop.index }}"
+             loading="{{ loop.first ? 'eager' : 'lazy' }}">
+        {% if slideCount > 1 %}
+          <span class="zpd-gal-num">{{ '%02d'|format(loop.index) }} / {{ '%02d'|format(slideCount) }}</span>
+        {% endif %}
+      </button>
+    {% endfor %}
   </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  <script>
-  (function () {
-    var thumbsEl = document.querySelector('.zpd-gal-thumbs');
-    var thumbsSwiper = thumbsEl ? new Swiper('.zpd-gal-thumbs', {
-      spaceBetween: 8,
-      slidesPerView: 'auto',
-      watchSlidesProgress: true,
-      freeMode: true,
-    }) : null;
-
-    new Swiper('.zpd-gal-main', {
-      loop: false,
-      speed: 380,
-      navigation: { nextEl: '.zpd-swiper-next', prevEl: '.zpd-swiper-prev' },
-      thumbs: thumbsSwiper ? { swiper: thumbsSwiper } : undefined,
-      keyboard: { enabled: true },
-    });
-  })();
-  </script>
-
 </section>
 {% endif %}
 
 {# ══ Descripción ══ #}
+{# Texto enriquecido: el campo product.description viene de un editor WYSIWYG (párrafos,
+   listas, negritas, etc.) — .z-richtext lo estiliza sin asumir su estructura. No se envuelve
+   en <p>: el contenido ya trae sus propios bloques y anidar <p> dentro de <p> es HTML inválido.
+
+   preview_text se muestra como cita (mismo estilo blockquote de .z-richtext) dentro del propio
+   bloque de texto enriquecido, no como un headline aparte — así ambos comparten la misma escala
+   tipográfica en vez de que el lead se vea desproporcionado frente al resto.
+
+   En varios productos description repite literalmente el mismo texto de preview_text (o
+   viene vacío tras quitarle las etiquetas) — cuando pasa, no tiene sentido mostrar la cita
+   y el mismo párrafo de nuevo debajo, así que se omite el bloque de abajo. #}
+{% set descPlain = (product.description ?? '')|striptags|trim %}
+{% set leadPlain  = (product.preview_text ?? '')|trim %}
+{% set showDescription = descPlain is not empty and descPlain != leadPlain %}
+
 <section id="zpd-desc" class="zpd-section">
-  <h2 class="zpd-section-title">Sobre este producto</h2>
-  <div class="zpd-description">
-    {% if product.description is not empty %}
-      <p>{{ product.description|raw }}</p>
-    {% else %}
+  <div class="zpd-desc-eyebrow">Sobre este producto</div>
+  <div class="z-richtext zpd-description">
+    {% if product.preview_text is not empty %}
+      <blockquote>{{ product.preview_text }}</blockquote>
+    {% endif %}
+    {% if showDescription %}
+      {{ product.description|raw }}
+    {% elseif product.preview_text is empty %}
       <p class="zpd-desc-empty">Este producto no tiene descripción todavía.</p>
     {% endif %}
   </div>
@@ -130,23 +105,22 @@
 {# ══ Atributos / Highlights ══ #}
 {% if productAttributes is not empty %}
 <section class="zpd-section">
-  <h2 class="zpd-section-title">¿Qué incluye?</h2>
+  <h2 class="zpd-section-h2">¿Qué incluye?</h2>
   <div class="zpd-highlights">
     {% for attr in productAttributes %}
       <div class="zpd-highlight-item">
-        <span class="zpd-highlight-icon">
-          {% set iconHtml = attr.getIconHtml('zpd-attr-icon', 28) %}
+        <div class="zpd-highlight-icon">
+          {% set iconHtml = attr.getIconHtml('zpd-attr-icon', 20) %}
           {% if iconHtml is not empty %}
             {{ iconHtml|raw }}
           {% else %}
             <span class="zpd-attr-icon zpd-attr-icon--fallback">✓</span>
           {% endif %}
-        </span>
-        <div>
-          <span class="zpd-highlight-label">{{ attr.name }}</span>
-          {% if attr.pivot.value is not empty %}
-            <span class="zpd-highlight-value">{{ attr.pivot.value }}</span>
-          {% endif %}
+        </div>
+        <div class="zpd-highlight-body">
+          <span class="zpd-highlight-label">
+            {{ attr.name }}{% if attr.pivot.value is not empty %} · <span class="zpd-highlight-value">{{ attr.pivot.value }}</span>{% endif %}
+          </span>
         </div>
       </div>
     {% endfor %}
@@ -158,7 +132,7 @@
 {% set cfg = productConfig %}
 {% if cfg %}
 <section class="zpd-section zpd-section--conditions">
-  <h2 class="zpd-section-title">Condiciones</h2>
+  <h2 class="zpd-section-h2">Condiciones</h2>
   <div class="zpd-conditions">
 
     {# Capacidad máxima — solo si tiene valor > 0 #}
@@ -222,11 +196,15 @@
 
 {# ══ Ofertas ══ #}
 {% if isStore %}
-  {# Solo se muestra si hay más de un offer — el partial lo decide internamente #}
-  {% partial 'product/body-offers-store' %}
+  {# Solo se muestra si hay más de un offer — el partial lo decide internamente.
+     El id va aquí (y no dentro del partial) para que el jump-link "Tarifas" del
+     header siempre tenga un destino, incluso cuando el partial no renderiza nada. #}
+  <section id="zpd-offers">
+    {% partial 'product/body-offers-store' %}
+  </section>
 {% else %}
   <section id="zpd-offers" class="zpd-section">
-    <h2 class="zpd-section-title">Tarifas disponibles</h2>
+    <h2 class="zpd-section-h2">Tarifas disponibles</h2>
     {% partial 'product/body-offers-booking' %}
   </section>
 {% endif %}
@@ -236,7 +214,7 @@
 
 {# ══ Ubicación — pendiente de implementar ══
 <section class="zpd-section">
-  <h2 class="zpd-section-title">Ubicación</h2>
+  <h2 class="zpd-section-h2">Ubicación</h2>
   <div class="zpd-map-placeholder">
     <span class="zpd-map-icon">🗺</span>
     <span>Próximamente</span>
@@ -246,7 +224,7 @@
 
 {# ══ Reseñas — pendiente de implementar ══
 <section id="zpd-reviews" class="zpd-section">
-  <h2 class="zpd-section-title">Reseñas</h2>
+  <h2 class="zpd-section-h2">Reseñas</h2>
   <div class="zpd-offers-nodates" style="padding: 32px 0">
     <div class="zpd-offers-nodates-icon">💬</div>
     <p class="zpd-offers-nodates-title">Las reseñas estarán disponibles próximamente.</p>

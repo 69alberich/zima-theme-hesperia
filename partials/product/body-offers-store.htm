@@ -11,17 +11,14 @@
 
     <div class="zpd-sv-card {% if isSelected %}zpd-sv-card--selected{% endif %}">
 
-      {% if isSelected %}
-        <div class="zpd-sv-selected-pill">✓ Seleccionada</div>
-      {% endif %}
-
       <div class="zpd-sv-name">{{ offer.offerName }}</div>
 
       <div class="zpd-sv-price">
         {% if offer.lowestPrice is not null %}
-          desde ${{ offer.lowestPrice|number_format(2, '.', ',') }}
+          <span class="zpd-sv-price-from">desde</span>
+          <span class="zpd-sv-price-val">${{ offer.lowestPrice|number_format(2, '.', ',') }}</span>
         {% else %}
-          —
+          <span class="zpd-sv-price-from">—</span>
         {% endif %}
       </div>
 
@@ -36,13 +33,13 @@
       </div>
 
       {% if isSelected %}
-        <span class="zpd-sv-btn zpd-sv-btn--active">Seleccionada</span>
+        <span class="zpd-offer-selected-pill">✓ Seleccionada</span>
       {% elseif offer.isAvailable %}
-        <a href="?{{ baseQuery }}&offer_id={{ offer.offerId }}" class="zpd-sv-btn">
+        <a href="?{{ baseQuery }}&offer_id={{ offer.offerId }}" class="z-btn z-btn-teal z-btn--sm zpd-offer-btn">
           Seleccionar
         </a>
       {% else %}
-        <span class="zpd-sv-btn zpd-sv-btn--disabled">Agotado</span>
+        <span class="z-btn z-btn--sm zpd-offer-btn" style="opacity:.4;pointer-events:none">Agotado</span>
       {% endif %}
 
     </div>

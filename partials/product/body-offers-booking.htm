@@ -51,30 +51,54 @@
 
       <div class="zpd-offer-card {% if isSelected %}zpd-offer-card--selected{% endif %} {% if loop.first and not isSelected %}zpd-offer-card--featured{% endif %}">
 
-        {% if loop.first and not isSelected %}
-          <div class="zpd-offer-badge">⭐ Menor precio</div>
-        {% elseif isSelected %}
-          <div class="zpd-offer-badge zpd-offer-badge--selected">✓ Seleccionada</div>
-        {% endif %}
+        <div class="zpd-offer-main">
 
-        {% if offerSlides|length > 0 %}
-          {% set gid = 'og-' ~ offer.offerId %}
-          <div class="zpd-offer-gallery" id="{{ gid }}">
-            {% for img in offerSlides %}
-              <button type="button"
-                      class="zpd-offer-gal-thumb"
-                      data-lightbox-src="{{ img.path }}"
-                      data-lightbox-group="{{ gid }}"
-                      onclick="zpdLightbox('{{ img.path }}', '{{ gid }}', {{ loop.index0 }})">
-                <img src="{{ img.getThumb(240, 160, {mode:'crop'}) }}" alt="">
-              </button>
-            {% endfor %}
-          </div>
-        {% endif %}
+          {# ── Media: foto principal + tira de miniaturas superpuesta (mismo patrón que
+             las tarjetas de producto del operador) — reemplaza la tira horizontal con
+             scroll, que era lo primero que se rompía en mobile. #}
+          {% if offerSlides|length > 0 %}
+            {% set gid = 'og-' ~ offer.offerId %}
+            <div class="zpd-offer-media">
+              {% for img in offerSlides %}
+                {% if loop.first %}
+                  <img class="zpd-offer-main-img"
+                       src="{{ img.getThumb(480, 360, {mode:'crop'}) }}"
+                       alt="{{ offer.offerName }}"
+                       data-lightbox-src="{{ img.path }}"
+                       data-lightbox-group="{{ gid }}"
+                       onclick="zpdLightbox('{{ img.path }}', '{{ gid }}', 0)">
+                {% endif %}
+              {% endfor %}
+              {% if offerSlides|length > 1 %}
+                <span class="zpd-offer-media-badge">{{ offerSlides|length }} foto{{ offerSlides|length != 1 ? 's' : '' }}</span>
+                <div class="zpd-offer-thumbs">
+                  {% for img in offerSlides|slice(1, 3) %}
+                    <button type="button" class="zpd-offer-thumb"
+                            data-lightbox-src="{{ img.path }}"
+                            data-lightbox-group="{{ gid }}"
+                            onclick="zpdLightbox('{{ img.path }}', '{{ gid }}', {{ loop.index }})">
+                      <img src="{{ img.getThumb(120, 88, {mode:'crop'}) }}" alt="">
+                    </button>
+                  {% endfor %}
+                  {% if offerSlides|length > 4 %}
+                    <div class="zpd-offer-thumb-more">+{{ offerSlides|length - 4 }}</div>
+                  {% endif %}
+                </div>
+              {% endif %}
+            </div>
+          {% else %}
+            <div class="zpd-offer-media zpd-offer-media--empty">🛏️</div>
+          {% endif %}
 
-        <div class="zpd-offer-body">
-          <div class="zpd-offer-info">
-            <div class="zpd-offer-name">{{ offer.offerName }}</div>
+          <div class="zpd-offer-content">
+            <div class="zpd-offer-title-row">
+              <div class="zpd-offer-name">{{ offer.offerName }}</div>
+              {# El estado "seleccionada" ya lo indica el pill navy junto al CTA (abajo) +
+                 el borde coral de la tarjeta — mostrarlo también acá era redundante. #}
+              {% if not isSelected and loop.first %}
+                <span class="zpd-offer-badge">Menor precio</span>
+              {% endif %}
+            </div>
             {% if media and media.preview_text %}
               <p class="zpd-offer-preview-text">{{ media.preview_text }}</p>
             {% endif %}
@@ -106,8 +130,10 @@
                   {% for line in group.lines %}
                     <li class="zpd-offer-price-line">
                       <span class="zpd-offer-price-pax">{{ line.paxLabel }}</span>
-                      <span class="zpd-offer-price-per">${{ line.unitPrice|number_format(2, '.', ',') }}/noche</span>
-                      <span class="zpd-offer-price-total">${{ line.totalPrice|number_format(2, '.', ',') }} total</span>
+                      <span class="zpd-offer-price-nums">
+                        <span class="zpd-offer-price-per">${{ line.unitPrice|number_format(2, '.', ',') }} / noche</span>
+                        <span class="zpd-offer-price-total">${{ line.totalPrice|number_format(2, '.', ',') }} total</span>
+                      </span>
                     </li>
                   {% endfor %}
                 </ul>
@@ -116,45 +142,54 @@
 
             <div class="zpd-offer-stock">
               {% if not offer.isAvailable %}
-                <span class="zpd-offer-stock--unavail">No disponible</span>
+                <span class="zpd-offer-stock--unavail">● No disponible</span>
               {% elseif offer.isLowStock %}
-                <span class="zpd-offer-stock--low">¡Solo {{ offer.availability }} lugar{{ offer.availability != 1 ? 'es' : '' }}!</span>
+                <span class="zpd-offer-stock--low">● Solo {{ offer.availability }} lugar{{ offer.availability != 1 ? 'es' : '' }}</span>
               {% else %}
-                <span class="zpd-offer-stock--ok">Disponible</span>
+                <span class="zpd-offer-stock--ok">● Disponible</span>
               {% endif %}
+            </div>
+
+            <div class="zpd-offer-footer">
+              <div class="zpd-offer-price-block">
+                <div class="zpd-offer-price-from">Desde</div>
+                <div class="zpd-offer-price zpd-offer-price-val" data-offer="{{ offer.offerId }}">
+                  ${{ firstGroup ? offer.lowestTotalForType(firstGroup.id)|number_format(2, '.', ',') : (offer.lowestTotal ? offer.lowestTotal|number_format(2, '.', ',') : '—') }}
+                </div>
+                <div class="zpd-offer-price-unit">total · {{ offer.nights }} noche{{ offer.nights != 1 ? 's' : '' }}</div>
+              </div>
+
+              <div class="zpd-offer-actions">
+                {% if offer.isAvailable %}
+                  {% if isSelected %}
+                    <span class="zpd-offer-selected-pill">✓ Seleccionada</span>
+                  {% else %}
+                    <a href="?{{ baseQuery }}&offer_id={{ offer.offerId }}"
+                       class="z-btn z-btn-teal z-btn--sm zpd-offer-btn"
+                       onclick="try{sessionStorage.setItem('zpdScrollTo','zpd-booking-card')}catch(e){}">
+                      Seleccionar
+                    </a>
+                  {% endif %}
+                  <button type="button"
+                    class="z-btn z-btn-ghost z-btn--sm zpd-offer-btn zpd-add-btn"
+                    data-offer="{{ offer.offerId }}"
+                    data-date-from="{{ p.date_from ?? '' }}"
+                    data-date-to="{{ p.date_to ?? '' }}"
+                    data-adults="{{ p.adults ?? 2 }}"
+                    data-children="{{ p.children ?? 0 }}"
+                    data-request="productDetail::onAddToCart"
+                    data-request-data="offer_id: {{ offer.offerId }}, date_from: '{{ p.date_from ?? '' }}', date_to: '{{ p.date_to ?? '' }}', adults: {{ p.adults ?? 2 }}, children: {{ p.children ?? 0 }}, price_type_id: '{{ firstGroup.id }}'"
+                    data-request-success="zCartOnAdd(data)">
+                    Añadir al carrito
+                  </button>
+                {% else %}
+                  <span class="z-btn z-btn--sm zpd-offer-btn" style="opacity:.4;pointer-events:none">No disponible</span>
+                {% endif %}
+              </div>
             </div>
           </div>
 
-          <div class="zpd-offer-action">
-            <div class="zpd-offer-price-from">desde</div>
-            <div class="zpd-offer-price zpd-offer-price-val" data-offer="{{ offer.offerId }}">
-              ${{ firstGroup ? offer.lowestTotalForType(firstGroup.id)|number_format(2, '.', ',') : (offer.lowestTotal ? offer.lowestTotal|number_format(2, '.', ',') : '—') }}
-            </div>
-            <div class="zpd-offer-price-unit">total · {{ offer.nights }} noche{{ offer.nights != 1 ? 's' : '' }}</div>
-
-            {% if offer.isAvailable %}
-              {% if isSelected %}
-                <span class="zpd-offer-selected-pill">✓ Seleccionada</span>
-              {% else %}
-                <a href="?{{ baseQuery }}&offer_id={{ offer.offerId }}"
-                   class="z-btn z-btn-teal z-btn--sm zpd-offer-btn"
-                   onclick="try{sessionStorage.setItem('zpdScrollTo','zpd-booking-card')}catch(e){}">
-                  Seleccionar
-                </a>
-              {% endif %}
-              <button type="button"
-                class="z-btn z-btn-ghost z-btn--sm zpd-offer-btn zpd-add-btn"
-                data-request="productDetail::onAddToCart"
-                data-request-data="offer_id: {{ offer.offerId }}, date_from: '{{ p.date_from ?? '' }}', date_to: '{{ p.date_to ?? '' }}', adults: {{ p.adults ?? 2 }}, children: {{ p.children ?? 0 }}, price_type_id: '{{ firstGroup.id }}'"
-                data-request-success="zCartOnAdd(data)">
-                🛒 Añadir al carrito
-              </button>
-            {% else %}
-              <span class="z-btn z-btn--sm zpd-offer-btn" style="opacity:.4;pointer-events:none">No disponible</span>
-            {% endif %}
-          </div>
         </div>
-
       </div>
     {% endfor %}
   </div>

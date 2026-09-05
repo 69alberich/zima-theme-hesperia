@@ -1,32 +1,36 @@
-{# ── product/hero.htm — banner estático ── #}
+{# ── product/hero.htm — encabezado: tipo + operador + título del producto (sin banner) ── #}
 
 {% set productName = product.name ?? 'Producto' %}
 {% set category    = product.categories is not empty ? product.categories.first.name : null %}
 
 <div class="zpd-hero">
-  <div class="zpd-hero-main">
+  <div class="zpd-hero-content">
+    <div class="zpd-hero-row">
 
-    {# Color sólido — sin imagen para evitar distorsión #}
-    <div class="zpd-slide-color"></div>
-
-    <div class="zpd-hero-overlay">
-      <div class="z-wrap zpd-hero-content">
-
-<div class="zpd-hero-badges">
-          <span class="zpd-badge zpd-badge--type">{{ isStore ? 'Tienda' : 'Booking' }}</span>
+      <div class="zpd-hero-main">
+        <div class="zpd-hero-tags">
+          <span class="zpd-hero-kind {{ isStore ? 'zpd-hero-kind--store' : 'zpd-hero-kind--booking' }}">
+            {{ isStore ? 'Tienda' : 'Reserva' }}
+          </span>
+          {% if productOperator %}
+            <a class="zpd-hero-operator" href="{{ 'operator'|page({'slug': productOperator.slug}) }}">{{ productOperator.name|upper }}</a>
+          {% endif %}
           {% if category %}
-            <span class="zpd-badge zpd-badge--cat">{{ category }}</span>
+            <span class="zpd-hero-cat">{{ category }}</span>
           {% endif %}
         </div>
 
         <h1 class="zpd-hero-title">{{ productName }}</h1>
-
-        {% if product.brand is not empty and product.brand %}
-          <p class="zpd-hero-location">📍 {{ product.brand.name }}</p>
-        {% endif %}
-
       </div>
-    </div>
 
+      {# Navegación de saltos a Descripción/Tarifas — el JS que la controla (scroll suave +
+         estado activo por IntersectionObserver) sigue en product/body.htm, solo se movió el
+         marcado aquí para que quede junto al título, como en el diseño. #}
+      <nav class="zpd-hero-jump" id="zpd-tabs-nav">
+        <a href="#zpd-desc" class="zpd-tab is-active">Descripción</a>
+        <a href="#zpd-offers" class="zpd-tab">Tarifas</a>
+      </nav>
+
+    </div>
   </div>
 </div>

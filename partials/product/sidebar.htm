@@ -204,7 +204,6 @@
           <div class="zpd-card-date-lbl">Llegada</div>
           <div class="zpd-card-date-val">{{ p.date_from|date('d M') }}</div>
         </div>
-        <div class="zpd-card-date-arrow">→</div>
         <div class="zpd-card-date-field">
           <div class="zpd-card-date-lbl">Salida</div>
           <div class="zpd-card-date-val">{{ p.date_to|date('d M') }}</div>
@@ -280,16 +279,16 @@
       </div>
     {% endif %}
 
-  </div>
-
-  {# ── Contacto rápido ── #}
-  <div class="zpd-card zpd-card--contact">
-    <div class="zpd-contact-icon">💬</div>
-    <div>
-      <div class="zpd-contact-title">¿Tienes preguntas?</div>
-      <div class="zpd-contact-desc">Nuestro equipo responde en minutos.</div>
+    {# ── Contacto rápido ── #}
+    <div class="zpd-contact">
+      <div class="zpd-contact-icon">☎</div>
+      <div class="zpd-contact-body">
+        <div class="zpd-contact-title">¿Tienes preguntas?</div>
+        <div class="zpd-contact-desc">Nuestro equipo responde en minutos.</div>
+      </div>
+      <a href="{{ 'contacto'|page }}" class="zpd-contact-btn">Escribir</a>
     </div>
-    <a href="{{ 'contacto'|page }}" class="z-btn z-btn-ghost z-btn--sm">Escribir</a>
+
   </div>
 
 {% endif %}
