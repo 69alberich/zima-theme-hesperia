@@ -21,19 +21,6 @@
     document.body.style.overflow = '';
   }
 
-  function openCart()  {
-    if (!drawer) return;
-    drawer.classList.add('is-open');
-    overlay.classList.add('is-visible');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeCart() {
-    if (!drawer) return;
-    drawer.classList.remove('is-open');
-    overlay.classList.remove('is-visible');
-    document.body.style.overflow = '';
-  }
-
   openBtns.forEach(b => b.addEventListener('click', openCart));
   closeBtns.forEach(b => b.addEventListener('click', closeCart));
   if (overlay) overlay.addEventListener('click', closeCart);

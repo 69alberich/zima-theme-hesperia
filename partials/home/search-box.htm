@@ -1,7 +1,9 @@
 {# ── home/search-box.htm — hero searchbox (redirect mode) ── #}
 {# Variables de página: showOperators, operators (desde [searchBox] onRun) #}
 
-<link rel="stylesheet" href="{{ 'assets/css/search-box-home.css'|theme }}">
+{# El CSS (.zsb2-*) ya lo inyecta el componente searchBox vía addCss() — está declarado
+   en el frontmatter de esta página aunque no se renderice con {% component %}, así que
+   su onRun() (y por lo tanto addCss) igual se ejecuta. Nada que enlazar aquí. #}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css">
 
 <div id="zsb-home" class="zsb2-wrap" data-search-url="{{ 'search'|page }}">
