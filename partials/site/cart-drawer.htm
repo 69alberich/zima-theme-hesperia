@@ -16,10 +16,12 @@
           data-request-success="zCartOnUpdate(data)"></button>
 
   {# Items — misma fuente que el AJAX de agregar/quitar (components/frontcart/items.htm
-     en el plugin, incluido aquí vía '@items'), para que el render inicial y las
-     actualizaciones nunca puedan desincronizarse en estructura o tamaño de imagen. #}
+     en el plugin, incluido aquí vía 'frontCart::items'), para que el render inicial y
+     las actualizaciones nunca puedan desincronizarse en estructura o tamaño de imagen.
+     '@partial' solo resuelve dentro de las propias vistas del componente — desde una
+     vista de tema hay que nombrar el componente explícitamente. #}
   <div id="z-cart-items" class="z-cart-body">
-    {% partial '@items' %}
+    {% partial 'frontCart::items' %}
   </div>
 
   {# Footer con total y acciones #}
