@@ -92,7 +92,7 @@
             <div class="zco-item">
               {% if item.offer and item.offer.product and item.offer.product.preview_image %}
                 <img class="zco-item-img"
-                     src="{{ item.offer.product.preview_image.getThumb(64, 64, {mode: 'crop'}) }}"
+                     src="{{ item.offer.product.preview_image.getThumb(168, 168, {mode: 'crop'}) }}"
                      alt="{{ item.offer.product.name }}">
               {% else %}
                 <div class="zco-item-img zco-item-img--placeholder">🌊</div>
@@ -109,8 +109,8 @@
                   {% if adults %}
                     <span>{{ adults }} adulto{{ adults != 1 ? 's' : '' }}{% if children > 0 %}, {{ children }} niño{{ children != 1 ? 's' : '' }}{% endif %}</span>
                   {% endif %}
-                  {% if item.price_category_name %}<span>{{ item.price_category_name }}</span>{% endif %}
                 </div>
+                {% if item.price_category_name %}<span class="zco-item-pill">{{ item.price_category_name }}</span>{% endif %}
               </div>
 
               <div class="zco-item-price">${{ item.total_price|number_format(2, '.', ',') }}</div>
