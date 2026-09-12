@@ -4,6 +4,10 @@
 {% set cfg       = productConfig %}
 {% set maxCap    = (cfg and cfg.max_capacity > 0) ? cfg.max_capacity : null %}
 {% set kidsCount = (cfg and cfg.max_kids_capacity > 0) ? true : false %}
+{# BookingRule (blocks_checkin): fechas en las que no se puede hacer check-in, en
+   formato 'YYYY-MM-DD'. Pendiente: exponer esta variable desde ProductDetail usando
+   BookingRuleResolver — por ahora el default vacío deja el calendario sin días bloqueados. #}
+{% set lockedDates = lockedCheckinDates ?? [] %}
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css">
 <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
@@ -41,6 +45,17 @@
       <input type="hidden" id="zpd-df" value="{{ p.date_from ?? '' }}">
       <input type="hidden" id="zpd-dt" value="{{ p.date_to ?? '' }}">
 
+      {% if lockedDates|length > 0 %}
+        <div class="zpd-modal-dates-hint">
+          <span class="zpd-modal-dates-hint-mark">✕</span>
+          Las fechas tachadas no admiten check-in.
+        </div>
+      {% endif %}
+
+      {# Alerta de regla de reserva (BookingRule: min/max noches, blocks_checkin) —
+         se llena vía AJAX al seleccionar fechas, ver zpdValidateBookingRules() más abajo #}
+      <div id="zpd-rule-alert" class="zpd-modal-alert" style="display:none"></div>
+
       {# ── Ocupación ── #}
       <div class="zpd-modal-occ">
 
@@ -71,7 +86,7 @@
         {% endif %}
 
         {# Alerta de capacidad excedida #}
-        <div id="zpd-cap-alert" class="zpd-modal-cap-alert" style="display:none">
+        <div id="zpd-cap-alert" class="zpd-modal-alert" style="display:none">
           ⚠ La combinación supera la capacidad máxima del producto.
         </div>
 
@@ -129,19 +144,11 @@
   </div>
 </div>
 
-<style>
-  :root {
-    --litepicker-day-is-start-color-bg: var(--z-teal);
-    --litepicker-day-is-end-color-bg:   var(--z-teal);
-  }
-  .litepicker { font-family: var(--z-font-sans); }
-  .litepicker .container__months { border-radius: 2px; box-shadow: 0 20px 50px -20px rgba(28,43,42,.3) !important; }
-</style>
-
 <script>
 (function () {
-  var MAX_CAP    = {{ maxCap ?? 'null' }};
-  var KIDS_COUNT = {{ kidsCount ? 'true' : 'false' }};
+  var MAX_CAP     = {{ maxCap ?? 'null' }};
+  var KIDS_COUNT  = {{ kidsCount ? 'true' : 'false' }};
+  var LOCKED_DATES = {{ lockedDates|json_encode|raw }};
   var handler    = 'productDetail::onPeekPrices';
   var fmt        = { day: 'numeric', month: 'short', year: 'numeric' };
 
@@ -158,6 +165,7 @@
       format:          'YYYY-MM-DD',
       autoApply:       true,
       mobileFriendly:  true,
+      lockDays:        LOCKED_DATES,
       {% if p.date_from is not empty %}
       startDate: '{{ p.date_from }}',
       endDate:   '{{ p.date_to }}',
@@ -177,6 +185,7 @@
           coEl.classList.remove('zpd-modal-date-val--dim');
 
           zpdValidateCap();
+          zpdValidateBookingRules();
           zpdFetchPrices();
         });
       }
@@ -208,6 +217,18 @@
   syncStepper('zpd-av', 'zpd-a');
   syncStepper('zpd-cv', 'zpd-c');
 
+  // ── Estado combinado del botón "Ver tarifas" ─────────────────────────────────
+  // Dos validaciones independientes (capacidad, BookingRule) pueden bloquear el
+  // botón por separado — se combinan acá para no pisarse entre sí.
+  var capExceeded  = false;
+  var ruleBlocked  = false;
+  function zpdSyncApplyBtn() {
+    var applyBtn = document.getElementById('zpd-apply-btn');
+    var blocked  = capExceeded || ruleBlocked;
+    applyBtn.disabled      = blocked;
+    applyBtn.style.opacity = blocked ? '.4' : '';
+  }
+
   // ── Validación de capacidad ──────────────────────────────────────────────────
   window.zpdValidateCap = function () {
     if (!MAX_CAP) return;
@@ -215,14 +236,51 @@
     var adults   = parseInt(document.getElementById('zpd-a').value) || 1;
     var children = parseInt(document.getElementById('zpd-c').value) || 0;
     var total    = adults + (KIDS_COUNT ? children : 0);
-    var exceeded = total > MAX_CAP;
+    capExceeded  = total > MAX_CAP;
 
-    var alertEl  = document.getElementById('zpd-cap-alert');
-    var applyBtn = document.getElementById('zpd-apply-btn');
+    document.getElementById('zpd-cap-alert').style.display = capExceeded ? 'flex' : 'none';
+    zpdSyncApplyBtn();
+  };
 
-    alertEl.style.display  = exceeded ? 'flex' : 'none';
-    applyBtn.disabled      = exceeded;
-    applyBtn.style.opacity = exceeded ? '.4' : '';
+  // ── Validación de BookingRule (min/max noches, blocks_checkin) ───────────────
+  // Pendiente del lado servidor: implementar el handler 'productDetail::onValidateBookingRules'
+  // usando BookingRuleResolver::checkProducts() (services/BookingRuleResolver.php), con el
+  // contrato { date_from, date_to } → { valid: bool, message: string|null }. Mientras el
+  // handler no exista, el .error() de abajo lo deja fallar en silencio sin romper la UI.
+  var ruleTimeout = null;
+  window.zpdValidateBookingRules = function () {
+    var df = document.getElementById('zpd-df').value;
+    var dt = document.getElementById('zpd-dt').value;
+    var alertEl = document.getElementById('zpd-rule-alert');
+
+    if (!df || !dt) {
+      ruleBlocked = false;
+      alertEl.style.display = 'none';
+      zpdSyncApplyBtn();
+      return;
+    }
+
+    clearTimeout(ruleTimeout);
+    ruleTimeout = setTimeout(function () {
+      oc.request(document.body, 'productDetail::onValidateBookingRules', {
+        data: { date_from: df, date_to: dt },
+        success: function (data) {
+          ruleBlocked = !!(data && data.valid === false);
+          if (ruleBlocked && data.message) {
+            alertEl.textContent = '⚠ ' + data.message;
+            alertEl.style.display = 'flex';
+          } else {
+            alertEl.style.display = 'none';
+          }
+          zpdSyncApplyBtn();
+        },
+        error: function () {
+          ruleBlocked = false;
+          alertEl.style.display = 'none';
+          zpdSyncApplyBtn();
+        }
+      });
+    }, 300);
   };
 
   // ── Fetch precios vía AJAX ───────────────────────────────────────────────────
@@ -260,8 +318,11 @@
   window.zpdOpenModal = function () {
     origOpen && origOpen();
     zpdValidateCap();
-    // Si ya hay fechas, cargar precios inmediatamente
-    if (document.getElementById('zpd-df').value) zpdFetchPrices();
+    // Si ya hay fechas, revalidar la regla de reserva y cargar precios de inmediato
+    if (document.getElementById('zpd-df').value) {
+      zpdValidateBookingRules();
+      zpdFetchPrices();
+    }
   };
 
 })();

@@ -370,11 +370,24 @@ img { max-width: 100%; display: block; }
 .z-cart-item-remove:hover { background: var(--z-orange); color: #fff; border-color: var(--z-orange); }
 
 .z-cart-item--invalid { filter: grayscale(1); opacity: .55; }
-.z-cart-item--invalid .z-cart-item-remove { filter: grayscale(0); opacity: 1; }
+.z-cart-item--invalid .z-cart-item-remove,
+.z-cart-item--invalid .z-rule-banner { filter: grayscale(0); opacity: 1; }
 .z-cart-item-unavailable {
   font-family: var(--z-font-mono); font-size: 9px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
   color: var(--z-text-dim); margin-bottom: 2px;
 }
+
+/* Banner de motivo específico (CartItem.invalid_reason = 'booking_rule_violation'),
+   con el texto libre de CartItem.invalid_message — reemplaza el label genérico
+   .z-cart-item-unavailable cuando hay un mensaje concreto que mostrar.
+   Compartido entre el drawer del carrito (.z-cart-item) y el resumen del checkout (.zco-item). */
+.z-rule-banner {
+  display: flex; align-items: flex-start; gap: 7px;
+  background: var(--z-teal-lt); border: 1px solid var(--z-orange);
+  padding: 7px 10px; margin-bottom: 8px;
+  font-size: 12px; line-height: 1.4; font-weight: 500; color: var(--z-orange);
+}
+.z-rule-banner-icon { flex-shrink: 0; line-height: 1.4; }
 
 /* Badge animado al añadir */
 @keyframes z-badge-pop { 0%,100% { transform: scale(1); } 50% { transform: scale(1.5); } }
@@ -586,8 +599,17 @@ img { max-width: 100%; display: block; }
   --litepicker-button-apply-color-bg:             var(--z-teal);
   --litepicker-container-months-box-shadow-color: rgba(28,43,42,.15);
 }
-.litepicker { font-family: var(--z-font-sans); border-radius: 16px !important; }
-.litepicker .container__months { border-radius: 16px; box-shadow: 0 20px 50px -20px rgba(28,43,42,.3) !important; }
+.litepicker { font-family: var(--z-font-sans); border-radius: 2px !important; }
+.litepicker .container__months { border-radius: 2px; box-shadow: 0 20px 50px -20px rgba(28,43,42,.3) !important; }
+
+/* Días bloqueados (BookingRule.blocks_checkin) — inyectados vía Litepicker `lockDays` */
+.litepicker .day-item.is-locked {
+  color: var(--z-text-dim) !important;
+  text-decoration: line-through;
+  text-decoration-color: var(--z-border);
+  cursor: not-allowed;
+}
+.litepicker .day-item.is-locked:hover { background: none !important; }
 
 /* ── Search page ── */
 .z-search-page   { padding: 32px var(--z-px) 64px; }
@@ -1311,6 +1333,13 @@ img { max-width: 100%; display: block; }
 .zpd-modal-date-val   { font-size: 14px; font-weight: 500; color: var(--z-text); }
 .zpd-modal-date-val--dim { color: var(--z-text-dim); font-weight: 400; }
 
+/* Leyenda de fechas bloqueadas (BookingRule.blocks_checkin) */
+.zpd-modal-dates-hint {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--z-text-muted); margin-top: -8px;
+}
+.zpd-modal-dates-hint-mark { text-decoration: line-through; text-decoration-color: var(--z-border); color: var(--z-text-dim); }
+
 /* Ocupación */
 .zpd-modal-occ        { display: flex; flex-direction: column; gap: 16px; }
 .zpd-modal-occ-row    { display: flex; align-items: center; justify-content: space-between; }
@@ -1346,9 +1375,9 @@ img { max-width: 100%; display: block; }
 }
 .z-stepper.is-disabled { pointer-events: none; }
 
-/* Capacidad (alerta solo, label ya no se usa) */
-
-.zpd-modal-cap-alert {
+/* Alerta genérica del modal — capacidad excedida (zpd-cap-alert) o
+   violación de BookingRule (zpd-rule-alert, min/max noches, blocks_checkin) */
+.zpd-modal-alert {
   display: flex; align-items: center; gap: 8px;
   font-size: 13px; font-weight: 500; color: var(--z-orange);
   background: var(--z-teal-lt); padding: 10px 14px;
@@ -1455,6 +1484,7 @@ img { max-width: 100%; display: block; }
 /* Submit */
 .zco-submit-row         { display: flex; flex-direction: column; gap: 10px; }
 .zco-submit-btn         { width: 100%; padding: 16px; font-size: 15px; font-weight: 500; }
+.zco-submit-btn:disabled { opacity: .45; cursor: not-allowed; }
 .zco-submit-note        { font-size: 12px; color: var(--z-text-muted); margin: 0; text-align: center; }
 
 /* Summary card */
@@ -1467,6 +1497,8 @@ img { max-width: 100%; display: block; }
 
 /* Items en summary */
 .zco-item               { display: flex; align-items: flex-start; gap: 14px; }
+.zco-item--invalid      { filter: grayscale(1); opacity: .55; }
+.zco-item--invalid .z-rule-banner { filter: grayscale(0); opacity: 1; }
 .zco-item-img           { width: 84px; height: 84px; object-fit: cover; flex-shrink: 0; background: var(--z-muted-bg); }
 .zco-item-img--placeholder { display: flex; align-items: center; justify-content: center; background: var(--z-muted-bg); font-size: 28px; }
 .zco-item-body          { flex: 1; min-width: 0; }
@@ -2701,17 +2733,6 @@ img { max-width: 100%; display: block; }
 .z-catalog-price,
 .z-feat-price {
   color: var(--z-teal);
-}
-
-/* Litepicker — paleta Hesperia */
-:root {
-  --litepicker-day-is-start-color-bg: var(--z-teal);
-  --litepicker-day-is-end-color-bg:   var(--z-teal);
-  --litepicker-day-color-hover:       var(--z-teal);
-  --litepicker-day-is-today-color:    var(--z-teal);
-  --litepicker-button-apply-color-bg: var(--z-teal);
-  --litepicker-button-prev-month-color: var(--z-teal);
-  --litepicker-button-next-month-color: var(--z-teal);
 }
 
 /* Tabs activos: subrayado terracota */

@@ -75,9 +75,22 @@
         </section>
         {% endif %}
 
-        {# ── Submit ── #}
+        {# ── Submit ──
+             Si algún ítem del carrito quedó inválido (ej. violó un BookingRule después de
+             agregarlo), se bloquea el envío acá también — CartValidationService lo rechaza
+             igual con una excepción, pero es mejor evitar el viaje al servidor y decirle
+             al usuario qué ítem tiene que quitar. #}
+        {% set hasInvalidItems = false %}
+        {% for item in cartItems %}{% if not item.is_valid %}{% set hasInvalidItems = true %}{% endif %}{% endfor %}
+
         <div class="zco-submit-row">
-          <button type="submit" class="z-btn z-btn-primary zco-submit-btn" id="zco-submit">
+          {% if hasInvalidItems %}
+            <div class="z-rule-banner">
+              <span class="z-rule-banner-icon">⚠</span>
+              <span>Tienes un ítem no disponible en el carrito. Quítalo para poder continuar.</span>
+            </div>
+          {% endif %}
+          <button type="submit" class="z-btn z-btn-primary zco-submit-btn" id="zco-submit" {% if hasInvalidItems %}disabled{% endif %}>
             Confirmar pedido
           </button>
           <p class="zco-submit-note">Al confirmar, tu reserva quedará en estado <strong>Pendiente</strong> hasta que el equipo la procese.</p>
@@ -98,7 +111,7 @@
             {% set adults   = parts|length > 0 ? parts[0] : null %}
             {% set children = parts|length > 1 ? parts[1] : null %}
 
-            <div class="zco-item">
+            <div class="zco-item{{ item.is_valid ? '' : ' zco-item--invalid' }}">
               {% if item.offer.product.preview_image %}
                 <img class="zco-item-img"
                      src="{{ item.offer.product.preview_image.getThumb(168, 168, {mode: 'crop'}) }}"
@@ -108,6 +121,12 @@
               {% endif %}
 
               <div class="zco-item-body">
+                {% if not item.is_valid %}
+                  <div class="z-rule-banner">
+                    <span class="z-rule-banner-icon">⚠</span>
+                    <span>{{ item.invalid_reason == 'booking_rule_violation' and item.invalid_message ? item.invalid_message : 'zima.zimaadmin::lang.plugin.cart.item_unavailable'|trans }}</span>
+                  </div>
+                {% endif %}
                 <div class="zco-item-name">{{ item.offer.product.name ?? item.offer_name }}</div>
                 <div class="zco-item-offer">{{ item.offer_name }}</div>
                 <div class="zco-item-meta">
