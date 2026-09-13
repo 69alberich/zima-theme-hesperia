@@ -3204,102 +3204,160 @@ img { max-width: 100%; display: block; }
 }
 
 
+/* -- Hoteles: hero de la cadena (pages/hoteles.htm) ------------ */
+.z-hlp-hero {
+  position: relative; overflow: hidden; color: #fff;
+  min-height: clamp(360px, 46vw, 520px);
+  display: flex; align-items: flex-end;
+}
+.z-hlp-hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 80% at 80% 20%, rgba(202,70,45,.18) 0%, transparent 60%),
+    linear-gradient(145deg, var(--z-text) 0%, #0b2539 45%, #112f4a 100%);
+}
+.z-hlp-hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(5,28,44,.55) 0%, rgba(5,28,44,0) 60%);
+}
+.z-hlp-hero-content {
+  position: relative; z-index: 2;
+  width: 100%; max-width: var(--z-max-w);
+  margin: 0 auto; padding: clamp(48px,8vw,88px) var(--z-px) clamp(40px,5vw,56px);
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
+  gap: clamp(24px,4vw,48px);
+}
+.z-hlp-hero-main { flex: 1 1 420px; min-width: 0; }
+.z-hlp-hero-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.z-hlp-eyebrow {
+  font-family: var(--z-font-mono); font-size: 11px; font-weight: 500;
+  letter-spacing: .16em; text-transform: uppercase; color: rgba(255,255,255,.65);
+}
+.z-hlp-stars-badge {
+  font-family: var(--z-font-mono); font-size: 10px; font-weight: 500;
+  letter-spacing: .08em; text-transform: uppercase; color: #fff;
+  background: var(--z-orange); padding: 5px 10px; border-radius: 999px;
+}
+.z-hlp-title {
+  margin: 16px 0 0; font-family: var(--z-font-serif); font-weight: 400;
+  font-size: clamp(36px, 5vw, 60px); line-height: 1.05; max-width: 16ch; color: #fff;
+}
+.z-hlp-sub {
+  margin: 16px 0 0; max-width: 52ch; font-size: 15px; line-height: 1.65; color: rgba(255,255,255,.72);
+}
+
+/* Stats — auto-fit en vez de una grilla fija de 2 columnas: si algún día solo hay
+   una estadística (ej. totalProducts en 0), evita la celda fantasma vacía al lado. */
+.z-hlp-hero-stats {
+  flex: 0 1 280px;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1px;
+  background: rgba(255,255,255,.18);
+}
+.z-hlp-hero-stat { background: rgba(5,28,44,.4); padding: 16px 18px; }
+.z-hlp-hero-stat-val { font-family: var(--z-font-serif); font-size: clamp(26px,3vw,34px); line-height: 1; color: #fff; }
+.z-hlp-hero-stat-lbl {
+  margin-top: 6px; font-family: var(--z-font-mono); font-size: 9px; font-weight: 500;
+  letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.6);
+}
+
+/* Continuo, sin el max-width de 1240px de .z-wrap — mismo criterio que .zpd-wrap
+   en producto: acá interesa que las fotos de las filas usen todo el ancho disponible. */
+.z-hlp-grid-section { width: 100%; padding: 56px var(--z-px) 0; }
+
+@media (max-width: 640px) {
+  .z-hlp-hero-content { padding-bottom: 32px; }
+  .z-hlp-hero-stats    { flex-basis: 100%; }
+}
+
 /* -- Operator List ------------------------------------------- */
 .z-oplist-page      { padding-top: 56px; }
 .z-oplist-header    { margin-bottom: 48px; }
 .z-oplist-title     { font-family: var(--z-font-serif); font-size: clamp(2rem, 4vw, 3rem); font-weight: 400; line-height: 1.1; margin-bottom: 12px; }
 .z-oplist-subtitle  { font-size: 17px; color: var(--z-text-muted); max-width: 520px; }
 
-.z-oplist {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 28px;
-}
+/* -- Filas horizontales (una por operador, alternadas) ----------
+   Reemplaza la grilla de cards anterior — landing "importante", cada hotel es su
+   propia sección editorial: foto grande + snapshot de galería a un lado, contenido
+   (nombre, preview_text, atributos, estadísticas) al otro. Sin caja/sombra propia,
+   solo una línea hairline entre filas — el peso visual lo dan la foto y la tipografía. */
+.z-hlrow-list { display: flex; flex-direction: column; }
 
-/* -- Card -- */
-.z-opcard {
-  display: flex;
-  flex-direction: column;
-  background: var(--z-card-bg, #fff);
-  border-radius: 16px;
-  overflow: hidden;
-  text-decoration: none;
-  color: inherit;
-  box-shadow: 0 2px 12px rgba(0,0,0,.07);
-  transition: transform .22s ease, box-shadow .22s ease;
+.z-hlrow {
+  display: flex; align-items: stretch; gap: clamp(24px, 4vw, 56px);
+  padding: clamp(40px, 5vw, 64px) 0;
+  border-bottom: 1px solid var(--z-border);
+  text-decoration: none; color: inherit;
 }
-.z-opcard:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 36px rgba(0,0,0,.13);
-}
+.z-hlrow-list > .z-hlrow:first-child { padding-top: 0; }
+.z-hlrow--rev { flex-direction: row-reverse; }
 
-/* Thumbnail */
-.z-opcard-thumb {
-  position: relative;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  background: var(--z-card-thumb-bg, #e8e5e0);
-}
-.z-opcard-thumb img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  transition: transform .4s ease;
-  display: block;
-}
-.z-opcard:hover .z-opcard-thumb img {
-  transform: scale(1.05);
-}
-.z-opcard-thumb-placeholder {
-  width: 100%; height: 100%;
-  display: flex; align-items: center; justify-content: center;
-}
+/* Media: foto principal + tira de 3 fotos de la galería debajo */
+.z-hlrow-media { flex: 0 1 52%; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.z-hlrow-media-main { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: var(--z-muted-bg); }
+.z-hlrow-media-main img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s ease; }
+.z-hlrow:hover .z-hlrow-media-main img { transform: scale(1.04); }
+.z-hlrow-media-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--z-text-dim); }
 
-/* Category badge */
-.z-opcard-badge {
-  position: absolute;
-  top: 14px; left: 14px;
-  background: rgba(0,0,0,.52);
-  backdrop-filter: blur(6px);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: .05em;
-  text-transform: uppercase;
-  padding: 4px 10px;
-  border-radius: 20px;
+.z-hlrow-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.z-hlrow-strip-thumb { position: relative; aspect-ratio: 1; overflow: hidden; background: var(--z-muted-bg); }
+.z-hlrow-strip-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.z-hlrow-strip-thumb--more img { filter: brightness(.45); }
+.z-hlrow-strip-more {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-family: var(--z-font-mono); font-size: 13px; font-weight: 500; color: #fff;
 }
 
 /* Body */
-.z-opcard-body {
-  padding: 20px 22px 22px;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
+.z-hlrow-body { flex: 1 1 48%; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+.z-hlrow-eyebrow {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--z-font-mono); font-size: 12px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--z-text-muted); margin-bottom: 16px;
 }
-.z-opcard-name {
-  font-family: var(--z-font-serif);
-  font-size: 20px;
-  font-weight: 400;
-  line-height: 1.2;
-  margin-bottom: 8px;
+.z-hlrow-eyebrow-stars { color: var(--z-orange); letter-spacing: .06em; }
+
+/* Con la fila a ancho continuo (ver .z-hlp-grid-section) sobra espacio en la columna
+   de texto — se sube la escala tipográfica y se afloja el max-width de .z-hlrow-text
+   (46ch → 62ch) para que deje de sentirse como una columna angosta flotando en un
+   espacio vacío, sin pasarse del largo de línea legible para un párrafo. */
+.z-hlrow-name {
+  font-family: var(--z-font-serif); font-size: clamp(32px, 3.4vw, 48px); font-weight: 400; line-height: 1.08;
+  color: var(--z-text); margin: 0 0 18px;
 }
-.z-opcard-desc {
-  font-size: 14px;
-  color: var(--z-text-muted);
-  line-height: 1.55;
-  flex: 1;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  margin-bottom: 16px;
+.z-hlrow-text {
+  font-family: var(--z-font-serif); font-style: italic; font-size: clamp(17px, 1.4vw, 19px); line-height: 1.6;
+  color: var(--z-text-md); max-width: 62ch; margin: 0 0 24px;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
 }
-.z-opcard-cta {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--z-teal);
-  letter-spacing: .02em;
-  margin-top: auto;
+
+.z-hlrow-amenities { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 28px; }
+.z-hlrow-amenity {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 13px; color: var(--z-text-muted);
+  border: 1px solid var(--z-border); border-radius: 999px; padding: 7px 14px;
+}
+.z-hlrow-amenity-icon { line-height: 1; }
+
+/* Tag "pertenece a" — usado por amenitylist (/experiencias, /restaurantes, /servicios)
+   en vez de la fila de atributos de operatorList: no hay un equivalente a "atributos"
+   propio de la amenity, así que se usa este único chip para dar contexto del hotel. */
+.z-hlrow-amenity--operator { gap: 8px; color: var(--z-text); font-weight: 500; }
+.z-hlrow-amenity-stars { color: var(--z-orange); font-size: 10px; letter-spacing: .04em; }
+
+.z-hlrow-foot {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px;
+  padding-top: 22px; border-top: 1px solid var(--z-border-lt);
+}
+.z-hlrow-foot--solo { justify-content: flex-end; }
+.z-hlrow-stats { display: flex; flex-wrap: wrap; gap: 30px; }
+.z-hlrow-stat-val { font-family: var(--z-font-serif); font-size: 28px; font-weight: 400; color: var(--z-text); line-height: 1; }
+.z-hlrow-stat-lbl { margin-top: 5px; font-family: var(--z-font-mono); font-size: 10px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--z-text-dim); }
+
+.z-hlrow-cta { flex-shrink: 0; }
+
+@media (max-width: 780px) {
+  .z-hlrow, .z-hlrow--rev { flex-direction: column; }
+  .z-hlrow-body { justify-content: flex-start; }
 }
 
 /* Pagination */
@@ -3311,22 +3369,20 @@ img { max-width: 100%; display: block; }
   margin-top: 48px;
 }
 .z-oplist-pager-btn {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--z-teal);
+  font-family: var(--z-font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--z-text);
   text-decoration: none;
-  padding: 8px 20px;
-  border: 2px solid var(--z-teal);
-  border-radius: 8px;
-  transition: background .18s, color .18s;
+  padding: 10px 20px;
+  border: 1px solid var(--z-border);
+  transition: border-color .15s, color .15s;
 }
-.z-oplist-pager-btn:hover { background: var(--z-teal); color: #fff; }
-.z-oplist-pager-info { font-size: 14px; color: var(--z-text-muted); }
+.z-oplist-pager-btn:hover { border-color: var(--z-orange); color: var(--z-orange); }
+.z-oplist-pager-info { font-family: var(--z-font-mono); font-size: 11px; letter-spacing: .05em; color: var(--z-text-muted); }
 .z-oplist-empty { color: var(--z-text-muted); font-size: 16px; padding: 48px 0; }
-
-@media (max-width: 640px) {
-  .z-oplist { grid-template-columns: 1fr; }
-}
 
 
 /* -- Amenity List -------------------------------------------- */

@@ -6,20 +6,49 @@ title = "Hoteles"
 [operatorList]
 category_code = "hotel"
 ==
-<section class="z-section z-oplist-page">
-  <div class="z-wrap">
-    <div class="z-oplist-header">
-      <h1 class="z-oplist-title">
-        {% if category %}{{ category.name }}{% else %}Hoteles & Posadas{% endif %}
+{% set isFiltered = activeCategory and activeCategory != 'hotel' and category %}
+
+<section class="z-hlp-hero">
+  <div class="z-hlp-hero-bg"></div>
+  <div class="z-hlp-hero-overlay"></div>
+
+  <div class="z-hlp-hero-content">
+    <div class="z-hlp-hero-main">
+      <div class="z-hlp-hero-tags">
+        <span class="z-hlp-eyebrow">Cadena Hesperia</span>
+        {% if not isFiltered and allFiveStars %}
+          <span class="z-hlp-stars-badge">★★★★★ en toda la cadena</span>
+        {% endif %}
+      </div>
+
+      <h1 class="z-hlp-title">
+        {% if isFiltered %}{{ category.name }}{% else %}Hoteles Hesperia en Venezuela{% endif %}
       </h1>
-      <p class="z-oplist-subtitle">
-        {% if activeCategory and activeCategory != 'hotel' and category %}
-          Mostrando {{ category.name }} en el Caribe venezolano
+
+      <p class="z-hlp-sub">
+        {% if isFiltered %}
+          Mostrando {{ category.name|lower }} dentro de la cadena Hesperia en el Caribe venezolano.
         {% else %}
-          Alojamientos seleccionados en el Caribe venezolano
+          Cuatro hoteles, un mismo estándar: ubicaciones privilegiadas, categoría cinco estrellas y la calidez que define a Hesperia en cada rincón de Venezuela.
         {% endif %}
       </p>
     </div>
-    {% component 'operatorList' %}
+
+    <div class="z-hlp-hero-stats">
+      <div class="z-hlp-hero-stat">
+        <div class="z-hlp-hero-stat-val">{{ operators.total }}</div>
+        <div class="z-hlp-hero-stat-lbl">Hotel{{ operators.total != 1 ? 'es' : '' }}</div>
+      </div>
+      {% if totalProducts %}
+        <div class="z-hlp-hero-stat">
+          <div class="z-hlp-hero-stat-val">{{ totalProducts }}</div>
+          <div class="z-hlp-hero-stat-lbl">Tipo{{ totalProducts != 1 ? 's' : '' }} de habitación</div>
+        </div>
+      {% endif %}
+    </div>
   </div>
+</section>
+
+<section class="z-hlp-grid-section">
+  {% component 'operatorList' %}
 </section>
