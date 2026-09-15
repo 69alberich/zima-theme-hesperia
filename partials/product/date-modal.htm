@@ -153,13 +153,19 @@
   var fmt        = { day: 'numeric', month: 'short', year: 'numeric' };
 
   // ── Litepicker ──────────────────────────────────────────────────────────────
+  // La opción mobileFriendly de Litepicker no es confiable para decidir 1 vs 2 meses
+  // (en algunos entornos su detección interna de pantalla no coincide con el viewport
+  // real) — se fuerza explícitamente por media query en vez de depender de eso, para
+  // que el calendario nunca intente pintar 2 meses (14 columnas) en una pantalla chica.
+  var IS_NARROW_SCREEN = window.matchMedia('(max-width: 640px)').matches;
+
   function initPicker() {
     if (typeof Litepicker === 'undefined') { setTimeout(initPicker, 100); return; }
     new Litepicker({
       element:         document.getElementById('zpd-lp'),
       singleMode:      false,
-      numberOfMonths:  2,
-      numberOfColumns: 2,
+      numberOfMonths:  IS_NARROW_SCREEN ? 1 : 2,
+      numberOfColumns: IS_NARROW_SCREEN ? 1 : 2,
       minDate:         new Date(),
       lang:            'es-VE',
       format:          'YYYY-MM-DD',

@@ -279,7 +279,13 @@
       </div>
     {% endif %}
 
-    {# ── Contacto rápido ── #}
+  </div>
+
+  {# ── Contacto rápido — en su propio card (no dentro de #zpd-booking-card): así
+     sigue visible en mobile aunque el card de precio/fechas se oculte más abajo
+     (a pedido del usuario, ver .zpd-mobile-bar). Mismo truco de margen negativo
+     de siempre (".zpd-card > .zpd-contact"), ahora aplicado a este card chico. ── #}
+  <div class="zpd-card" id="zpd-contact-card">
     <div class="zpd-contact">
       <div class="zpd-contact-icon">☎</div>
       <div class="zpd-contact-body">
@@ -287,6 +293,58 @@
         <div class="zpd-contact-desc">Nuestro equipo responde en minutos.</div>
       </div>
       <a href="{{ 'contacto'|page }}" class="zpd-contact-btn">Escribir</a>
+    </div>
+  </div>
+
+  {# ── Barra fija mobile: este card es un sidebar sticky de escritorio, así que en
+     mobile (sin sidebar) cae al final del flujo normal, después de galería, descripción,
+     atributos, condiciones, tarifas y la card del hotel — el precio y el acceso a
+     tarifas quedan enterrados. Esta barra da acceso inmediato sin reordenar nada.
+     Primera versión solo tenía precio + CTA; el usuario notó que cambiar fechas/
+     ocupación seguía obligando a bajar hasta el card de abajo, así que se le sumó
+     la fila de fechas+ocupación con su propio botón "Cambiar" (mismo `zpdOpenModal()`
+     que ya usa el card completo). ── #}
+  <div class="zpd-mobile-bar" id="zpd-mobile-bar">
+
+    {% if hasDates %}
+      <div class="zpd-mobile-bar-meta">
+        <div class="zpd-mobile-bar-meta-text">
+          {{ p.date_from|date('d M') }} → {{ p.date_to|date('d M') }}
+          {% if nights %}· {{ nights }} noche{{ nights != 1 ? 's' : '' }}{% endif %}
+          ·
+          {% if p.all_occupancies is defined %}
+            Todas las ocupaciones
+          {% else %}
+            {{ p.adults ?? 2 }} adulto{{ (p.adults ?? 2) != 1 ? 's' : '' }}{% if (p.children ?? 0) > 0 %}, {{ p.children }} niño{{ p.children != 1 ? 's' : '' }}{% endif %}
+          {% endif %}
+        </div>
+        <button type="button" class="zpd-card-occ-edit zpd-mobile-bar-edit" onclick="zpdOpenModal()">Cambiar</button>
+      </div>
+    {% endif %}
+
+    <div class="zpd-mobile-bar-row">
+      <div class="zpd-mobile-bar-price">
+        <div class="zpd-mobile-bar-lbl">Precio desde</div>
+        <div class="zpd-mobile-bar-val">
+          {% if offer and offer.lowestTotal is not null %}
+            ${{ offer.lowestTotal|number_format(2, '.', ',') }}
+          {% elseif not hasDates %}
+            Elige fechas
+          {% else %}
+            Sin precio
+          {% endif %}
+        </div>
+        {% if hasDates and offers|length > 0 %}
+          <div class="zpd-mobile-bar-count">
+            {{ offers|length }} presentaci{{ offers|length == 1 ? 'ón' : 'ones' }} disponible{{ offers|length == 1 ? '' : 's' }}
+          </div>
+        {% endif %}
+      </div>
+      {% if hasDates %}
+        <a href="#zpd-offers" class="z-btn z-btn-primary zpd-mobile-bar-btn">Ver tarifas</a>
+      {% else %}
+        <button type="button" class="z-btn z-btn-primary zpd-mobile-bar-btn" onclick="zpdOpenModal()">Elegir fechas</button>
+      {% endif %}
     </div>
 
   </div>

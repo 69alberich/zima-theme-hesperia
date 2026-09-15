@@ -708,6 +708,12 @@ img { max-width: 100%; display: block; }
   .z-stats-bar-inner { grid-template-columns: repeat(2, 1fr); justify-content: stretch; }
   .z-nav-links  { display: none; }
   .z-nav-toggle { display: flex; }
+  /* Con el menú de links oculto, el pill de login competía por ancho con el
+     carrito y el toggle y terminaba partiendo "Iniciar sesión" en 2 líneas
+     (aunque tenga nowrap, si el flex-item se angosta demasiado el texto no
+     entra) — se achica un poco para que las 14 letras entren cómodas en una
+     sola línea sin tocar el tamaño en desktop. */
+  .z-nav-login  { font-size: 12px; padding: 6px 11px; }
   .z-mobile-nav.is-open { display: block; }
   .z-footer-grid  { grid-template-columns: 1fr 1fr; }
   .z-search-layout { grid-template-columns: 1fr; }
@@ -1265,10 +1271,54 @@ img { max-width: 100%; display: block; }
 .zpd-lb-dot   { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.35); cursor: pointer; transition: background .15s; }
 .zpd-lb-dot--on { background: #fff; }
 
+/* ── Barra fija mobile de precio/tarifas (ver sidebar.htm) — oculta en desktop,
+   donde el sidebar ya es sticky y siempre está a la vista. ── */
+.zpd-mobile-bar { display: none; }
+
 /* ── Responsive product detail ── */
 @media (max-width: 960px) {
   .zpd-layout { grid-template-columns: 1fr; }
   .zpd-sidebar { position: static; }
+
+  /* La barra fija (.zpd-mobile-bar) ya cubre precio/fechas/ocupación/CTA en mobile —
+     el card completo queda redundante acá (y sigue siendo el sidebar sticky real
+     en desktop/tablet, donde esta regla no aplica). */
+  #zpd-booking-card { display: none; }
+
+  .zpd-mobile-bar {
+    display: flex; flex-direction: column;
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+    background: var(--z-surface); border-top: 1px solid var(--z-border);
+    box-shadow: 0 -6px 20px -8px rgba(5,28,44,.15);
+  }
+
+  /* Fila de fechas/ocupación — mismo dato y mismo botón "Cambiar" (.zpd-card-occ-edit)
+     que ya tiene el card completo, para no tener que bajar hasta el final a editarlos. */
+  .zpd-mobile-bar-meta {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 10px var(--z-px);
+    border-bottom: 1px solid var(--z-border-lt);
+  }
+  .zpd-mobile-bar-meta-text { font-size: 12px; color: var(--z-text-md); min-width: 0; }
+  .zpd-mobile-bar-edit { flex-shrink: 0; padding: 5px 10px; font-size: 9px; }
+
+  .zpd-mobile-bar-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 12px var(--z-px);
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+  .zpd-mobile-bar-lbl {
+    font-family: var(--z-font-mono); font-size: 9px; font-weight: 500;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--z-text-muted);
+  }
+  .zpd-mobile-bar-val { font-family: var(--z-font-serif); font-size: 21px; color: var(--z-text); line-height: 1.15; margin-top: 2px; }
+  .zpd-mobile-bar-count { font-size: 10px; color: var(--z-text-muted); margin-top: 2px; }
+  .zpd-mobile-bar-btn { flex-shrink: 0; text-decoration: none; }
+
+  /* Espacio para que el último contenido (card del hotel, contacto) no quede
+     tapado detrás de la barra fija — un poco más que antes porque ahora puede
+     tener 2 filas (fechas/ocupación + precio) en vez de 1. */
+  .zpd-wrap { padding-bottom: 118px; }
 }
 @media (max-width: 680px) {
   .zpd-offer-main    { grid-template-columns: 1fr; }
@@ -1410,6 +1460,14 @@ img { max-width: 100%; display: block; }
    casi nada adentro. Con flex-wrap + ancho al contenido, cada condición ocupa solo lo
    que necesita y no queda espacio vacío sin importar cuántas haya. ── */
 .zpd-conditions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+/* En mobile, "al ancho del contenido" deja cada condición en su propia fila (2 textos
+   cortos no llegan a sumar el ancho de pantalla) — un solo bloque angosto arriba del
+   otro, con toda la mitad derecha vacía. A partir de acá se fuerzan 2 columnas parejas
+   para que se vean de a pares, igual que ya hace .zpd-modal-conditions en el modal. */
+@media (max-width: 640px) {
+  .zpd-conditions { display: grid; grid-template-columns: repeat(2, 1fr); }
+}
 .zpd-cond-card {
   display: flex; align-items: center; gap: 12px;
   background: var(--z-bg); outline: 1px solid var(--z-border); outline-offset: -1px;
@@ -2967,6 +3025,7 @@ img { max-width: 100%; display: block; }
   padding: 6px 14px; border-radius: 999px;
   border: 1px solid rgba(255,255,255,.25);
   transition: background .15s, color .15s;
+  white-space: nowrap; flex-shrink: 0;
 }
 .z-nav-login:hover { background: rgba(255,255,255,.1); color: #fff; }
 
