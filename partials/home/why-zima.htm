@@ -31,7 +31,7 @@
   {% endif %}
 {% endmacro %}
 
-<section class="z-section">
+<section class="z-section z-fluid z-capped">
   {% if items|length %}
     {% set firstItem = items|first %}
     <h2 class="z-why-title">{{ firstItem.section_title ?? 'Por qué reservar con Zima' }}</h2>

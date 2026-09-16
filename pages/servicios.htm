@@ -8,20 +8,46 @@ category_code = ""
 operator_code = ""
 per_page = "12"
 ==
-<section class="z-section z-oplist-page">
-  <div class="z-wrap">
-    <div class="z-oplist-header">
-      <h1 class="z-oplist-title">
-        {% if category %}{{ category.name }}{% else %}Servicios{% endif %}
+{% set isFiltered = category is not null %}
+
+<section class="z-hlp-hero">
+  <div class="z-hlp-hero-bg"></div>
+  <div class="z-hlp-hero-overlay"></div>
+
+  <div class="z-hlp-hero-content">
+    <div class="z-hlp-hero-main">
+      <div class="z-hlp-hero-tags">
+        <span class="z-hlp-eyebrow">Cadena Hesperia</span>
+      </div>
+
+      <h1 class="z-hlp-title">
+        {% if isFiltered %}{{ category.name }}{% else %}Servicios Hesperia{% endif %}
       </h1>
-      <p class="z-oplist-subtitle">
-        {% if category %}
-          {{ category.name }} en el Caribe venezolano
+
+      <p class="z-hlp-sub">
+        {% if isFiltered %}
+          Mostrando {{ category.name|lower }} dentro de la cadena Hesperia en el Caribe venezolano.
         {% else %}
-          Actividades y servicios disponibles en el Caribe venezolano
+          Bodas, spa, salones de eventos y actividades pensadas para cada momento de tu viaje por los hoteles de la cadena.
         {% endif %}
       </p>
     </div>
-    {% component 'amenityList' %}
+
+    <div class="z-hlp-hero-stats">
+      <div class="z-hlp-hero-stat">
+        <div class="z-hlp-hero-stat-val">{{ amenities.total }}</div>
+        <div class="z-hlp-hero-stat-lbl">Servicio{{ amenities.total != 1 ? 's' : '' }}</div>
+      </div>
+      {% if operatorCount %}
+        <div class="z-hlp-hero-stat">
+          <div class="z-hlp-hero-stat-val">{{ operatorCount }}</div>
+          <div class="z-hlp-hero-stat-lbl">Hotel{{ operatorCount != 1 ? 'es' : '' }}</div>
+        </div>
+      {% endif %}
+    </div>
   </div>
+</section>
+
+<section class="z-hlp-grid-section z-fluid">
+  {% component 'amenityList' %}
 </section>

@@ -12,7 +12,7 @@
   'experiencias': 'z-thumb-exp'
 } %}
 
-<section class="z-section">
+<section class="z-section z-fluid z-capped">
   {% if featured|length %}
     {% set meta = featured|first %}
     <div class="z-eyebrow">{{ meta.section_eyebrow ?? 'Ofertas destacadas' }}</div>

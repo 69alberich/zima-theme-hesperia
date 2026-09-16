@@ -32,7 +32,7 @@
   {% endif %}
 {% endmacro %}
 
-<section class="z-section">
+<section class="z-section z-fluid z-capped">
   {% if categories|length %}
     {% set firstItem = categories|first %}
     <h2 class="z-categories-title">{{ firstItem.title ?? 'Explora por categoría' }}</h2>

@@ -7,18 +7,46 @@ title = "Restaurantes"
 category_code = "restaurant"
 per_page = "12"
 ==
-<section class="z-section z-oplist-page">
-  <div class="z-wrap">
-    <div class="z-oplist-header">
-      <h1 class="z-oplist-title">Restaurantes</h1>
-      <p class="z-oplist-subtitle">
-        {% if activeCategory and activeCategory != 'restaurant' and category %}
-          Mostrando {{ category.name }} en el Caribe venezolano
+{% set isFiltered = activeCategory and activeCategory != 'restaurant' and category %}
+
+<section class="z-hlp-hero">
+  <div class="z-hlp-hero-bg"></div>
+  <div class="z-hlp-hero-overlay"></div>
+
+  <div class="z-hlp-hero-content">
+    <div class="z-hlp-hero-main">
+      <div class="z-hlp-hero-tags">
+        <span class="z-hlp-eyebrow">Cadena Hesperia</span>
+      </div>
+
+      <h1 class="z-hlp-title">
+        {% if isFiltered %}{{ category.name }}{% else %}Restaurantes Hesperia{% endif %}
+      </h1>
+
+      <p class="z-hlp-sub">
+        {% if isFiltered %}
+          Mostrando {{ category.name|lower }} dentro de la cadena Hesperia en el Caribe venezolano.
         {% else %}
-          Gastronomía y sabores del Caribe venezolano
+          Cocina con vista al mar y sabor caribeño, parte de la experiencia en los hoteles de la cadena.
         {% endif %}
       </p>
     </div>
-    {% component 'amenityList' %}
+
+    <div class="z-hlp-hero-stats">
+      <div class="z-hlp-hero-stat">
+        <div class="z-hlp-hero-stat-val">{{ amenities.total }}</div>
+        <div class="z-hlp-hero-stat-lbl">Restaurante{{ amenities.total != 1 ? 's' : '' }}</div>
+      </div>
+      {% if operatorCount %}
+        <div class="z-hlp-hero-stat">
+          <div class="z-hlp-hero-stat-val">{{ operatorCount }}</div>
+          <div class="z-hlp-hero-stat-lbl">Hotel{{ operatorCount != 1 ? 'es' : '' }}</div>
+        </div>
+      {% endif %}
+    </div>
   </div>
+</section>
+
+<section class="z-hlp-grid-section z-fluid">
+  {% component 'amenityList' %}
 </section>

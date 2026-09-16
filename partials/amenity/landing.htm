@@ -32,14 +32,14 @@
   {# ── Banda editorial ── #}
   {% if amenity.preview_text %}
   <div class="zam-band">
-    <div class="zam-band-inner">
+    <div class="zam-band-inner z-capped">
       <p class="zam-band-text">{{ amenity.preview_text }}</p>
     </div>
   </div>
   {% endif %}
 
   {# ── Cuerpo ── #}
-  <div class="zam-body">
+  <div class="zam-body z-fluid z-capped">
 
     {# Descripción + imagen lateral #}
     {% if amenity.description or amenity.gallery is not empty %}
@@ -84,14 +84,10 @@
     </div>
     {% endif %}
 
-    {# Volver #}
-    <div class="zam-footer-nav">
-      <a href="{{ 'operator'|page({'slug': operator.slug}) }}"
-         class="zam-back-link">
-        <span class="zam-back-arrow">←</span>
-        <span>Volver a {{ operator.name }}</span>
-      </a>
-    </div>
+    {# ── Operador — mismo card navy "El hotel" que ya usa la página de producto,
+       reemplaza el link de "Volver a {{ operator.name }}" por algo con más
+       presencia (foto, descripción, CTA) en vez de solo un link de texto. ── #}
+    {% partial 'product/operator-card' productOperator=operator %}
 
   </div>
 

@@ -68,6 +68,26 @@ img { max-width: 100%; display: block; }
 
 /* ── Layout helpers ── */
 .z-wrap        { max-width: var(--z-max-w); margin: 0 auto; padding: 0 var(--z-px); }
+
+/* Ancho de página — dos utilidades, para no repetir los mismos valores en cada
+   sección nueva (se habían ido duplicando a mano: .zpd-wrap, .z-hlp-grid-section,
+   .z-section, .zco-page, etc., cada una con su propio max-width/padding lateral
+   idéntico). Cada sección conserva su propia clase para el padding VERTICAL y el
+   resto de su layout — estas dos solo resuelven el ancho horizontal.
+     .z-fluid  → padding lateral + ancho continuo (edge-to-edge). Úsala sola en
+                 secciones sin tope: nav, footer, grillas de listados, galerías.
+     .z-capped → solo el tope de 1240px + centrado, SIN padding propio — pensada
+                 para envoltorios internos que ya heredan el padding de un padre
+                 (ej. .zam-band-inner dentro de .zam-band, que ya tiene el suyo).
+   Para una sección de nivel superior que necesita padding Y tope a la vez (ej.
+   .z-section, .zam-body), combiná las dos en el mismo elemento — el width:100%
+   de .z-fluid queda acotado por el max-width de .z-capped, y el padding no se
+   duplica porque .z-capped no aporta ninguno: class="z-section z-fluid z-capped".
+   Nota: .zco-page/.zor-page usan un cap propio de 1100px (más angosto a propósito
+   para checkout/orden) — no son candidatas a .z-capped, que fija 1240px. */
+.z-fluid  { width: 100%; padding-left: var(--z-px); padding-right: var(--z-px); }
+.z-capped { max-width: var(--z-max-w); margin-left: auto; margin-right: auto; }
+
 .z-two-col     { display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start; }
 .z-two-col-wide{ display: grid; grid-template-columns: 1fr 340px; gap: 32px; align-items: start; }
 .z-sticky-panel{ position: sticky; top: calc(var(--z-nav-h) + 16px); }
@@ -232,7 +252,7 @@ img { max-width: 100%; display: block; }
 }
 .z-nav-inner {
   display: flex; align-items: center; justify-content: space-between; gap: 24px;
-  padding: 16px var(--z-px);
+  padding-top: 16px; padding-bottom: 16px;
 }
 .z-nav-logo {
   font-family: var(--z-font-serif); font-size: 24px; font-weight: 400;
@@ -276,7 +296,7 @@ img { max-width: 100%; display: block; }
 .z-footer { background: var(--z-footer-bg); color: rgba(255,255,255,.65); margin-top: 100px; }
 .z-footer-grid {
   display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;
-  padding: 56px var(--z-px);
+  padding-top: 56px; padding-bottom: 56px;
 }
 .z-footer-brand-name {
   font-family: var(--z-font-serif); font-size: 26px; font-weight: 400;
@@ -293,7 +313,7 @@ img { max-width: 100%; display: block; }
 .z-footer-divider { border-top: 1px solid rgba(255,255,255,.08); }
 .z-footer-bottom {
   display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 12px; padding: 20px var(--z-px) 24px;
+  flex-wrap: wrap; gap: 12px; padding-top: 20px; padding-bottom: 24px;
 }
 .z-footer-copy { font-size: 13px; color: rgba(255,255,255,.4); }
 
@@ -419,7 +439,7 @@ img { max-width: 100%; display: block; }
 .z-hero-subtitle { font-size: 17px; color: #f6f1e9; max-width: 480px; margin: 0; }
 
 /* ── Section base ── */
-.z-section              { max-width: var(--z-max-w); margin: 0 auto; padding: 64px var(--z-px) 0; }
+.z-section              { padding-top: 64px; }
 .z-section--bottom-lg   { padding-bottom: 100px; }
 
 /* ── Categories ── */
@@ -833,7 +853,7 @@ img { max-width: 100%; display: block; }
 
 /* ── Page layout — full-width, sin el max-width de 1240px de .z-wrap; mismo criterio
    que las secciones full-bleed del landing de operador (padding propio, sin cap). ── */
-.zpd-wrap   { width: 100%; padding: 40px var(--z-px) 80px; }
+.zpd-wrap   { padding-top: 40px; padding-bottom: 80px; }
 .zpd-layout {
   display: grid;
   grid-template-columns: 1fr 360px;
@@ -1821,9 +1841,6 @@ img { max-width: 100%; display: block; }
   letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.6);
 }
 
-/* Layout principal — columna izquierda (contenido) + sticky derecha (futuro) */
-.zop-body                   { max-width: var(--z-max-w); margin: 0 auto; padding: 52px var(--z-px) 80px; }
-
 /* Sección genérica */
 .zop-section                { margin-bottom: 60px; }
 .zop-section-title {
@@ -1993,7 +2010,7 @@ img { max-width: 100%; display: block; }
 
 /* ── Highlights ─────────────────────────────────────────────────────── */
 /* Full-width: fuera de .zop-body, con su propio padding — no queda acotada al max-width del contenedor */
-.zop-highlights-section     { width: 100%; padding: clamp(48px, 6vw, 88px) var(--z-px) 0; }
+.zop-highlights-section     { padding-top: clamp(48px, 6vw, 88px); }
 .zop-highlights {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
@@ -2025,7 +2042,7 @@ img { max-width: 100%; display: block; }
 
 /* ── Gallery ────────────────────────────────────────────────────────── */
 /* Full-width: fuera de .zop-body, con su propio padding — igual que .zop-highlights-section */
-.zop-gallery-section        { width: 100%; padding: clamp(64px, 8vw, 120px) var(--z-px); }
+.zop-gallery-section        { padding-top: clamp(64px, 8vw, 120px); padding-bottom: clamp(64px, 8vw, 120px); }
 
 .zop-gallery-header {
   display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
@@ -2532,12 +2549,12 @@ img { max-width: 100%; display: block; }
 }
 
 /* ── Banda editorial ── */
+/* Bloque de fondo sólido oscuro: navy, no coral — mismo criterio que el resto de
+   los "dark highlight blocks" del sitio (banner del carrito, card de operador,
+   monto de Pago Móvil). El coral es acento, no relleno de áreas grandes. */
 .zam-band {
-  background: var(--z-teal);
+  background: var(--z-text);
   padding: 56px var(--z-px);
-}
-.zam-band-inner {
-  max-width: var(--z-max-w); margin: 0 auto;
 }
 .zam-band-text {
   font-family: var(--z-font-serif);
@@ -2550,8 +2567,7 @@ img { max-width: 100%; display: block; }
 
 /* ── Body ── */
 .zam-body {
-  max-width: var(--z-max-w); margin: 0 auto;
-  padding: 80px var(--z-px) 100px;
+  padding-top: 80px; padding-bottom: 100px;
   display: flex; flex-direction: column; gap: 80px;
 }
 
@@ -2585,7 +2601,7 @@ img { max-width: 100%; display: block; }
 /* Imagen lateral */
 .zam-aside-img-wrap {
   position: sticky; top: calc(var(--z-nav-h) + 24px);
-  border-radius: 12px; overflow: hidden;
+  border-radius: 2px; overflow: hidden;
 }
 .zam-aside-img {
   width: 100%; display: block;
@@ -2621,14 +2637,9 @@ img { max-width: 100%; display: block; }
 .zam-film-item {
   flex-shrink: 0; position: relative;
   width: 340px; height: 220px;
-  border-radius: 10px; overflow: hidden;
+  border-radius: 2px; overflow: hidden;
   border: none; padding: 0; cursor: pointer;
   scroll-snap-align: start;
-  transition: transform .3s ease, box-shadow .3s ease;
-}
-.zam-film-item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 40px rgba(0,0,0,.18);
 }
 .zam-film-item img {
   width: 100%; height: 100%; object-fit: cover; display: block;
@@ -2644,17 +2655,6 @@ img { max-width: 100%; display: block; }
   );
   pointer-events: none;
 }
-
-/* ── Footer nav ── */
-.zam-back-link {
-  display: inline-flex; align-items: center; gap: 10px;
-  font-size: 14px; font-weight: 600; color: var(--z-teal);
-  text-decoration: none; padding: 12px 0;
-  border-top: 1px solid var(--z-border); width: 100%;
-  transition: gap .2s;
-}
-.zam-back-link:hover       { gap: 14px; }
-.zam-back-arrow            { font-size: 20px; line-height: 1; }
 
 /* ── Lightbox ── */
 .zam-lb {
@@ -3321,7 +3321,7 @@ img { max-width: 100%; display: block; }
 
 /* Continuo, sin el max-width de 1240px de .z-wrap — mismo criterio que .zpd-wrap
    en producto: acá interesa que las fotos de las filas usen todo el ancho disponible. */
-.z-hlp-grid-section { width: 100%; padding: 56px var(--z-px) 0; }
+.z-hlp-grid-section { padding-top: 56px; }
 
 @media (max-width: 640px) {
   .z-hlp-hero-content { padding-bottom: 32px; }
