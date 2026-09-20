@@ -1,0 +1,28 @@
+##
+url = "/blog/rss"
+title = "Blog RSS Feed"
+
+[resources]
+headers[Content-Type] = 'text/xml'
+
+[collection posts]
+handle = "Zima\Blog\Post"
+==
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Blog Zima</title>
+        <link>{{ 'blog'|page }}</link>
+        <description>Guías, experiencias e historias del Caribe venezolano.</description>
+        <atom:link href="{{ 'blog-rss'|page }}" rel="self" type="application/rss+xml" />
+        {% for post in posts %}
+        <item>
+            <title>{{ post.title }}</title>
+            <link>{{ 'blog-post'|page({slug: post.slug}) }}</link>
+            <guid>{{ 'blog-post'|page({slug: post.slug}) }}</guid>
+            <pubDate>{{ post.published_at_date|date('r') }}</pubDate>
+            <description>{{ post.excerpt }}</description>
+        </item>
+        {% endfor %}
+    </channel>
+</rss>

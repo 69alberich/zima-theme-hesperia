@@ -1,0 +1,228 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   BLOG  (.z-blog-*)
+   Usa los tokens --z-* de zima.css (cargado globalmente vía site/meta.htm) —
+   este archivo solo tiene layout/estructura propia del blog, no repite paleta
+   ni tipografía. Mismo criterio visual que el resto del sitio: esquinas rectas
+   en contenedores estructurales, pill solo en chips pequeños, hairline en vez
+   de sombra, serif para títulos/mono para eyebrows y meta.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.z-blog-grid-section { padding-top: 56px; padding-bottom: 100px; }
+
+/* ── Filtro de categorías ── */
+.z-blog-filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 48px; }
+.z-blog-filter {
+  font-family: var(--z-font-mono); font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--z-text-muted); border: 1px solid var(--z-border); border-radius: 999px; padding: 8px 16px;
+  text-decoration: none; transition: border-color .15s, color .15s, background .15s;
+}
+.z-blog-filter:hover { border-color: var(--z-orange); color: var(--z-orange); }
+.z-blog-filter.is-active { border-color: var(--z-orange); color: var(--z-orange); background: var(--z-teal-lt); }
+
+/* ── Card base (compartida por featured/grid) ── */
+.z-blog-card { display: flex; flex-direction: column; border: 1px solid var(--z-border); text-decoration: none; color: inherit; transition: border-color .2s ease; }
+.z-blog-card:hover { border-color: var(--z-orange); }
+
+.z-blog-card-media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--z-muted-bg); }
+.z-blog-card-media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s ease; }
+.z-blog-card:hover .z-blog-card-media img { transform: scale(1.05); }
+.z-blog-card-media--placeholder {
+  width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+  font-size: 40px; background: linear-gradient(135deg, var(--z-muted-bg), var(--z-border-lt));
+}
+
+.z-blog-card-body { padding: 22px; display: flex; flex-direction: column; flex: 1; }
+.z-blog-card-meta { display: flex; align-items: center; margin-bottom: 10px; font-family: var(--z-font-mono); font-size: 10px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; }
+.z-blog-card-cat { color: var(--z-orange); }
+.z-blog-card-date, .z-blog-card-read { color: var(--z-text-dim); }
+.z-blog-card-cat + .z-blog-card-date::before,
+.z-blog-card-date + .z-blog-card-read::before { content: '·'; margin: 0 8px; color: var(--z-border); }
+
+.z-blog-card-title { font-family: var(--z-font-serif); font-weight: 400; font-size: 20px; line-height: 1.25; color: var(--z-text); margin: 0 0 10px; }
+.z-blog-card-excerpt {
+  font-size: 14px; line-height: 1.6; color: var(--z-text-muted); margin: 0 0 16px; flex: 1;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.z-blog-card-cta { margin-top: auto; font-family: var(--z-font-mono); font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--z-text-muted); transition: color .15s; }
+.z-blog-card:hover .z-blog-card-cta { color: var(--z-orange); }
+
+/* ── Featured (post destacado, hero de la lista) ── */
+.z-blog-card--featured { display: grid; grid-template-columns: 1.15fr 1fr; margin-bottom: 72px; }
+.z-blog-card--featured .z-blog-card-media { aspect-ratio: auto; }
+.z-blog-card--featured .z-blog-card-body { padding: clamp(28px, 3.5vw, 56px); justify-content: center; }
+.z-blog-card--featured .z-blog-card-meta { font-size: 11px; }
+.z-blog-card--featured .z-blog-card-title { font-size: clamp(30px, 4.2vw, 54px); line-height: 1.02; letter-spacing: -.01em; margin-bottom: 20px; }
+.z-blog-card--featured .z-blog-card-excerpt { font-size: 16px; line-height: 1.65; -webkit-line-clamp: 3; }
+
+/* ── Grid estándar (categoría / tag) ── */
+.z-blog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+
+/* ── Sección "Destacados" — 2 cards medianas, un escalón entre el post
+   destacado (grande) y la lista numerada (solo texto) — ver .z-blog-list. ── */
+.z-blog-section-label {
+  font-family: var(--z-font-mono); font-size: 11px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--z-text-dim); margin: 0 0 24px;
+}
+.z-blog-spotlight { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; margin-bottom: 72px; }
+.z-blog-spotlight .z-blog-card-title { font-size: clamp(21px, 2vw, 25px); }
+
+/* ── Lista editorial numerada — sin foto, puro tipográfico. El index en mono
+   gigante es la firma visual de esta sección (recurso típico de revista). ── */
+.z-blog-list { display: flex; flex-direction: column; border-top: 1px solid var(--z-border); margin-bottom: 72px; }
+.z-blog-list-item {
+  display: flex; align-items: baseline; gap: clamp(16px, 3vw, 40px);
+  padding: clamp(20px, 3vw, 32px) 0; border-bottom: 1px solid var(--z-border);
+  text-decoration: none; color: inherit;
+}
+.z-blog-list-index { font-family: var(--z-font-mono); font-size: clamp(13px, 1.6vw, 16px); color: var(--z-border); flex-shrink: 0; width: 2.4ch; transition: color .2s; }
+.z-blog-list-item:hover .z-blog-list-index { color: var(--z-orange); }
+.z-blog-list-body { flex: 1; min-width: 0; display: flex; align-items: baseline; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.z-blog-list-title { font-family: var(--z-font-serif); font-weight: 400; font-size: clamp(20px, 2.4vw, 30px); line-height: 1.15; color: var(--z-text); transition: color .2s; }
+.z-blog-list-item:hover .z-blog-list-title { color: var(--z-orange); }
+.z-blog-list-meta { font-family: var(--z-font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--z-text-muted); white-space: nowrap; }
+.z-blog-list-arrow { font-family: var(--z-font-mono); font-size: 22px; color: var(--z-border); flex-shrink: 0; transition: transform .3s cubic-bezier(.2,.8,.2,1), color .2s; }
+.z-blog-list-item:hover .z-blog-list-arrow { color: var(--z-orange); transform: translateX(8px); }
+
+/* ── Compacta (relacionados / "seguí leyendo") ── */
+.z-blog-compact { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--z-border-lt); text-decoration: none; color: inherit; }
+.z-blog-related-list .z-blog-compact:last-child { border-bottom: none; }
+.z-blog-compact-media { width: 84px; height: 84px; flex-shrink: 0; overflow: hidden; background: var(--z-muted-bg); }
+.z-blog-compact-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.z-blog-compact-media--placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 22px; background: linear-gradient(135deg, var(--z-muted-bg), var(--z-border-lt)); }
+.z-blog-compact-body { min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+.z-blog-compact-cat { font-family: var(--z-font-mono); font-size: 9px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--z-orange); margin-bottom: 4px; }
+.z-blog-compact-title { font-family: var(--z-font-serif); font-size: 16px; line-height: 1.3; color: var(--z-text); transition: color .15s; }
+.z-blog-compact:hover .z-blog-compact-title { color: var(--z-orange); }
+
+/* ── Header simple (categoría / tag / back link) ── */
+.z-blog-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--z-font-mono); font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--z-text-muted); text-decoration: none; margin-bottom: 24px; transition: color .15s;
+}
+.z-blog-back:hover { color: var(--z-orange); }
+
+.z-blog-simple-header { margin-bottom: 40px; }
+.z-blog-simple-title { font-family: var(--z-font-serif); font-weight: 400; font-size: clamp(30px, 3.5vw, 44px); margin: 0 0 10px; color: var(--z-text); }
+.z-blog-simple-sub { font-size: 16px; color: var(--z-text-muted); max-width: 60ch; margin: 0; }
+
+.z-blog-empty { color: var(--z-text-muted); padding: 64px 0; text-align: center; font-size: 15px; }
+
+/* ── Tag cloud ── */
+.z-blog-tag-cloud { margin-top: 64px; padding-top: 40px; border-top: 1px solid var(--z-border); }
+.z-blog-tag-cloud-title { font-family: var(--z-font-mono); font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--z-text-muted); margin: 0 0 20px; }
+.z-blog-tags { display: flex; flex-wrap: wrap; gap: 10px; }
+.z-blog-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--z-font-mono); font-size: 11px; font-weight: 500; letter-spacing: .05em;
+  border: 1px solid var(--z-border); border-radius: 999px; color: var(--z-text-muted);
+  padding: 7px 14px; text-decoration: none; transition: border-color .15s, color .15s;
+}
+.z-blog-tag:hover { border-color: var(--z-orange); color: var(--z-orange); }
+.z-blog-tag-count { background: var(--z-border-lt); color: var(--z-text-dim); font-size: 10px; font-weight: 600; padding: 1px 7px; border-radius: 999px; }
+
+/* ── Pagination ── */
+.z-blog ul.pagination { display: flex; gap: 8px; list-style: none; padding: 0; margin: 56px 0 0; justify-content: center; }
+.z-blog ul.pagination a, .z-blog ul.pagination span {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 38px; height: 38px; padding: 0 10px;
+  font-family: var(--z-font-mono); font-size: 12px; color: var(--z-text); text-decoration: none; border: 1px solid transparent;
+}
+.z-blog ul.pagination .active span { border-color: var(--z-orange); color: var(--z-orange); }
+.z-blog ul.pagination a:hover { border-color: var(--z-border); }
+
+/* ── CTA de cierre (cross-sell hacia hoteles) ──
+   Antes era un bloque navy sólido — pero es lo último antes del footer, que
+   es exactamente el mismo navy, y quedaba mal (ver historial). En vez de
+   forzar el mismo "dark highlight block" que ya usan el carrito/operador/
+   Pago Móvil, este usa el otro extremo de la paleta: el wash coral-crema
+   suave (--z-teal-lt) que el sitio ya reserva para resaltes livianos
+   (banners de alerta, badges de estado) — nunca se había usado a esta
+   escala, pero es un token existente, no un color inventado. Texto oscuro
+   sobre fondo claro + el botón coral sólido de siempre.
+
+   El corte de color claro→oscuro contra el footer ya funciona como límite
+   por sí solo — no hace falta un tramo crema de por medio ni una línea
+   separadora encima; ambos se sentían como un espacio muerto. Se cierra el
+   hueco pegando el footer directo (mismo criterio de .z-fluid/.z-capped:
+   selector puntual con :has(), no se toca la regla global de .z-footer ni
+   se afecta ninguna otra página). */
+.z-blog-cta {
+  background: var(--z-teal-lt); color: var(--z-text);
+  text-align: center; padding: clamp(48px, 6vw, 80px) var(--z-px); margin-top: 72px;
+}
+#z-main:has(> .z-blog-cta:last-child) + .z-footer { margin-top: 0; }
+.z-blog-cta-eyebrow { font-family: var(--z-font-mono); font-size: 11px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--z-orange); margin-bottom: 14px; }
+.z-blog-cta-title { font-family: var(--z-font-serif); font-weight: 400; font-size: clamp(28px, 3.4vw, 42px); line-height: 1.1; margin: 0 0 14px; color: var(--z-text); }
+.z-blog-cta-desc { color: var(--z-text-muted); max-width: 52ch; margin: 0 auto 28px; line-height: 1.6; }
+
+/* ═══════════════════════════════════════════════════════════
+   Post detail (/blog/:slug)
+   ═══════════════════════════════════════════════════════════ */
+
+.z-blog-detail-hero {
+  position: relative; height: 64vh; min-height: 420px;
+  display: flex; align-items: flex-end; overflow: hidden;
+}
+.z-blog-detail-hero-bg {
+  position: absolute; inset: 0; background-size: cover; background-position: center;
+  transform: scale(1.04); transition: transform 8s ease;
+}
+.z-blog-detail-hero:hover .z-blog-detail-hero-bg { transform: scale(1); }
+.z-blog-detail-hero-bg--empty { background: linear-gradient(135deg, var(--z-text) 0%, #0b2539 45%, #112f4a 100%); }
+.z-blog-detail-hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(5,15,15,.88) 0%, rgba(5,15,15,.25) 55%, rgba(5,15,15,.15) 100%);
+}
+.z-blog-detail-hero-content { position: relative; z-index: 1; padding-bottom: 56px; display: flex; flex-direction: column; gap: 14px; }
+.z-blog-detail-tag {
+  display: inline-flex; align-self: flex-start;
+  font-family: var(--z-font-mono); font-size: 10px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+  color: #fff; border: 1px solid rgba(255,255,255,.35); border-radius: 999px; padding: 5px 14px;
+}
+.z-blog-detail-title { font-family: var(--z-font-serif); font-weight: 400; font-size: clamp(32px, 5vw, 56px); line-height: 1.05; color: #fff; margin: 0; max-width: 20ch; }
+.z-blog-detail-date { font-family: var(--z-font-mono); font-size: 12px; letter-spacing: .04em; color: rgba(255,255,255,.6); }
+
+.z-blog-detail-body { padding-top: 56px; }
+.z-blog-detail-content { font-size: 17px; line-height: 1.85; color: var(--z-text-md); max-width: 72ch; }
+.z-blog-detail-content p { margin: 0 0 1.3em; }
+.z-blog-detail-content h2, .z-blog-detail-content h3 {
+  font-family: var(--z-font-serif); font-weight: 400; color: var(--z-text); margin: 1.5em 0 .6em; line-height: 1.2;
+}
+.z-blog-detail-content h2 { font-size: 28px; }
+.z-blog-detail-content h3 { font-size: 21px; }
+.z-blog-detail-content img { max-width: 100%; margin: 1.4em 0; }
+.z-blog-detail-content a { color: var(--z-orange); }
+.z-blog-detail-content ul, .z-blog-detail-content ol { padding-left: 24px; margin: 0 0 1.3em; }
+.z-blog-detail-content li { margin-bottom: 8px; }
+.z-blog-detail-content blockquote {
+  margin: 1.6em 0; padding: 4px 0 4px 24px; border-left: 2px solid var(--z-orange);
+  font-family: var(--z-font-serif); font-style: italic; font-size: 20px; color: var(--z-text);
+}
+
+.z-blog-detail-footer { max-width: 72ch; margin-top: 40px; padding-top: 28px; border-top: 1px solid var(--z-border-lt); }
+
+.z-blog-related-section { margin-top: 72px; padding-top: 48px; border-top: 1px solid var(--z-border); }
+.z-blog-related-title { font-family: var(--z-font-mono); font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--z-text-muted); margin: 0 0 28px; }
+
+@media (max-width: 900px) {
+  .z-blog-grid { grid-template-columns: repeat(2, 1fr); }
+  .z-blog-spotlight { grid-template-columns: 1fr; }
+  .z-blog-card--featured { grid-template-columns: 1fr; }
+  .z-blog-card--featured .z-blog-card-media { aspect-ratio: 16 / 10; }
+  .z-blog-related-section .z-blog-grid { grid-template-columns: repeat(2, 1fr); }
+  .z-blog-list-body { flex-direction: column; align-items: flex-start; gap: 6px; }
+}
+
+@media (max-width: 640px) {
+  .z-blog-grid { grid-template-columns: 1fr; }
+  .z-blog-filters { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; margin-left: calc(-1 * var(--z-px)); margin-right: calc(-1 * var(--z-px)); padding-left: var(--z-px); padding-right: var(--z-px); }
+  .z-blog-filter { flex-shrink: 0; }
+  .z-blog-list-item { gap: 16px; }
+  .z-blog-list-arrow { display: none; }
+}
+
+/* ── Barra de progreso de lectura (solo /blog/:slug) ── */
+.z-blog-progress {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+  background: var(--z-orange); z-index: 500; transition: width .1s linear;
+}

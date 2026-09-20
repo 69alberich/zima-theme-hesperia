@@ -1,0 +1,31 @@
+{# ── blog/post-card.htm ── card compartida por el post destacado y la grilla.
+   Recibe valores sueltos (no un objeto Post) para poder alimentarla tanto con
+   posts reales como con contenido de muestra mientras solo hay 1 post real
+   — ver el comentario "CONTENIDO DE MUESTRA" en pages/blog.htm.
+
+   Params: title, excerpt, url, category (texto), date (texto ya formateado),
+           readTime (texto ya formateado, ej. "4 min"), image (objeto File|null),
+           icon (emoji de respaldo si no hay imagen), variant ('grid' por
+           defecto, o 'featured') #}
+{% set variant = variant ?? 'grid' %}
+<a href="{{ url }}" class="z-blog-card z-blog-card--{{ variant }}">
+  <div class="z-blog-card-media">
+    {% if image %}
+      <img src="{{ image.getThumb(variant == 'featured' ? 900 : 600, variant == 'featured' ? 620 : 440, {mode: 'crop'}) }}"
+           alt="{{ title }}" loading="lazy">
+    {% else %}
+      <div class="z-blog-card-media--placeholder"><span>{{ icon ?: '📝' }}</span></div>
+    {% endif %}
+  </div>
+
+  <div class="z-blog-card-body">
+    <div class="z-blog-card-meta">
+      {% if category %}<span class="z-blog-card-cat">{{ category }}</span>{% endif %}
+      {% if date %}<span class="z-blog-card-date">{{ date }}</span>{% endif %}
+      {% if readTime %}<span class="z-blog-card-read">{{ readTime }}</span>{% endif %}
+    </div>
+    <h3 class="z-blog-card-title">{{ title }}</h3>
+    {% if excerpt %}<p class="z-blog-card-excerpt">{{ excerpt }}</p>{% endif %}
+    <span class="z-blog-card-cta">Leer más →</span>
+  </div>
+</a>

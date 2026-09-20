@@ -1,0 +1,103 @@
+##
+url = "/blog/:slug"
+layout = "default"
+title = "Blog Post"
+
+[section post]
+handle = "Zima\Blog\Post"
+==
+{% if post is empty %}
+    {% do abort(404) %}
+{% endif %}
+
+{% put meta %}
+<title>{{ post.title }} — Zima</title>
+<meta name="description" content="{{ (post.excerpt ?: post.content)|striptags|slice(0, 160) }}">
+<meta property="og:type" content="article">
+<meta property="og:title" content="{{ post.title }}">
+<meta property="og:description" content="{{ (post.excerpt ?: post.content)|striptags|slice(0, 200) }}">
+{% if post.featured_image %}<meta property="og:image" content="{{ post.featured_image.getThumb(1200, 630, {mode: 'crop'}) }}">{% endif %}
+<meta property="og:url" content="{{ this.page.url }}">
+<meta property="og:locale" content="es_VE">
+{% endput %}
+
+{% put styles %}
+<link rel="stylesheet" href="{{ 'assets/css/blog.css'|theme }}">
+{% endput %}
+
+{% set firstCategory = post.categories is not empty ? post.categories|first : null %}
+{% set wordCount = post.content|striptags|split(' ')|length %}
+{% set readTime  = (wordCount / 200)|round(0, 'ceil') %}
+
+<div class="z-blog-progress" id="zBlogProgress"></div>
+
+<section class="z-blog-detail-hero">
+  {% if post.featured_image %}
+    <div class="z-blog-detail-hero-bg" style="background-image:url('{{ post.featured_image.path }}')"></div>
+  {% else %}
+    <div class="z-blog-detail-hero-bg z-blog-detail-hero-bg--empty"></div>
+  {% endif %}
+  <div class="z-blog-detail-hero-overlay"></div>
+
+  <div class="z-blog-detail-hero-content z-fluid z-capped">
+    {% if firstCategory %}
+      <a href="{{ 'blog-category'|page({slug: firstCategory.slug}) }}" class="z-blog-detail-tag">{{ firstCategory.title }}</a>
+    {% endif %}
+    <h1 class="z-blog-detail-title">{{ post.title }}</h1>
+    <div class="z-blog-detail-date">{{ post.published_at_date|date('d \\d\\e M, Y') }} · {{ readTime }} min de lectura</div>
+  </div>
+</section>
+
+<section class="z-blog-detail-body z-fluid z-capped">
+  <a class="z-blog-back" href="{{ 'blog'|page }}">← Volver al blog</a>
+
+  <div class="z-blog-detail-content">
+    {{ post.content|content }}
+  </div>
+
+  {% if post.tags is not empty %}
+  <div class="z-blog-detail-footer">
+    <div class="z-blog-tags">
+      {% for tag in post.tags %}
+      <a class="z-blog-tag" href="{{ 'blog-tag'|page({slug: tag.slug}) }}">{{ tag.title }}</a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {# ═══ CONTENIDO DE MUESTRA — "Seguí leyendo" con 3 posts de relleno, mismo
+     motivo que en pages/blog.htm: mostrar el diseño de la sección con varios
+     artículos aunque hoy solo exista este. Reemplazar por una consulta real
+     (ej. otros posts de la misma categoría) en cuanto haya más contenido. ═══ #}
+  <div class="z-blog-related-section">
+    <h2 class="z-blog-related-title">Seguí leyendo</h2>
+    <div class="z-blog-related-list">
+      {% partial 'blog/post-card-compact' title='5 playas escondidas en Isla Margarita' url='#' category='Destinos' image=null icon='🏝️' %}
+      {% partial 'blog/post-card-compact' title='Qué empacar para una escapada a Morrocoy' url='#' category='Consejos de viaje' image=null icon='🎒' %}
+      {% partial 'blog/post-card-compact' title='Golf con vista al mar: la experiencia en Isla Margarita' url='#' category='Experiencias' image=null icon='⛳' %}
+    </div>
+  </div>
+</section>
+
+<div class="z-blog-cta">
+  <div class="z-blog-cta-eyebrow">¿Ya sabés a dónde vas?</div>
+  <h2 class="z-blog-cta-title">Convertí la lectura en reserva</h2>
+  <p class="z-blog-cta-desc">Cuatro hoteles en Venezuela te esperan con la misma calidez de siempre — mirá tarifas y disponibilidad para tus próximas fechas.</p>
+  <a href="{{ 'hoteles'|page }}" class="z-btn z-btn-primary">Ver hoteles →</a>
+</div>
+
+<script>
+(function () {
+  var bar = document.getElementById('zBlogProgress');
+  if (!bar) return;
+  function update() {
+    var h = document.documentElement;
+    var scrollable = h.scrollHeight - h.clientHeight;
+    var pct = scrollable > 0 ? (h.scrollTop / scrollable) * 100 : 0;
+    bar.style.width = pct + '%';
+  }
+  document.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
+</script>

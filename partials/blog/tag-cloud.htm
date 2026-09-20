@@ -1,0 +1,20 @@
+description = "Nube de tags del blog, con conteo de posts por tag"
+
+[collection tags]
+handle = "Zima\Blog\Tag"
+==
+{% set allTags = tags.withCount('posts').get() %}
+
+{% if allTags is not empty %}
+<div class="z-blog-tag-cloud">
+    <h2 class="z-blog-tag-cloud-title">Explorar por tema</h2>
+    <div class="z-blog-tags">
+        {% for tag in allTags %}
+        <a class="z-blog-tag" href="{{ 'blog-tag'|page({slug: tag.slug}) }}">
+            {{ tag.title }}
+            <span class="z-blog-tag-count">{{ tag.posts_count }}</span>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}

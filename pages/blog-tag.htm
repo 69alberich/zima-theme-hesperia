@@ -1,0 +1,60 @@
+##
+url = "/blog/tag/:slug"
+layout = "default"
+title = "Blog Tag"
+
+[section tag]
+handle = "Zima\Blog\Tag"
+
+[collection posts]
+handle = "Zima\Blog\Post"
+==
+{% if tag is empty %}
+    {% do abort(404) %}
+{% endif %}
+
+{% put meta %}
+<title>Publicaciones con "{{ tag.title }}" — Blog Zima</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="Publicaciones con &quot;{{ tag.title }}&quot; — Blog Zima">
+<meta property="og:url" content="{{ this.page.url }}">
+<meta property="og:locale" content="es_VE">
+{% endput %}
+
+{% put styles %}
+<link rel="stylesheet" href="{{ 'assets/css/blog.css'|theme }}">
+{% endput %}
+
+{% set items = posts.whereRelation('tags', 'slug', tag.slug).paginate(6) %}
+
+<section class="z-blog-grid-section z-fluid z-capped">
+  <div class="z-blog">
+    <a class="z-blog-back" href="{{ 'blog'|page }}">← Volver al blog</a>
+
+    <div class="z-blog-simple-header">
+      <h1 class="z-blog-simple-title">Publicaciones con "{{ tag.title }}"</h1>
+    </div>
+
+    {% if items.total == 0 %}
+      <p class="z-blog-empty">Todavía no hay publicaciones con esta etiqueta.</p>
+    {% else %}
+      <div class="z-blog-grid">
+        {% for post in items %}
+          {% set excerpt = post.excerpt ?: post.content|striptags|trim|slice(0, 140) %}
+          {% partial 'blog/post-card'
+            title    = post.title
+            excerpt  = excerpt
+            url      = 'blog-post'|page({slug: post.slug})
+            category = post.categories is not empty ? post.categories|first.title : null
+            date     = post.published_at_date|date('d M Y')
+            image    = post.featured_image
+          %}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {{ pager(items) }}
+
+    {% partial 'blog/tag-cloud' %}
+  </div>
+</section>

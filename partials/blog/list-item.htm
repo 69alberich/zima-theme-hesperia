@@ -1,0 +1,12 @@
+{# ── blog/list-item.htm ── fila de la lista editorial numerada (sin foto).
+   Params: index (número, se formatea a 2 dígitos), title, url, category, date, readTime #}
+<a href="{{ url }}" class="z-blog-list-item">
+  <span class="z-blog-list-index">{{ '%02d'|format(index) }}</span>
+  <span class="z-blog-list-body">
+    <span class="z-blog-list-title">{{ title }}</span>
+    <span class="z-blog-list-meta">
+      {{ category }}{% if date %} · {{ date }}{% endif %}{% if readTime %} · {{ readTime }}{% endif %}
+    </span>
+  </span>
+  <span class="z-blog-list-arrow">→</span>
+</a>

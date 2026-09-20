@@ -1,0 +1,16 @@
+{# ── blog/post-card-compact.htm ── fila angosta con thumb, para "Relacionados"
+   y listas laterales. Mismos params sueltos que post-card.htm (title, url,
+   category, image|null, icon). #}
+<a href="{{ url }}" class="z-blog-compact">
+  <div class="z-blog-compact-media">
+    {% if image %}
+      <img src="{{ image.getThumb(160, 160, {mode: 'crop'}) }}" alt="{{ title }}" loading="lazy">
+    {% else %}
+      <div class="z-blog-compact-media--placeholder"><span>{{ icon ?: '📝' }}</span></div>
+    {% endif %}
+  </div>
+  <div class="z-blog-compact-body">
+    {% if category %}<div class="z-blog-compact-cat">{{ category }}</div>{% endif %}
+    <div class="z-blog-compact-title">{{ title }}</div>
+  </div>
+</a>

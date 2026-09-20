@@ -1,0 +1,133 @@
+##
+url = "/blog"
+layout = "default"
+title = "Blog"
+meta_title = "Blog — Zima"
+meta_description = "Guías, experiencias e historias del Caribe venezolano: hoteles, náutica y destinos."
+
+[collection posts]
+handle = "Zima\Blog\Post"
+
+[collection categories]
+handle = "Zima\Blog\Category"
+==
+{% put meta %}
+<title>{{ this.page.meta_title }}</title>
+<meta name="description" content="{{ this.page.meta_description }}">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{ this.page.meta_title }}">
+<meta property="og:description" content="{{ this.page.meta_description }}">
+<meta property="og:url" content="{{ this.page.url }}">
+<meta property="og:locale" content="es_VE">
+{% endput %}
+
+{% put styles %}
+<link rel="stylesheet" href="{{ 'assets/css/blog.css'|theme }}">
+{% endput %}
+
+{% set items = posts.paginate(6) %}
+{% set allCategories = categories.get() %}
+
+{# ── Post destacado: el más reciente. El resto de la grilla, mientras solo
+   exista este único post real, se completa con CONTENIDO DE MUESTRA (ver más
+   abajo) para mostrar cómo luce con varias publicaciones — reemplazar por
+   `items|slice(1)` en cuanto haya más posts reales cargados. ── #}
+{% set featuredPost = items|first %}
+
+<section class="z-hlp-hero">
+  <div class="z-hlp-hero-bg"></div>
+  <div class="z-hlp-hero-overlay"></div>
+
+  <div class="z-hlp-hero-content">
+    <div class="z-hlp-hero-main">
+      <div class="z-hlp-hero-tags">
+        <span class="z-hlp-eyebrow">Cadena Hesperia</span>
+      </div>
+
+      <h1 class="z-hlp-title">Historias del Caribe</h1>
+
+      <p class="z-hlp-sub">
+        Guías de viaje, novedades de la cadena y postales del Caribe venezolano — escritas para que planees tu próxima escapada.
+      </p>
+    </div>
+
+    <div class="z-hlp-hero-stats">
+      <div class="z-hlp-hero-stat">
+        <div class="z-hlp-hero-stat-val">{{ items.total }}</div>
+        <div class="z-hlp-hero-stat-lbl">Artículo{{ items.total != 1 ? 's' : '' }}</div>
+      </div>
+      {% if allCategories|length %}
+        <div class="z-hlp-hero-stat">
+          <div class="z-hlp-hero-stat-val">{{ allCategories|length }}</div>
+          <div class="z-hlp-hero-stat-lbl">Categoría{{ allCategories|length != 1 ? 's' : '' }}</div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="z-blog-grid-section z-fluid z-capped">
+  <div class="z-blog">
+
+    {% if allCategories|length %}
+      <div class="z-blog-filters">
+        <a href="{{ 'blog'|page }}" class="z-blog-filter is-active">Todas</a>
+        {% for category in allCategories %}
+          <a href="{{ 'blog-category'|page({slug: category.slug}) }}" class="z-blog-filter">{{ category.title }}</a>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if featuredPost %}
+      {% set featExcerpt = featuredPost.excerpt ?: featuredPost.content|striptags|trim|slice(0, 180) %}
+      {% set featWords   = featuredPost.content|striptags|split(' ')|length %}
+      {% partial 'blog/post-card'
+        variant  = 'featured'
+        title    = featuredPost.title
+        excerpt  = featExcerpt
+        url      = 'blog-post'|page({slug: featuredPost.slug})
+        category = featuredPost.categories is not empty ? featuredPost.categories|first.title : null
+        date     = featuredPost.published_at_date|date('d M Y')
+        readTime = (featWords / 200)|round(0, 'ceil') ~ ' min'
+        image    = featuredPost.featured_image
+      %}
+    {% endif %}
+
+    {% if items.total == 0 %}
+      <p class="z-blog-empty">Todavía no hay publicaciones.</p>
+    {% else %}
+      {# ═══════════════════════════════════════════════════════════════════
+         CONTENIDO DE MUESTRA — todo lo de acá abajo (spotlight + lista) es
+         hardcodeado para mostrar el diseño con varias publicaciones mientras
+         solo existe 1 post real. Reemplazar por `items|slice(1)` repartido
+         entre .z-blog-spotlight (primeros 2) y .z-blog-list (el resto) en
+         cuanto haya más posts reales cargados. Pedido explícito del usuario.
+         ═══════════════════════════════════════════════════════════════════ #}
+
+      <h2 class="z-blog-section-label">Destacados</h2>
+      <div class="z-blog-spotlight">
+        {% partial 'blog/post-card' title='5 playas escondidas en Isla Margarita' excerpt='Más allá de Playa El Agua: las caletas que solo conocen los que viven en la isla.' url='#' category='Destinos' date='14 Sep 2026' readTime='5 min' image=null icon='🏝️' %}
+        {% partial 'blog/post-card' title='La historia detrás del Hesperia Isla Margarita' excerpt='De hotel de pueblo a referente de la isla: cómo llegó a tener su propio campo de golf.' url='#' category='Nuestros hoteles' date='02 Sep 2026' readTime='6 min' image=null icon='🏨' %}
+      </div>
+
+      <h2 class="z-blog-section-label">Más historias</h2>
+      <div class="z-blog-list">
+        {% partial 'blog/list-item' index=1 title='Qué empacar para una escapada a Morrocoy' url='#' category='Consejos de viaje' date='08 Sep 2026' readTime='4 min' %}
+        {% partial 'blog/list-item' index=2 title='7 platos venezolanos que tenés que probar en la costa' url='#' category='Gastronomía' date='28 Ago 2026' readTime='3 min' %}
+        {% partial 'blog/list-item' index=3 title='Golf con vista al mar: la experiencia en Isla Margarita' url='#' category='Experiencias' date='19 Ago 2026' readTime='4 min' %}
+      </div>
+    {% endif %}
+
+    {{ pager(items) }}
+
+    {% partial 'blog/tag-cloud' %}
+
+  </div>
+</section>
+
+<div class="z-blog-cta">
+  <div class="z-blog-cta-eyebrow">¿Ya sabés a dónde vas?</div>
+  <h2 class="z-blog-cta-title">Convertí la lectura en reserva</h2>
+  <p class="z-blog-cta-desc">Cuatro hoteles en Venezuela te esperan con la misma calidez de siempre — mirá tarifas y disponibilidad para tus próximas fechas.</p>
+  <a href="{{ 'hoteles'|page }}" class="z-btn z-btn-primary">Ver hoteles →</a>
+</div>

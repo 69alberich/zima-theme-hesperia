@@ -1,0 +1,62 @@
+##
+url = "/blog/categoria/:slug"
+layout = "default"
+title = "Blog Category"
+
+[section category]
+handle = "Zima\Blog\Category"
+
+[collection posts]
+handle = "Zima\Blog\Post"
+==
+{% if category is empty %}
+    {% do abort(404) %}
+{% endif %}
+
+{% put meta %}
+<title>{{ category.title }} — Blog Zima</title>
+{% if category.description %}<meta name="description" content="{{ category.description|striptags|slice(0, 160) }}">{% endif %}
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{ category.title }} — Blog Zima">
+<meta property="og:url" content="{{ this.page.url }}">
+<meta property="og:locale" content="es_VE">
+{% endput %}
+
+{% put styles %}
+<link rel="stylesheet" href="{{ 'assets/css/blog.css'|theme }}">
+{% endput %}
+
+{% set items = posts.whereRelation('categories', 'slug', category.slug).paginate(6) %}
+
+<section class="z-blog-grid-section z-fluid z-capped">
+  <div class="z-blog">
+    <a class="z-blog-back" href="{{ 'blog'|page }}">← Volver al blog</a>
+
+    <div class="z-blog-simple-header">
+      <h1 class="z-blog-simple-title">{{ category.title }}</h1>
+      {% if category.description %}
+        <p class="z-blog-simple-sub">{{ category.description }}</p>
+      {% endif %}
+    </div>
+
+    {% if items.total == 0 %}
+      <p class="z-blog-empty">Todavía no hay publicaciones en esta categoría.</p>
+    {% else %}
+      <div class="z-blog-grid">
+        {% for post in items %}
+          {% set excerpt = post.excerpt ?: post.content|striptags|trim|slice(0, 140) %}
+          {% partial 'blog/post-card'
+            title    = post.title
+            excerpt  = excerpt
+            url      = 'blog-post'|page({slug: post.slug})
+            category = category.title
+            date     = post.published_at_date|date('d M Y')
+            image    = post.featured_image
+          %}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {{ pager(items) }}
+  </div>
+</section>
