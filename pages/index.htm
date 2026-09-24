@@ -13,6 +13,12 @@ destinationPage = "search"
 [section landing]
 handle = "Zima\Landing"
 value = "home"
+
+[collection historiaPosts]
+handle = "Zima\Blog\Post"
+
+[collection latestBlogPost]
+handle = "Zima\Blog\Post"
 ==
 {% if landing %}
 {% put meta %}
@@ -37,8 +43,24 @@ value = "home"
 {% endput %}
 {% endif %}
 
+{# .take(), no .limit() — .limit() encadenado sobre estos componentes de
+   Tailor devuelve 0 resultados en silencio (bug real, confirmado probando en
+   vivo). .take() es el alias nativo de Laravel para lo mismo y sí funciona. #}
+{% set historiaPosts = historiaPosts.whereRelation('tags', 'slug', 'historias').orderBy('published_at', 'desc').take(4).get() %}
+
 {% for block in landing.blocks %}
-    {% partial 'home/blocks/' ~ block.type block=block %}
+    {% if block.type == 'blog' %}
+        {% partial 'home/blocks/blog' block=block posts=historiaPosts %}
+    {% elseif block.type == 'blog_latest' %}
+        {# .take(1).get()|first en vez de .first() directo — no confirmado si
+           .first() sufre el mismo problema que .limit() (ver
+           blog/posts-by-category.htm), así que se usa la cadena ya probada
+           (.take + .get) por las dudas. #}
+        {% set latestPost = latestBlogPost.orderBy('published_at', 'desc').take(1).get()|first %}
+        {% partial 'home/blocks/blog_latest' block=block post=latestPost %}
+    {% else %}
+        {% partial 'home/blocks/' ~ block.type block=block %}
+    {% endif %}
 {% endfor %}
 
 {# ── CATÁLOGO ── #}

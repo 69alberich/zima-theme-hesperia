@@ -22,10 +22,6 @@ handle = "Zima\Blog\Post"
 <meta property="og:locale" content="es_VE">
 {% endput %}
 
-{% put styles %}
-<link rel="stylesheet" href="{{ 'assets/css/blog.css'|theme }}">
-{% endput %}
-
 {% set items = posts.whereRelation('categories', 'slug', category.slug).paginate(6) %}
 
 <section class="z-blog-grid-section z-fluid z-capped">

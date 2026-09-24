@@ -1,0 +1,27 @@
+description = "Renderiza N posts publicados de una categoría del blog, identificada por su código. Pensada para usarse tanto en páginas del blog como en bloques de Zima Landings. Uso: {% partial 'blog/posts-by-category' code='destinos' limit=3 %}"
+
+[collection posts]
+handle = "Zima\Blog\Post"
+==
+{% set limit = limit ?? 3 %}
+{# .take() en vez de .limit() — .limit() queda sombreado en este builder de
+   Tailor y silenciosamente devuelve 0 resultados (bug real encontrado y
+   confirmado probando en vivo). .take() es el alias nativo de Laravel para
+   lo mismo y sí funciona correctamente acá. #}
+{% set items = code ? posts.whereRelation('categories', 'code', code).take(limit).get() : [] %}
+
+{% if items is not empty %}
+<div class="z-blog-grid">
+    {% for post in items %}
+        {% set excerpt = post.excerpt ?: post.content|striptags|trim|slice(0, 140) %}
+        {% partial 'blog/post-card'
+            title    = post.title
+            excerpt  = excerpt
+            url      = 'blog-post'|page({slug: post.slug})
+            category = post.categories is not empty ? post.categories|first.title : null
+            date     = post.published_at_date|date('d M Y')
+            image    = post.featured_image
+        %}
+    {% endfor %}
+</div>
+{% endif %}

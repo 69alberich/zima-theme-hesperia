@@ -1,7 +1,15 @@
 {# block.section_eyebrow, block.section_title, block.view_all_url
    block.fp_title, block.fp_excerpt, block.fp_category, block.fp_date, block.fp_url, block.fp_image
-   block.other_posts[] → title, category, url, date #}
-{% if block.fp_title or block.other_posts is not empty %}
+   block.other_posts[] → title, category, url, date
+
+   `posts` (opcional): colección real de Zima\Blog\Post, ya filtrada (tag "historias")
+   por pages/index.htm. Si viene con contenido, manda sobre los campos manuales
+   fp_*/other_posts del bloque — esos quedan solo como respaldo si todavía no
+   hay ningún post con esa etiqueta. #}
+{% set featuredPost = posts is defined and posts is not empty ? posts|first : null %}
+{% set otherPosts = posts is defined and posts|length > 1 ? posts|slice(1) : [] %}
+
+{% if featuredPost or block.fp_title or block.other_posts is not empty %}
 <section class="hsp-blog">
 
   <div class="hsp-header">
@@ -19,7 +27,22 @@
   <div class="hsp-blog-grid">
 
     {# ── Post destacado ── #}
-    {% if block.fp_title %}
+    {% if featuredPost %}
+    {% set featExcerpt = featuredPost.excerpt ?: featuredPost.content|striptags|trim|slice(0, 140) %}
+    <a href="{{ 'blog-post'|page({slug: featuredPost.slug}) }}" class="hsp-blog-feat">
+      <div class="hsp-blog-feat-img"
+        {% if featuredPost.featured_image %}style="background-image:url('{{ featuredPost.featured_image.path }}');background-size:cover;background-position:center;"{% endif %}>
+        {% if not featuredPost.featured_image %}<span class="hsp-blog-feat-img-slot">[ FOTO DESTACADA ]</span>{% endif %}
+      </div>
+      {% if featuredPost.categories is not empty %}
+        <div class="hsp-blog-tag">{{ featuredPost.categories|first.title|upper }}</div>
+      {% endif %}
+      <div class="hsp-blog-feat-title">{{ featuredPost.title }}</div>
+      {% if featExcerpt %}
+        <div class="hsp-blog-feat-excerpt">{{ featExcerpt }}</div>
+      {% endif %}
+    </a>
+    {% elseif block.fp_title %}
     {% set featImg = block.fp_image is iterable ? block.fp_image|first : block.fp_image %}
     {% if block.fp_url %}
     <a href="{{ block.fp_url }}" class="hsp-blog-feat">
@@ -41,7 +64,16 @@
     {% endif %}
 
     {# ── Lista de posts ── #}
-    {% if block.other_posts is not empty %}
+    {% if otherPosts is not empty %}
+    <div class="hsp-blog-list">
+      {% for post in otherPosts %}
+      <a href="{{ 'blog-post'|page({slug: post.slug}) }}" class="hsp-blog-item">
+        <div class="hsp-blog-item-title">{{ post.title }}</div>
+        <div class="hsp-blog-item-date">{{ post.published_at_date|date('d M Y') }}</div>
+      </a>
+      {% endfor %}
+    </div>
+    {% elseif not featuredPost and block.other_posts is not empty %}
     <div class="hsp-blog-list">
       {% for post in block.other_posts %}
       {% if post.url %}

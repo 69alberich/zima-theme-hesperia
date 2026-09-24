@@ -1,4 +1,4 @@
-description = "Nube de tags del blog, con conteo de posts por tag"
+description = "Nube de tags del blog, con conteo de posts por tag. Acepta un `title` opcional (por defecto 'Explorar por tema')."
 
 [collection tags]
 handle = "Zima\Blog\Tag"
@@ -7,7 +7,7 @@ handle = "Zima\Blog\Tag"
 
 {% if allTags is not empty %}
 <div class="z-blog-tag-cloud">
-    <h2 class="z-blog-tag-cloud-title">Explorar por tema</h2>
+    <h2 class="z-blog-tag-cloud-title">{{ title ?? 'Explorar por tema' }}</h2>
     <div class="z-blog-tags">
         {% for tag in allTags %}
         <a class="z-blog-tag" href="{{ 'blog-tag'|page({slug: tag.slug}) }}">

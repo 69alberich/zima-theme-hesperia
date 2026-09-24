@@ -1,0 +1,9 @@
+{# block.eyebrow, block.title, block.description, block.button_label, block.button_url #}
+<div class="z-blog-cta">
+  {% if block.eyebrow %}<div class="z-blog-cta-eyebrow">{{ block.eyebrow }}</div>{% endif %}
+  {% if block.title %}<h2 class="z-blog-cta-title">{{ block.title }}</h2>{% endif %}
+  {% if block.description %}<p class="z-blog-cta-desc">{{ block.description }}</p>{% endif %}
+  {% if block.button_label and block.button_url %}
+  <a href="{{ block.button_url }}" class="z-btn z-btn-primary">{{ block.button_label }} →</a>
+  {% endif %}
+</div>

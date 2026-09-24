@@ -21,10 +21,6 @@ handle = "Zima\Blog\Post"
 <meta property="og:locale" content="es_VE">
 {% endput %}
 
-{% put styles %}
-<link rel="stylesheet" href="{{ 'assets/css/blog.css'|theme }}">
-{% endput %}
-
 {% set firstCategory = post.categories is not empty ? post.categories|first : null %}
 {% set wordCount = post.content|striptags|split(' ')|length %}
 {% set readTime  = (wordCount / 200)|round(0, 'ceil') %}

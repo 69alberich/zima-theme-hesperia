@@ -1,0 +1,24 @@
+description = "Lista editorial numerada (sin imagen) de N posts publicados de una categoría del blog, por su código. Uso: {% partial 'blog/posts-by-category-list' code='destinos' limit=3 %}"
+
+[collection posts]
+handle = "Zima\Blog\Post"
+==
+{% set limit = limit ?? 3 %}
+{# .take(), no .limit() — ver comentario en blog/posts-by-category.htm #}
+{% set items = code ? posts.whereRelation('categories', 'code', code).take(limit).get() : [] %}
+
+{% if items is not empty %}
+<div class="z-blog-list">
+    {% for post in items %}
+        {% set words = post.content|striptags|split(' ')|length %}
+        {% partial 'blog/list-item'
+            index    = loop.index
+            title    = post.title
+            url      = 'blog-post'|page({slug: post.slug})
+            category = post.categories is not empty ? post.categories|first.title : null
+            date     = post.published_at_date|date('d M Y')
+            readTime = (words / 200)|round(0, 'ceil') ~ ' min'
+        %}
+    {% endfor %}
+</div>
+{% endif %}

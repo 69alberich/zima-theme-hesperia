@@ -1,0 +1,32 @@
+{# block.section_eyebrow, block.section_title, post (el post más reciente,
+   ya resuelto por el caller — este partial se invoca con nombre dinámico
+   desde pages/index.htm, y un partial invocado dinámicamente no puede
+   declarar su propia sección de componente [collection ...]: October no
+   separa el header INI del cuerpo Twig en ese caso y todo el archivo termina
+   pasando crudo al parser de INI, lo que rompe el render con
+   "syntax error, unexpected '{' in Unknown on line 1". Por eso la consulta
+   se hace en index.htm, con un componente declarado de forma estática, y acá
+   solo se recibe el resultado. blog.css se carga una sola vez desde
+   layouts/default.htm, no hace falta declararlo acá. #}
+{% if post %}
+<section class="z-blog-grid-section z-fluid z-capped">
+  <div class="z-blog">
+    {% if block.section_eyebrow or block.section_title %}
+    <h2 class="z-blog-section-label">{{ block.section_eyebrow ?: block.section_title }}</h2>
+    {% endif %}
+
+    {% set excerpt = post.excerpt ?: post.content|striptags|trim|slice(0, 180) %}
+    {% set words   = post.content|striptags|split(' ')|length %}
+    {% partial 'blog/post-card'
+      variant  = 'featured'
+      title    = post.title
+      excerpt  = excerpt
+      url      = 'blog-post'|page({slug: post.slug})
+      category = post.categories is not empty ? post.categories|first.title : null
+      date     = post.published_at_date|date('d M Y')
+      readTime = (words / 200)|round(0, 'ceil') ~ ' min'
+      image    = post.featured_image
+    %}
+  </div>
+</section>
+{% endif %}
