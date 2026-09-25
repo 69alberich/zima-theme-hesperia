@@ -1,7 +1,15 @@
-{# ── blog/list-item.htm ── fila de la lista editorial numerada (sin foto).
-   Params: index (número, se formatea a 2 dígitos), title, url, category, date, readTime #}
+{# ── blog/list-item.htm ── fila de la lista editorial numerada, con foto chica al lado.
+   Params: index (número, se formatea a 2 dígitos), title, url, category, date, readTime,
+           image (objeto File|null), icon (emoji de respaldo si no hay imagen) #}
 <a href="{{ url }}" class="z-blog-list-item">
   <span class="z-blog-list-index">{{ '%02d'|format(index) }}</span>
+  <span class="z-blog-list-media">
+    {% if image %}
+      <img src="{{ image.getThumb(160, 160, {mode: 'crop'}) }}" alt="{{ title }}" loading="lazy">
+    {% else %}
+      <span class="z-blog-list-media--placeholder">{{ icon ?: '📝' }}</span>
+    {% endif %}
+  </span>
   <span class="z-blog-list-body">
     <span class="z-blog-list-title">{{ title }}</span>
     <span class="z-blog-list-meta">

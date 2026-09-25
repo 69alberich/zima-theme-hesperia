@@ -1,10 +1,10 @@
-{# block.section_eyebrow, block.section_title, block.category_code, block.limit #}
+{# block.section_eyebrow, block.section_title, block.category_code, block.limit, block.show_view_all #}
 <section class="z-blog-grid-section z-fluid z-capped">
   <div class="z-blog">
     {% if block.section_eyebrow or block.section_title %}
     <h2 class="z-blog-section-label">{{ block.section_eyebrow ?: block.section_title }}</h2>
     {% endif %}
 
-    {% partial 'blog/posts-by-category' code=block.category_code limit=block.limit ?: 3 %}
+    {% partial 'blog/posts-by-category' code=block.category_code limit=block.limit ?: 3 showViewAll=block.show_view_all %}
   </div>
 </section>

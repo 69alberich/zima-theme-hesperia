@@ -3,7 +3,7 @@ description = "Nube de tags del blog, con conteo de posts por tag. Acepta un `ti
 [collection tags]
 handle = "Zima\Blog\Tag"
 ==
-{% set allTags = tags.withCount('posts').get() %}
+{% set allTags = tags.withCount('posts').get()|filter(t => t.posts_count > 0) %}
 
 {% if allTags is not empty %}
 <div class="z-blog-tag-cloud">

@@ -1,0 +1,30 @@
+{# block.eyebrow, block.title, block.subtitle
+   block.background_type (image|color|video, default image)
+   block.background_image, block.background_color, block.background_video, block.background_video_poster
+
+   Hero genérico y reutilizable para cualquier landing — sin buscador (ese
+   vive solo en el Hero del Home, partials/home/blocks/hero.htm) y sin stats
+   (esas son propias del header de listados, .z-hlp-hero). #}
+{% set bgType = block.background_type ?: 'image' %}
+<section class="z-hero-block">
+  {% if bgType == 'color' and block.background_color %}
+    <div class="z-hero-block-bg" style="background: {{ block.background_color }}"></div>
+  {% elseif bgType == 'video' and block.background_video %}
+    {# el gradiente de .z-hero-block-bg queda de respaldo detrás del video
+       mientras carga o si el navegador no puede reproducirlo. #}
+    <div class="z-hero-block-bg"{% if block.background_video_poster and block.background_video_poster.path %} style="background-image: url('{{ block.background_video_poster.path }}')"{% endif %}></div>
+    <video class="z-hero-block-video" autoplay muted loop playsinline
+      {% if block.background_video_poster and block.background_video_poster.path %}poster="{{ block.background_video_poster.path }}"{% endif %}>
+      <source src="{{ block.background_video.path }}">
+    </video>
+  {% else %}
+    <div class="z-hero-block-bg"{% if block.background_image and block.background_image.path %} style="background-image: url('{{ block.background_image.path }}')"{% endif %}></div>
+  {% endif %}
+  <div class="z-hero-block-overlay"></div>
+
+  <div class="z-hero-block-content">
+    {% if block.eyebrow %}<div class="z-hero-block-eyebrow">{{ block.eyebrow }}</div>{% endif %}
+    {% if block.title %}<h1 class="z-hero-block-title">{{ block.title }}</h1>{% endif %}
+    {% if block.subtitle %}<p class="z-hero-block-sub">{{ block.subtitle }}</p>{% endif %}
+  </div>
+</section>

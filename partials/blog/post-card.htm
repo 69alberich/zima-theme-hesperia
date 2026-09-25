@@ -16,14 +16,12 @@
     {% else %}
       <div class="z-blog-card-media--placeholder"><span>{{ icon ?: '📝' }}</span></div>
     {% endif %}
+    {% if category %}<span class="z-blog-card-badge">{{ category }}</span>{% endif %}
+    {% if readTime %}<span class="z-blog-card-time">{{ readTime }}</span>{% endif %}
   </div>
 
   <div class="z-blog-card-body">
-    <div class="z-blog-card-meta">
-      {% if category %}<span class="z-blog-card-cat">{{ category }}</span>{% endif %}
-      {% if date %}<span class="z-blog-card-date">{{ date }}</span>{% endif %}
-      {% if readTime %}<span class="z-blog-card-read">{{ readTime }}</span>{% endif %}
-    </div>
+    {% if date %}<div class="z-blog-card-date">{{ date }}</div>{% endif %}
     <h3 class="z-blog-card-title">{{ title }}</h3>
     {% if excerpt %}<p class="z-blog-card-excerpt">{{ excerpt }}</p>{% endif %}
     <span class="z-blog-card-cta">Leer más →</span>

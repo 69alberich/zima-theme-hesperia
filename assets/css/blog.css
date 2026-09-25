@@ -7,7 +7,13 @@
    de sombra, serif para títulos/mono para eyebrows y meta.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-.z-blog-grid-section { padding-top: 56px; padding-bottom: 100px; }
+/* Cada bloque de Zima Landings (blog_latest, blog_category_grid, blog_category_list,
+   blog_tag_cloud...) se envuelve en su propio .z-blog-grid-section, así que al
+   apilarse en /blog el padding-top de uno se suma al padding-bottom del anterior
+   y deja huecos de ~150px entre secciones. Solo el primero de la página necesita
+   el aire de arriba (ya lo separa del hero); el resto solo aporta el de abajo. */
+.z-blog-grid-section { padding-top: 56px; padding-bottom: 64px; }
+.z-blog-grid-section + .z-blog-grid-section { padding-top: 0; }
 
 /* ── Filtro de categorías ── */
 .z-blog-filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 48px; }
@@ -20,7 +26,11 @@
 .z-blog-filter.is-active { border-color: var(--z-orange); color: var(--z-orange); background: var(--z-teal-lt); }
 
 /* ── Card base (compartida por featured/grid) ── */
-.z-blog-card { display: flex; flex-direction: column; border: 1px solid var(--z-border); text-decoration: none; color: inherit; transition: border-color .2s ease; }
+.z-blog-card {
+  display: flex; flex-direction: column; background: #fff;
+  border: 1px solid var(--z-border); text-decoration: none; color: inherit;
+  transition: border-color .2s ease;
+}
 .z-blog-card:hover { border-color: var(--z-orange); }
 
 .z-blog-card-media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--z-muted-bg); }
@@ -31,12 +41,26 @@
   font-size: 40px; background: linear-gradient(135deg, var(--z-muted-bg), var(--z-border-lt));
 }
 
+/* Categoría y tiempo de lectura como badges sobre la foto — en vez de texto
+   plano en la meta, mismo lenguaje de pill ya usado en .z-hlp-stars-badge. */
+.z-blog-card-badge {
+  position: absolute; top: 14px; left: 14px; z-index: 2;
+  font-family: var(--z-font-mono); font-size: 10px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase;
+  color: #fff; background: rgba(5, 28, 44, .82);
+  padding: 6px 12px; border-radius: 999px;
+}
+.z-blog-card-time {
+  position: absolute; top: 14px; right: 14px; z-index: 2;
+  font-family: var(--z-font-mono); font-size: 10px; font-weight: 500; letter-spacing: .04em;
+  color: var(--z-text); background: rgba(255, 255, 255, .92);
+  padding: 6px 11px; border-radius: 999px;
+}
+
 .z-blog-card-body { padding: 22px; display: flex; flex-direction: column; flex: 1; }
-.z-blog-card-meta { display: flex; align-items: center; margin-bottom: 10px; font-family: var(--z-font-mono); font-size: 10px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; }
-.z-blog-card-cat { color: var(--z-orange); }
-.z-blog-card-date, .z-blog-card-read { color: var(--z-text-dim); }
-.z-blog-card-cat + .z-blog-card-date::before,
-.z-blog-card-date + .z-blog-card-read::before { content: '·'; margin: 0 8px; color: var(--z-border); }
+.z-blog-card-date {
+  font-family: var(--z-font-mono); font-size: 10px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--z-text-dim); margin-bottom: 10px;
+}
 
 .z-blog-card-title { font-family: var(--z-font-serif); font-weight: 400; font-size: 20px; line-height: 1.25; color: var(--z-text); margin: 0 0 10px; }
 .z-blog-card-excerpt {
@@ -49,20 +73,27 @@
 /* ── Featured (post destacado, hero de la lista) ── */
 .z-blog-card--featured { display: grid; grid-template-columns: 1.15fr 1fr; margin-bottom: 72px; }
 .z-blog-card--featured .z-blog-card-media { aspect-ratio: auto; }
+.z-blog-card--featured .z-blog-card-badge, .z-blog-card--featured .z-blog-card-time { top: 24px; font-size: 11px; padding: 7px 14px; }
+.z-blog-card--featured .z-blog-card-badge { left: 24px; }
+.z-blog-card--featured .z-blog-card-time { right: 24px; }
 .z-blog-card--featured .z-blog-card-body { padding: clamp(28px, 3.5vw, 56px); justify-content: center; }
-.z-blog-card--featured .z-blog-card-meta { font-size: 11px; }
+.z-blog-card--featured .z-blog-card-date { font-size: 11px; }
 .z-blog-card--featured .z-blog-card-title { font-size: clamp(30px, 4.2vw, 54px); line-height: 1.02; letter-spacing: -.01em; margin-bottom: 20px; }
 .z-blog-card--featured .z-blog-card-excerpt { font-size: 16px; line-height: 1.65; -webkit-line-clamp: 3; }
 
 /* ── Grid estándar (categoría / tag) ── */
 .z-blog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.z-blog-grid--2col { grid-template-columns: repeat(2, 1fr); }
 
 /* ── Sección "Destacados" — 2 cards medianas, un escalón entre el post
    destacado (grande) y la lista numerada (solo texto) — ver .z-blog-list. ── */
 .z-blog-section-label {
-  font-family: var(--z-font-mono); font-size: 11px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase;
-  color: var(--z-text-dim); margin: 0 0 24px;
+  display: flex; align-items: baseline; gap: 24px;
+  font-family: var(--z-font-serif); font-style: italic; font-weight: 400;
+  font-size: clamp(24px, 2.6vw, 32px); line-height: 1; color: var(--z-text);
+  margin: 0 0 32px;
 }
+.z-blog-section-label::after { content: ''; flex: 1; height: 1px; background: var(--z-border); }
 .z-blog-spotlight { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; margin-bottom: 72px; }
 .z-blog-spotlight .z-blog-card-title { font-size: clamp(21px, 2vw, 25px); }
 
@@ -76,6 +107,10 @@
 }
 .z-blog-list-index { font-family: var(--z-font-mono); font-size: clamp(13px, 1.6vw, 16px); color: var(--z-border); flex-shrink: 0; width: 2.4ch; transition: color .2s; }
 .z-blog-list-item:hover .z-blog-list-index { color: var(--z-orange); }
+.z-blog-list-media { width: 88px; height: 88px; flex-shrink: 0; overflow: hidden; background: var(--z-muted-bg); }
+.z-blog-list-media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .3s; }
+.z-blog-list-item:hover .z-blog-list-media img { transform: scale(1.04); }
+.z-blog-list-media--placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 26px; background: linear-gradient(135deg, var(--z-muted-bg), var(--z-border-lt)); }
 .z-blog-list-body { flex: 1; min-width: 0; display: flex; align-items: baseline; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
 .z-blog-list-title { font-family: var(--z-font-serif); font-weight: 400; font-size: clamp(20px, 2.4vw, 30px); line-height: 1.15; color: var(--z-text); transition: color .2s; }
 .z-blog-list-item:hover .z-blog-list-title { color: var(--z-orange); }
@@ -107,6 +142,19 @@
 .z-blog-simple-sub { font-size: 16px; color: var(--z-text-muted); max-width: 60ch; margin: 0; }
 
 .z-blog-empty { color: var(--z-text-muted); padding: 64px 0; text-align: center; font-size: 15px; }
+
+/* ── Botón "Más de esta categoría" (bloques blog_category_grid/list) ── */
+.z-blog-view-all-wrap { display: flex; justify-content: center; margin: 32px 0 8px; }
+.z-blog-view-all-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--z-font-mono); font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+  color: #fff; text-decoration: none;
+  padding: 14px 28px; border: 1px solid var(--z-text); border-radius: 2px;
+  background: var(--z-text); transition: opacity .2s;
+}
+.z-blog-view-all-btn:hover { opacity: .82; }
+.z-blog-view-all-btn:hover .z-blog-view-all-arrow { transform: translateX(3px); }
+.z-blog-view-all-arrow { font-family: var(--z-font-mono); font-size: 14px; transition: transform .2s cubic-bezier(.2,.8,.2,1); }
 
 /* ── Tag cloud ── */
 .z-blog-tag-cloud { margin-top: 64px; padding-top: 40px; border-top: 1px solid var(--z-border); }
@@ -219,6 +267,7 @@
   .z-blog-filter { flex-shrink: 0; }
   .z-blog-list-item { gap: 16px; }
   .z-blog-list-arrow { display: none; }
+  .z-blog-list-media { width: 64px; height: 64px; }
 }
 
 /* ── Barra de progreso de lectura (solo /blog/:slug) ── */

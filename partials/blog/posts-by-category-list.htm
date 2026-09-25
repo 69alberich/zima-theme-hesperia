@@ -2,10 +2,14 @@ description = "Lista editorial numerada (sin imagen) de N posts publicados de un
 
 [collection posts]
 handle = "Zima\Blog\Post"
+
+[collection categoryLookup]
+handle = "Zima\Blog\Category"
 ==
 {% set limit = limit ?? 3 %}
 {# .take(), no .limit() — ver comentario en blog/posts-by-category.htm #}
 {% set items = code ? posts.whereRelation('categories', 'code', code).take(limit).get() : [] %}
+{% set categoryEntry = code ? categoryLookup.where('code', code).take(1).get()|first : null %}
 
 {% if items is not empty %}
 <div class="z-blog-list">
@@ -18,7 +22,17 @@ handle = "Zima\Blog\Post"
             category = post.categories is not empty ? post.categories|first.title : null
             date     = post.published_at_date|date('d M Y')
             readTime = (words / 200)|round(0, 'ceil') ~ ' min'
+            image    = post.featured_image
         %}
     {% endfor %}
+</div>
+{% endif %}
+
+{% if showViewAll and categoryEntry %}
+<div class="z-blog-view-all-wrap">
+    <a href="{{ 'blog-category'|page({slug: categoryEntry.slug}) }}" class="z-blog-view-all-btn">
+        Más de {{ categoryEntry.title }}
+        <span class="z-blog-view-all-arrow">→</span>
+    </a>
 </div>
 {% endif %}

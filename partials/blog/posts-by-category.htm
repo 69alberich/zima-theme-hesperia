@@ -1,7 +1,10 @@
-description = "Renderiza N posts publicados de una categoría del blog, identificada por su código. Pensada para usarse tanto en páginas del blog como en bloques de Zima Landings. Uso: {% partial 'blog/posts-by-category' code='destinos' limit=3 %}"
+description = "Renderiza N posts publicados de una categoría del blog, identificada por su código. Pensada para usarse tanto en páginas del blog como en bloques de Zima Landings. Con limit=1 se ve como un post destacado único (mismo estilo que blog_latest); con limit=2, dos cards que ocupan el 100% del contenedor (2 columnas); con limit=3 (o más), la grilla de 3 columnas de siempre. Uso: {% partial 'blog/posts-by-category' code='destinos' limit=3 %}"
 
 [collection posts]
 handle = "Zima\Blog\Post"
+
+[collection categoryLookup]
+handle = "Zima\Blog\Category"
 ==
 {% set limit = limit ?? 3 %}
 {# .take() en vez de .limit() — .limit() queda sombreado en este builder de
@@ -9,19 +12,49 @@ handle = "Zima\Blog\Post"
    confirmado probando en vivo). .take() es el alias nativo de Laravel para
    lo mismo y sí funciona correctamente acá. #}
 {% set items = code ? posts.whereRelation('categories', 'code', code).take(limit).get() : [] %}
+{% set categoryEntry = code ? categoryLookup.where('code', code).take(1).get()|first : null %}
 
 {% if items is not empty %}
-<div class="z-blog-grid">
-    {% for post in items %}
-        {% set excerpt = post.excerpt ?: post.content|striptags|trim|slice(0, 140) %}
+    {% if limit == 1 %}
+        {# limit=1 → mismo tratamiento que el bloque blog_latest: un único
+           post destacado grande, imagen + contenido lado a lado. #}
+        {% set post = items|first %}
+        {% set excerpt = post.excerpt ?: post.content|striptags|trim|slice(0, 180) %}
+        {% set words   = post.content|striptags|split(' ')|length %}
         {% partial 'blog/post-card'
+            variant  = 'featured'
             title    = post.title
             excerpt  = excerpt
             url      = 'blog-post'|page({slug: post.slug})
             category = post.categories is not empty ? post.categories|first.title : null
             date     = post.published_at_date|date('d M Y')
+            readTime = (words / 200)|round(0, 'ceil') ~ ' min'
             image    = post.featured_image
         %}
-    {% endfor %}
+    {% else %}
+        {# limit=2 → 2 columnas que ocupan el 100% del contenedor; limit=3+
+           → grilla de 3 columnas de siempre. #}
+        <div class="z-blog-grid{{ limit == 2 ? ' z-blog-grid--2col' : '' }}">
+            {% for post in items %}
+                {% set excerpt = post.excerpt ?: post.content|striptags|trim|slice(0, 140) %}
+                {% partial 'blog/post-card'
+                    title    = post.title
+                    excerpt  = excerpt
+                    url      = 'blog-post'|page({slug: post.slug})
+                    category = post.categories is not empty ? post.categories|first.title : null
+                    date     = post.published_at_date|date('d M Y')
+                    image    = post.featured_image
+                %}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endif %}
+
+{% if showViewAll and categoryEntry %}
+<div class="z-blog-view-all-wrap">
+    <a href="{{ 'blog-category'|page({slug: categoryEntry.slug}) }}" class="z-blog-view-all-btn">
+        Más de {{ categoryEntry.title }}
+        <span class="z-blog-view-all-arrow">→</span>
+    </a>
 </div>
 {% endif %}
