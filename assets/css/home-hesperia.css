@@ -92,31 +92,34 @@
 }
 .hsp-link-mono:hover { color: var(--hsp-terra); }
 
-/* ── Stats editorial ───────────────────────────────────── */
+/* ── Stats editorial — franja navy con divisores hairline entre celdas,
+   mismo "dark highlight block" que ya usan los heroes de listado (.z-hlp-*)
+   y el CTA del blog, en vez de celdas sand sueltas con un punto de marca. ── */
 .hsp-stats {
-  padding: clamp(80px,10vw,140px) var(--hsp-px) 40px;
-  border-bottom: 1px solid var(--hsp-border);
+  background: var(--hsp-ink);
+  padding: var(--hsp-py-lg) var(--hsp-px);
 }
 
 .hsp-stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1px;
-  background: var(--hsp-border);
 }
 
 .hsp-stats-cell {
-  background: var(--hsp-sand);
-  padding: 22px clamp(16px, 2vw, 28px) 26px;
+  position: relative;
+  padding: 0 clamp(16px, 2vw, 28px);
+  border-left: 1px solid rgba(255,255,255,.16);
 }
+.hsp-stats-cell:first-child { border-left: none; padding-left: 0; }
 
 .hsp-stat-num {
   font-family: var(--z-font-serif);
-  font-size: clamp(52px, 7vw, 88px);
-  line-height: 0.9;
+  font-weight: 400;
+  font-size: clamp(36px, 4.4vw, 56px);
+  line-height: 1;
   color: var(--hsp-terra);
 }
-.hsp-stat-num--neutral { color: var(--hsp-ink); }
+.hsp-stat-num--neutral { color: #fff; }
 
 .hsp-stat-sup {
   font-size: 0.42em;
@@ -125,10 +128,14 @@
 
 .hsp-stat-lbl {
   margin-top: 14px;
-  font-size: 13px;
-  line-height: 1.4;
-  color: var(--hsp-muted);
-  max-width: 170px;
+  font-family: var(--z-font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  line-height: 1.5;
+  color: rgba(255,255,255,.55);
+  max-width: 20ch;
 }
 
 /* ── Three Ways (categorías editoriales) ───────────────── */
@@ -857,8 +864,9 @@
   .hsp-finder-grid      { grid-template-columns: 1fr; }
   .hsp-mesa-grid        { grid-template-columns: 1fr; }
   .hsp-mesa-col         { gap: 10px; }
-  .hsp-stats-grid       { grid-template-columns: repeat(2, 1fr); }
-  .hsp-stats-cell:nth-child(even) { border-right: none; }
+  .hsp-stats-grid       { grid-template-columns: repeat(2, 1fr); row-gap: 32px; }
+  .hsp-stats-cell       { border-left: none; padding-left: 0; }
+  .hsp-stats-cell:nth-child(even) { border-left: 1px solid rgba(255,255,255,.16); padding-left: clamp(16px, 4vw, 24px); }
   .hsp-cta-actions      { flex-direction: column; align-items: center; }
   .hsp-cta-deco         { display: none; }
 }

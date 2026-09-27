@@ -15,16 +15,26 @@ handle = "Zima\Contact\Message"
 
 <div class="zct-page">
 
-  {# ── Hero banda ── #}
-  <div class="zct-hero">
-    <div class="zct-hero-inner z-wrap">
-      <div class="zct-hero-eyebrow">Hablemos</div>
-      <h1 class="zct-hero-title">¿En qué podemos<br>ayudarte?</h1>
-      <p class="zct-hero-sub">
-        Estamos listos para guiarte hacia la experiencia perfecta<br>en el Caribe venezolano.
-      </p>
+  {# ── Hero — mismo .z-hlp-hero que Hoteles/Restaurantes/Experiencias/Servicios,
+     sin stats propias (no hay un número que valga la pena destacar acá). ── #}
+  <section class="z-hlp-hero">
+    <div class="z-hlp-hero-bg"></div>
+    <div class="z-hlp-hero-overlay"></div>
+
+    <div class="z-hlp-hero-content">
+      <div class="z-hlp-hero-main">
+        <div class="z-hlp-hero-tags">
+          <span class="z-hlp-eyebrow">Hablemos</span>
+        </div>
+
+        <h1 class="z-hlp-title">¿En qué podemos ayudarte?</h1>
+
+        <p class="z-hlp-sub">
+          Estamos listos para guiarte hacia la experiencia perfecta en el Caribe venezolano.
+        </p>
+      </div>
     </div>
-  </div>
+  </section>
 
   {# ── Layout: form + info ── #}
   <div class="z-wrap zct-layout">
@@ -94,7 +104,13 @@ handle = "Zima\Contact\Message"
     <div class="zct-info-panel">
 
       <div class="zct-info-card">
-        <div class="zct-info-icon">📍</div>
+        <div class="zct-info-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 21s-7-7.5-7-12a7 7 0 0 1 14 0c0 4.5-7 12-7 12z"/>
+            <circle cx="12" cy="9" r="2.5"/>
+          </svg>
+        </div>
         <div>
           <div class="zct-info-label">Ubicación</div>
           <div class="zct-info-value">
@@ -104,7 +120,13 @@ handle = "Zima\Contact\Message"
       </div>
 
       <div class="zct-info-card">
-        <div class="zct-info-icon">✉️</div>
+        <div class="zct-info-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="5" width="18" height="14" rx="2"/>
+            <path d="M3 7l9 6 9-6"/>
+          </svg>
+        </div>
         <div>
           <div class="zct-info-label">Correo electrónico</div>
           <div class="zct-info-value">
@@ -114,7 +136,12 @@ handle = "Zima\Contact\Message"
       </div>
 
       <div class="zct-info-card">
-        <div class="zct-info-icon">📞</div>
+        <div class="zct-info-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6.6 10.8a15.9 15.9 0 0 0 6.6 6.6l2.2-2.2a1.5 1.5 0 0 1 1.5-.4c1.1.3 2.3.5 3.5.5a1.5 1.5 0 0 1 1.5 1.5v3.4a1.5 1.5 0 0 1-1.6 1.5A18.5 18.5 0 0 1 3.4 4.6 1.5 1.5 0 0 1 4.9 3h3.4a1.5 1.5 0 0 1 1.5 1.5c0 1.2.2 2.4.5 3.5a1.5 1.5 0 0 1-.4 1.5z"/>
+          </svg>
+        </div>
         <div>
           <div class="zct-info-label">Teléfono / WhatsApp</div>
           <div class="zct-info-value">
@@ -126,7 +153,13 @@ handle = "Zima\Contact\Message"
       </div>
 
       <div class="zct-info-card">
-        <div class="zct-info-icon">🕐</div>
+        <div class="zct-info-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M12 7v5l3 3"/>
+          </svg>
+        </div>
         <div>
           <div class="zct-info-label">Horario de atención</div>
           <div class="zct-info-value">
@@ -174,49 +207,14 @@ handle = "Zima\Contact\Message"
 
 <style>
 /* ── Contacto page ─────────────────────────────────────── */
-.zct-page { background: var(--z-bg, #fff); }
-
-/* Hero */
-.zct-hero {
-  padding: 5rem 0 3.5rem;
-  background: linear-gradient(135deg,
-    color-mix(in srgb, var(--z-nav-bg, #1a1a2e) 96%, transparent),
-    color-mix(in srgb, var(--z-nav-bg, #1a1a2e) 88%, var(--z-teal, #2dd4c4))
-  );
-  clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
-  margin-bottom: -2rem;
-}
-.zct-hero-inner { text-align: center; }
-.zct-hero-eyebrow {
-  font-family: var(--z-font-sans);
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--z-teal, #2dd4c4);
-  margin-bottom: 1rem;
-}
-.zct-hero-title {
-  font-family: var(--z-font-serif);
-  font-size: clamp(2.2rem, 5vw, 3.6rem);
-  font-weight: 600;
-  color: #fff;
-  line-height: 1.15;
-  margin-bottom: 1rem;
-}
-.zct-hero-sub {
-  font-family: var(--z-font-sans);
-  font-size: 1rem;
-  color: rgba(255,255,255,0.65);
-  line-height: 1.65;
-}
+.zct-page { background: var(--z-bg); }
 
 /* Layout */
 .zct-layout {
   display: grid;
   grid-template-columns: 1fr 380px;
   gap: 3.5rem;
-  padding-top: 5rem;
+  padding-top: 56px;
   padding-bottom: 5rem;
   align-items: start;
 }
@@ -231,13 +229,13 @@ handle = "Zima\Contact\Message"
   font-family: var(--z-font-serif);
   font-size: 1.8rem;
   font-weight: 600;
-  color: var(--z-text, #1a1a2e);
+  color: var(--z-text);
   margin-bottom: 0.35rem;
 }
 .zct-form-sub {
   font-family: var(--z-font-sans);
   font-size: 0.9rem;
-  color: var(--z-text-soft, #6b7280);
+  color: var(--z-text-soft);
 }
 
 .zct-form { display: flex; flex-direction: column; gap: 1.25rem; }
@@ -250,26 +248,23 @@ handle = "Zima\Contact\Message"
   font-family: var(--z-font-sans);
   font-size: 0.82rem;
   font-weight: 600;
-  color: var(--z-text, #1a1a2e);
+  color: var(--z-text);
   letter-spacing: 0.02em;
 }
 .zct-input {
   font-family: var(--z-font-sans);
   font-size: 0.93rem;
-  color: var(--z-text, #1a1a2e);
-  background: var(--z-bg, #fff);
-  border: 1.5px solid color-mix(in srgb, var(--z-text, #1a1a2e) 18%, transparent);
-  border-radius: 10px;
+  color: var(--z-text);
+  background: var(--z-surface);
+  border: 1.5px solid var(--z-border);
+  border-radius: 2px;
   padding: 0.75em 1em;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s;
   width: 100%;
   box-sizing: border-box;
 }
-.zct-input:focus {
-  border-color: var(--z-teal, #2dd4c4);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--z-teal, #2dd4c4) 20%, transparent);
-}
+.zct-input:focus { border-color: var(--z-orange); }
 .zct-select { appearance: none; cursor: pointer; }
 .zct-textarea { resize: vertical; min-height: 140px; }
 
@@ -282,23 +277,22 @@ handle = "Zima\Contact\Message"
   font-size: 0.95rem;
   font-weight: 600;
   color: #fff;
-  background: var(--z-orange, #f4835f);
+  background: var(--z-orange);
   border: none;
-  border-radius: 100px;
+  border-radius: 2px;
   padding: 0.9em 2.2em;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 4px 18px rgba(244,131,95,.28);
+  transition: background 0.15s;
   align-self: flex-start;
 }
-.zct-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(244,131,95,.38); }
+.zct-submit:hover { background: var(--z-teal-dark); }
 .zct-submit-icon { font-style: normal; transition: transform 0.2s; }
 .zct-submit:hover .zct-submit-icon { transform: translateX(4px); }
 
 .zct-disclaimer {
   font-family: var(--z-font-sans);
   font-size: 0.78rem;
-  color: var(--z-text-soft, #6b7280);
+  color: var(--z-text-soft);
   line-height: 1.5;
 }
 
@@ -321,14 +315,14 @@ handle = "Zima\Contact\Message"
 .zct-form-success-icon {
   display: flex; align-items: center; justify-content: center;
   width: 48px; height: 48px; border-radius: 50%;
-  background: var(--z-teal, #2dd4c4); color: #fff; font-size: 1.3rem; margin-bottom: 0.5rem;
+  background: var(--z-orange); color: #fff; font-size: 1.3rem; margin-bottom: 0.5rem;
 }
 .zct-form-success-title {
   font-family: var(--z-font-serif); font-size: 1.5rem; font-weight: 600;
-  color: var(--z-text, #1a1a2e); margin: 0;
+  color: var(--z-text); margin: 0;
 }
 .zct-form-success-sub {
-  font-family: var(--z-font-sans); font-size: 0.9rem; color: var(--z-text-soft, #6b7280); margin: 0;
+  font-family: var(--z-font-sans); font-size: 0.9rem; color: var(--z-text-soft); margin: 0;
 }
 
 /* Info panel */
@@ -342,44 +336,40 @@ handle = "Zima\Contact\Message"
   display: flex;
   gap: 1rem;
   align-items: flex-start;
-  background: color-mix(in srgb, var(--z-bg, #fff) 60%, transparent);
-  border: 1.5px solid color-mix(in srgb, var(--z-text, #1a1a2e) 10%, transparent);
-  border-radius: 14px;
+  background: var(--z-surface);
+  border: 1.5px solid var(--z-border);
+  border-radius: 2px;
   padding: 1.1rem 1.25rem;
-  backdrop-filter: blur(4px);
 }
-.zct-info-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 0.05rem; }
+.zct-info-icon { display: flex; color: var(--z-orange); flex-shrink: 0; margin-top: 0.05rem; }
 .zct-info-label {
   font-family: var(--z-font-sans);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--z-text-soft, #6b7280);
+  color: var(--z-text-soft);
   margin-bottom: 0.3rem;
 }
 .zct-info-value {
   font-family: var(--z-font-sans);
   font-size: 0.9rem;
-  color: var(--z-text, #1a1a2e);
+  color: var(--z-text);
   line-height: 1.55;
 }
 .zct-info-link {
-  color: var(--z-teal, #2dd4c4);
+  color: var(--z-orange);
   text-decoration: none;
   font-weight: 500;
 }
 .zct-info-link:hover { text-decoration: underline; }
 
 .zct-map-placeholder {
-  border-radius: 16px;
+  border-radius: 2px;
   overflow: hidden;
   height: 180px;
-  background: linear-gradient(135deg,
-    color-mix(in srgb, var(--z-teal, #2dd4c4) 12%, var(--z-bg, #fff)),
-    color-mix(in srgb, var(--z-orange, #f4835f) 8%, var(--z-bg, #fff))
-  );
-  border: 1.5px dashed color-mix(in srgb, var(--z-teal, #2dd4c4) 40%, transparent);
+  background: var(--z-muted-bg);
+  border: 1.5px dashed var(--z-border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -389,7 +379,7 @@ handle = "Zima\Contact\Message"
 .zct-map-text {
   font-family: var(--z-font-sans);
   font-size: 0.82rem;
-  color: var(--z-text-soft, #6b7280);
+  color: var(--z-text-soft);
 }
 
 .zct-social {
@@ -404,14 +394,13 @@ handle = "Zima\Contact\Message"
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 1.5px solid color-mix(in srgb, var(--z-text, #1a1a2e) 18%, transparent);
-  color: var(--z-text-soft, #6b7280);
+  border: 1.5px solid var(--z-border);
+  color: var(--z-text-soft);
   text-decoration: none;
-  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  transition: border-color 0.2s, color 0.2s;
 }
 .zct-social-link:hover {
-  border-color: var(--z-teal, #2dd4c4);
-  color: var(--z-teal, #2dd4c4);
-  background: color-mix(in srgb, var(--z-teal, #2dd4c4) 10%, transparent);
+  border-color: var(--z-orange);
+  color: var(--z-orange);
 }
 </style>
