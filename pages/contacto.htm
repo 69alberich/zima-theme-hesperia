@@ -2,6 +2,9 @@
 url = "/contacto"
 layout = "default"
 title = "Contacto"
+
+[submission contactForm]
+handle = "Zima\Contact\Message"
 ==
 {% put meta %}
 <title>Contacto | {{ this.theme.site_name|default('Zima') }}</title>
@@ -33,48 +36,47 @@ title = "Contacto"
         <p class="zct-form-sub">Te responderemos en menos de 24 horas.</p>
       </div>
 
-      {# ── Plugin placeholder ──────────────────────────────
-           Aquí va el componente de formulario de October CMS
-           Descomenta y configura el plugin correspondiente:
+      {# el éxito se resuelve en el cliente (data-request-success) porque el
+         envío va por AJAX — formSubmitted no llega a re-renderizarse sin un
+         reload completo de página, que no queremos acá. #}
+      <div id="zct-success" class="zct-form-success" style="display:none">
+        <div class="zct-form-success-icon">✓</div>
+        <h3 class="zct-form-success-title">¡Mensaje enviado!</h3>
+        <p class="zct-form-success-sub">Gracias por escribirnos — te responderemos en menos de 24 horas.</p>
+      </div>
 
-           {% component 'contactForm' %}
+      <form id="zct-form" class="zct-form" data-request="contactForm::onFormSubmit" data-request-validate
+        data-request-success="document.getElementById('zct-form').style.display='none'; document.getElementById('zct-success').style.display='flex';">
+        {# honeypot anti-spam — invisible para personas, si un bot lo completa el envío se rechaza #}
+        <input type="text" name="_oc_hp" class="zct-honeypot" tabindex="-1" autocomplete="off">
 
-           O si usas RainLab.Contact:
-           [contactForm]
-           in operator.htm page config, then:
-           {% component 'contactForm' %}
-      ─────────────────────────────────────────────────── #}
-
-      <form class="zct-form" action="#" method="post">
         <div class="zct-form-row zct-form-row--2">
           <div class="zct-field">
             <label class="zct-label" for="ct-name">Nombre completo</label>
             <input class="zct-input" type="text" id="ct-name" name="name"
                    placeholder="Tu nombre" required autocomplete="name">
+            <span data-validate-for="name" class="zct-error"></span>
           </div>
           <div class="zct-field">
             <label class="zct-label" for="ct-email">Correo electrónico</label>
             <input class="zct-input" type="email" id="ct-email" name="email"
                    placeholder="tu@email.com" required autocomplete="email">
+            <span data-validate-for="email" class="zct-error"></span>
           </div>
         </div>
 
         <div class="zct-field">
           <label class="zct-label" for="ct-subject">Asunto</label>
-          <select class="zct-input zct-select" id="ct-subject" name="subject">
-            <option value="" disabled selected>Selecciona un tema</option>
-            <option value="reserva">Consulta de reserva</option>
-            <option value="hotel">Información de hotel</option>
-            <option value="experiencia">Experiencias y actividades</option>
-            <option value="operador">Registro como operador</option>
-            <option value="otro">Otro</option>
-          </select>
+          <input class="zct-input" type="text" id="ct-subject" name="subject"
+                 placeholder="¿En qué te podemos ayudar?" required>
+          <span data-validate-for="subject" class="zct-error"></span>
         </div>
 
         <div class="zct-field">
           <label class="zct-label" for="ct-message">Mensaje</label>
           <textarea class="zct-input zct-textarea" id="ct-message" name="message"
                     placeholder="Cuéntanos qué necesitas…" rows="6" required></textarea>
+          <span data-validate-for="message" class="zct-error"></span>
         </div>
 
         <button type="submit" class="zct-submit">
@@ -298,6 +300,35 @@ title = "Contacto"
   font-size: 0.78rem;
   color: var(--z-text-soft, #6b7280);
   line-height: 1.5;
+}
+
+/* Honeypot — oculto para personas, visible para bots que ignoran CSS */
+.zct-honeypot {
+  position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none;
+}
+
+.zct-error {
+  font-family: var(--z-font-sans);
+  font-size: 0.78rem;
+  color: #d64545;
+  min-height: 1em;
+}
+
+.zct-form-success {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem;
+  padding: 2.5rem 0;
+}
+.zct-form-success-icon {
+  display: flex; align-items: center; justify-content: center;
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--z-teal, #2dd4c4); color: #fff; font-size: 1.3rem; margin-bottom: 0.5rem;
+}
+.zct-form-success-title {
+  font-family: var(--z-font-serif); font-size: 1.5rem; font-weight: 600;
+  color: var(--z-text, #1a1a2e); margin: 0;
+}
+.zct-form-success-sub {
+  font-family: var(--z-font-sans); font-size: 0.9rem; color: var(--z-text-soft, #6b7280); margin: 0;
 }
 
 /* Info panel */

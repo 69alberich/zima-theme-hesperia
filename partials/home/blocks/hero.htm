@@ -1,6 +1,24 @@
-{# block.eyebrow, block.title, block.subtitle, block.background_image #}
+{# block.eyebrow, block.title, block.subtitle
+   block.background_type (image|color|css|video, default image)
+   block.background_image, block.background_color, block.background_css,
+   block.background_video, block.background_video_poster #}
+{% set bgType = block.background_type ?: 'image' %}
 <div class="z-hero">
-  <div class="z-hero-bg"{% if block.background_image and block.background_image.path %} style="background-image: url('{{ block.background_image.path }}')"{% endif %}></div>
+  {% if bgType == 'color' and block.background_color %}
+    <div class="z-hero-bg" style="background: {{ block.background_color }}"></div>
+  {% elseif bgType == 'css' and block.background_css %}
+    <div class="z-hero-bg" style="background: {{ block.background_css }}"></div>
+  {% elseif bgType == 'video' and block.background_video %}
+    {# el degradado de .z-hero-bg queda de respaldo detrás del video mientras
+       carga o si el navegador no puede reproducirlo. #}
+    <div class="z-hero-bg"{% if block.background_video_poster and block.background_video_poster.path %} style="background-image: url('{{ block.background_video_poster.path }}')"{% endif %}></div>
+    <video class="z-hero-bg-video" autoplay muted loop playsinline
+      {% if block.background_video_poster and block.background_video_poster.path %}poster="{{ block.background_video_poster.path }}"{% endif %}>
+      <source src="{{ block.background_video.path }}">
+    </video>
+  {% else %}
+    <div class="z-hero-bg"{% if block.background_image and block.background_image.path %} style="background-image: url('{{ block.background_image.path }}')"{% endif %}></div>
+  {% endif %}
   <div class="z-hero-dim"></div>
   <div class="z-wrap z-hero-body">
     <div class="z-hero-text">

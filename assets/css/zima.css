@@ -422,6 +422,7 @@ img { max-width: 100%; display: block; }
     linear-gradient(145deg, #051C2C 0%, #0b2539 45%, #112f4a 100%);
 }
 .z-hero-dim { position: absolute; inset: 0; background: linear-gradient(180deg,rgba(5,28,44,.08),rgba(5,28,44,.52)); pointer-events: none; }
+.z-hero-bg-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .z-hero-body {
   position: relative; z-index: 1;
   display: flex; flex-direction: column; justify-content: center; gap: 32px;
