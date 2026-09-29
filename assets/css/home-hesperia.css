@@ -4,14 +4,21 @@
               hotel-finder · blog · cta
    ═══════════════════════════════════════════════════════════ */
 
-/* ── Tokens de sección ─────────────────────────────────── */
+/* ── Tokens de sección ─────────────────────────────────────
+   --hsp-sand/-ink/-terra/-salmon son alias de los tokens reales de zima.css
+   (--z-bg/-text/-orange/-coral-lt) — antes eran hex propios que coincidían
+   por copia manual, no por definición: si un color de marca cambiaba en
+   zima.css, esta hoja no se enteraba y el home quedaba desincronizado del
+   resto del sitio sin ningún error visible. --hsp-muted y --hsp-border NO
+   son alias — son valores propios, ligeramente distintos de cualquier token
+   de zima.css, no duplicados. ── */
 :root {
-  --hsp-sand:    #F8F6F3;
-  --hsp-ink:     #051C2C;
-  --hsp-terra:   #CA462D;
+  --hsp-sand:    var(--z-bg);
+  --hsp-ink:     var(--z-text);
+  --hsp-terra:   var(--z-orange);
   --hsp-muted:   #5C6B76;
   --hsp-border:  #DFE1E0;
-  --hsp-salmon:  #F0A38F;
+  --hsp-salmon:  var(--z-coral-lt);
   --hsp-px:      clamp(20px, 5vw, 72px);
   --hsp-py-lg:   clamp(72px, 9vw, 140px);
   --hsp-py-md:   clamp(64px, 8vw, 120px);

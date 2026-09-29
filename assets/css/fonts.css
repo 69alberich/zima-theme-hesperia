@@ -4,14 +4,22 @@
  * Canela (Commercial Type) — display serif → headings
  * GT Walsheim (Grilli Type) — humanist sans → body / UI
  *
- * Coloca los archivos .woff2 en assets/fonts/ con estos nombres exactos.
- * Pesos usados en el tema: Canela 300 400 700 · GT Walsheim 300 400 500 600 700
+ * Los @font-face de acá abajo están comentados a propósito: los archivos
+ * .woff2/.woff que referencian nunca se instalaron en assets/fonts/, así que
+ * cada carga de página intentaba bajar los 10 pesos y fallaba con 404 antes
+ * de caer recién ahí al fallback real (Instrument Serif + Archivo, definido
+ * en --z-font-serif/--z-font-sans de zima.css) — 10 requests perdidos por
+ * página, sin ningún beneficio visual.
  *
- * Mientras los archivos no estén presentes, el navegador usa el fallback
- * definido en zima.css (Cormorant Garamond / Archivo).
+ * Cuando lleguen los archivos reales: pegarlos en assets/fonts/ con estos
+ * nombres exactos y descomentar los bloques @font-face de abajo — el
+ * fallback en zima.css no necesita tocarse, ya tiene 'Canela'/'GT Walsheim'
+ * primero en la lista.
+ * Pesos usados en el tema: Canela 300 400 700 · GT Walsheim 300 400 500 600 700
  */
 
 /* ── Canela ─────────────────────────────────────────────── */
+/*
 @font-face {
   font-family: 'Canela';
   src: url('../fonts/Canela-Light.woff2') format('woff2'),
@@ -20,6 +28,8 @@
   font-style: normal;
   font-display: swap;
 }
+*/
+/*
 @font-face {
   font-family: 'Canela';
   src: url('../fonts/Canela-LightItalic.woff2') format('woff2'),
@@ -28,6 +38,8 @@
   font-style: italic;
   font-display: swap;
 }
+*/
+/*
 @font-face {
   font-family: 'Canela';
   src: url('../fonts/Canela-Regular.woff2') format('woff2'),
@@ -36,6 +48,8 @@
   font-style: normal;
   font-display: swap;
 }
+*/
+/*
 @font-face {
   font-family: 'Canela';
   src: url('../fonts/Canela-RegularItalic.woff2') format('woff2'),
@@ -44,6 +58,8 @@
   font-style: italic;
   font-display: swap;
 }
+*/
+/*
 @font-face {
   font-family: 'Canela';
   src: url('../fonts/Canela-Bold.woff2') format('woff2'),
@@ -52,6 +68,8 @@
   font-style: normal;
   font-display: swap;
 }
+*/
+/*
 @font-face {
   font-family: 'Canela';
   src: url('../fonts/Canela-BoldItalic.woff2') format('woff2'),
@@ -60,8 +78,10 @@
   font-style: italic;
   font-display: swap;
 }
+*/
 
 /* ── GT Walsheim ────────────────────────────────────────── */
+/*
 @font-face {
   font-family: 'GT Walsheim';
   src: url('../fonts/GTWalsheim-Light.woff2') format('woff2'),
@@ -70,6 +90,8 @@
   font-style: normal;
   font-display: swap;
 }
+*/
+/*
 @font-face {
   font-family: 'GT Walsheim';
   src: url('../fonts/GTWalsheim-Regular.woff2') format('woff2'),
@@ -78,6 +100,8 @@
   font-style: normal;
   font-display: swap;
 }
+*/
+/*
 @font-face {
   font-family: 'GT Walsheim';
   src: url('../fonts/GTWalsheim-Medium.woff2') format('woff2'),
@@ -86,6 +110,8 @@
   font-style: normal;
   font-display: swap;
 }
+*/
+/*
 @font-face {
   font-family: 'GT Walsheim';
   src: url('../fonts/GTWalsheim-Bold.woff2') format('woff2'),
@@ -94,3 +120,4 @@
   font-style: normal;
   font-display: swap;
 }
+*/
