@@ -150,7 +150,8 @@
         setTimeout(function () { btn.disabled = false; btn.textContent = 'Agregar al carrito'; }, 2000);
       },
       error: function (xhr) {
-        var err = (xhr.responseJSON && xhr.responseJSON.error) ? xhr.responseJSON.error : 'Error al agregar.';
+        // Mensaje real del servidor (ApplicationException): viene en data.$env, no en responseJSON
+        var err = (xhr && xhr.$env && xhr.$env.getMessage && xhr.$env.getMessage()) || 'Error al agregar.';
         msgEl.textContent   = err;
         msgEl.className     = 'zpd-store-msg zpd-store-msg--err';
         msgEl.style.display = '';
